@@ -21,8 +21,8 @@ namespace Data.Implementations
     {
         private readonly ILogger<RolUserData> _logger;
 
-        public RolUserData(ApplicationDbContext context, IConfiguration configuration,  ILogger<RolUserData> logger, IAuditService auditService, ICurrentUserService currentUserService)
-            : base(context, configuration, auditService, currentUserService)
+        public RolUserData(ApplicationDbContext context, IConfiguration configuration,  ILogger<RolUserData> logger, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+            : base(context, configuration, auditService, currentUserService, mapper)
         {
             _logger = logger;
         }

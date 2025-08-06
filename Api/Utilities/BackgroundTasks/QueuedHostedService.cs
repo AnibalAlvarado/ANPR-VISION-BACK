@@ -22,12 +22,19 @@ namespace Utilities.BackgroundTasks
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("⏳ Tarea recibida en la cola. Ejecutando...");
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 var workItem = await _taskQueue.DequeueAsync(stoppingToken);
+
+                if (workItem == null)
+                {
+                    _logger.LogWarning("⚠ No hay tarea para procesar.");
+                    continue;
+                }
+
                 try
                 {
-
                     await workItem(stoppingToken);
                 }
                 catch (Exception ex)
@@ -36,5 +43,6 @@ namespace Utilities.BackgroundTasks
                 }
             }
         }
+
     }
 }

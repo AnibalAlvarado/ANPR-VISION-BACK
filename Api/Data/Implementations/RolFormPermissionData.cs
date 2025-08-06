@@ -17,8 +17,8 @@ namespace Data.Implementations
 {
     public class RolFormPermissionData : RepositoryData<RolFormPermission>, IRolFormPermissionData
     {
-        public RolFormPermissionData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService)
-            : base(context, configuration,auditService, currentUserService)
+        public RolFormPermissionData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+            : base(context, configuration,auditService, currentUserService, mapper)
         {
 
         }

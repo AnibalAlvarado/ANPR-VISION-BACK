@@ -182,5 +182,21 @@ namespace Web.Controllers.Implementations
             return Ok(result);
         }
 
+        [HttpGet("paged")]
+        public override async Task<ActionResult<PagedResult<D>>> GetPaged([FromQuery] QueryParameters query)
+        {
+            try
+            {
+                var result = await _business.GetAllPaginatedAsync(query);
+                return Ok(new ApiResponse<PagedResult<D>>(result, true, "Listado paginado", null));
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<PagedResult<D>>(null!, false, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+
     }
 }

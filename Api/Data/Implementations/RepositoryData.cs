@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Data.Interfaces;
 using Entity.Annotations;
 using Entity.Contexts;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,13 +31,16 @@ namespace Data.Implementations
         protected readonly IConfiguration _configuration;
         private readonly IAuditService _auditService;  // <-- Aquí la inyección
         private readonly ICurrentUserService _currentUserService;
+        protected readonly IMapper _mapper; 
 
-        public RepositoryData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService)
+
+        public RepositoryData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
             _auditService = auditService;
             _currentUserService = currentUserService;
+            _mapper = mapper;
         }
         protected async Task AuditAsync(string action, int entityId = 0, string changes = null)
         {
@@ -259,5 +264,54 @@ namespace Data.Implementations
 
             return dynamicList;
         }
+
+        public override async Task<PagedResult<TDto>> GetAllPaginatedAsync<TDto>(
+            QueryParameters query,
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IQueryable<T>>? include = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            // Asegurar valores válidos
+            var page = query.Page <= 0 ? 1 : query.Page;
+            var pageSize = query.PageSize <= 0 ? 10 : query.PageSize;
+
+            IQueryable<T> dbQuery = _context.Set<T>().AsNoTracking();
+
+            // Incluir relaciones
+            if (include is not null)
+                dbQuery = include(dbQuery);
+
+            // Filtro
+            if (filter is not null)
+                dbQuery = dbQuery.Where(filter);
+
+            // Aplicar búsqueda y ordenamiento
+            //dbQuery = dbQuery.ApplySearch(query.Search);
+            //dbQuery = dbQuery.ApplySort(query.Sort);
+
+            // Conteo total
+            var totalCount = await dbQuery.CountAsync(cancellationToken);
+
+            // Proyección a DTO
+            var items = await dbQuery
+                .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return new PagedResult<TDto>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
+        }
+
+
+
     }
 }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Exceptions;
@@ -107,6 +108,20 @@ namespace Business.Implementations
         {
             return await _data.GetAllDynamicAsync();
         }
+
+        public override async Task<PagedResult<D>> GetAllPaginatedAsync(QueryParameters query, Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IQueryable<T>>? include = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var pagedResultDto = await _data.GetAllPaginatedAsync<D>(query, filter, include, cancellationToken);
+                return pagedResultDto;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al obtener listado paginado", ex);
+            }
+        }
+
 
     }
 }

@@ -20,7 +20,15 @@ namespace Utilities.BackgroundTasks
 
         public async Task<Func<CancellationToken, Task>> DequeueAsync(CancellationToken cancellationToken)
         {
-            return await _queue.Reader.ReadAsync(cancellationToken);
+            try
+            {
+                return await _queue.Reader.ReadAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                // Puedes devolver null o relanzar la excepción según tu necesidad
+                return null;
+            }
         }
     }
 }

@@ -16,8 +16,8 @@ namespace Data.Implementations
 {
     public class FormData : RepositoryData<Form>, IFormData
     {
-        public FormData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService)
-            : base(context, configuration, auditService, currentUserService)
+        public FormData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+            : base(context, configuration, auditService, currentUserService, mapper)
         {
 
         }

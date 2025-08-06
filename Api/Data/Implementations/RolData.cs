@@ -18,8 +18,8 @@ namespace Data.Implementations
 {
     public class RolData : RepositoryData<Rol>, IRolData
     {
-        public RolData(ApplicationDbContext context, IConfiguration configuration,IAuditService auditService, ICurrentUserService currentUserService)
-            : base(context, configuration,  auditService, currentUserService)
+        public RolData(ApplicationDbContext context, IConfiguration configuration,IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+            : base(context, configuration,  auditService, currentUserService, mapper)
         {
 
         }

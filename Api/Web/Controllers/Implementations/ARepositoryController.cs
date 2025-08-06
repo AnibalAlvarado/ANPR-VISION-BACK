@@ -15,5 +15,6 @@ namespace Web.Controllers.Implementations
         public abstract Task<ActionResult> PermanentDelete(int id);
         public abstract Task<ActionResult> Delete(int id);
         public abstract Task<IActionResult> GetDynamicAsync();
+        public abstract Task<ActionResult<PagedResult<D>>> GetPaged([FromQuery] QueryParameters query);
     }
 }

@@ -16,8 +16,8 @@ namespace Data.Implementations
 {
     public class PermissionData : RepositoryData<Permission>, IPermissionData
     {
-        public PermissionData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService)
-            : base(context, configuration, auditService, currentUserService)
+        public PermissionData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+            : base(context, configuration, auditService, currentUserService, mapper)
         {
 
         }

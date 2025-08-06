@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,5 +55,7 @@ namespace Business.Implementations
         /// </summary>
         /// <returns>Lista de objetos dinámicos con propiedades en PascalCase.</returns>
         public abstract Task<List<ExpandoObject>> GetAllDynamicAsync();
+
+        public abstract Task<PagedResult<D>> GetAllPaginatedAsync(QueryParameters query, Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IQueryable<T>>? include = null, CancellationToken cancellationToken = default);
     }
 }

@@ -18,5 +18,6 @@ namespace Web.Controllers.Interfaces
 
         Task<ActionResult> Delete(int id);
         Task<IActionResult> GetDynamicAsync();
+        Task<ActionResult<PagedResult<D>>> GetPaged([FromQuery] QueryParameters query);
     }
 }

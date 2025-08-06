@@ -16,8 +16,8 @@ namespace Data.Implementations
 {
     public class ModuleData : RepositoryData<Module>, IModuleData
     {
-        public ModuleData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService)
-            : base(context, configuration, auditService, currentUserService)
+        public ModuleData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+            : base(context, configuration, auditService, currentUserService, mapper)
         {
 
         }

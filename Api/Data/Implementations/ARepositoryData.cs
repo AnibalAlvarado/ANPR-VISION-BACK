@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,7 +63,8 @@ namespace Data.Implementations
 
         public abstract Task<List<ExpandoObject>> GetAllDynamicAsync();
 
-
+        public abstract Task<PagedResult<TDto>> GetAllPaginatedAsync<TDto>(QueryParameters query, Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IQueryable<T>>? include = null, CancellationToken cancellationToken = default);
 
     }
 }
