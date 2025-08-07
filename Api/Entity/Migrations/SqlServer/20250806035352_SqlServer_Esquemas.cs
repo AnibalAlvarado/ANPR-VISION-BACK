@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Entity.Migrations.AuditDb
+namespace Entity.Migrations.SqlServer
 {
     /// <inheritdoc />
-    public partial class InitAuditDb : Migration
+    public partial class SqlServer_Esquemas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

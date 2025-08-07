@@ -206,5 +206,21 @@ namespace Business.Implementations
             }
         }
 
+        public async Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId)
+        {
+            try
+            {
+                return await _data.GetUserRolesAsync(userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener roles del usuario con ID: {UserId}", userId);
+                throw;
+            }
+        }
+
+
+
+
     }
 }

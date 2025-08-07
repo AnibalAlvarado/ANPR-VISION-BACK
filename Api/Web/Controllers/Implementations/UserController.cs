@@ -103,5 +103,20 @@ namespace Web.Controllers.Implementations
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+        [HttpGet("roles/{userId}")]
+        public async Task<IActionResult> GetUserRolesWithState(int userId)
+        {
+            try
+            {
+                var roles = await _business.GetUserRolesAsync(userId);
+                return Ok(new { success = true, data = roles });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener roles con estado del usuario");
+                return StatusCode(500, new { success = false, message = "Error interno del servidor" });
+            }
+        }
     }
 }

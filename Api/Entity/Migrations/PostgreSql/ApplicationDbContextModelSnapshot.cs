@@ -2,20 +2,17 @@
 using Entity.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Entity.Migrations
+namespace Entity.Migrations.PostgreSql
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250523220516_NotinitMainDb")]
-    partial class NotinitMainDb
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,6 +36,9 @@ namespace Entity.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -54,6 +54,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             Description = "Formulario principal",
+                            IsDeleted = false,
                             Name = "Principal"
                         });
                 });
@@ -72,6 +73,9 @@ namespace Entity.Migrations
                     b.Property<int>("FormId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("ModuleId")
                         .HasColumnType("integer");
 
@@ -89,6 +93,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             FormId = 1,
+                            IsDeleted = false,
                             ModuleId = 1
                         });
                 });
@@ -108,6 +113,9 @@ namespace Entity.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -123,6 +131,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             Description = "Permiso para ver",
+                            IsDeleted = false,
                             Name = "Ver"
                         },
                         new
@@ -130,6 +139,7 @@ namespace Entity.Migrations
                             Id = 2,
                             Asset = false,
                             Description = "Permiso para editar",
+                            IsDeleted = false,
                             Name = "Editar"
                         },
                         new
@@ -137,6 +147,7 @@ namespace Entity.Migrations
                             Id = 3,
                             Asset = false,
                             Description = "Permiso para eliminar",
+                            IsDeleted = false,
                             Name = "Eliminar"
                         });
                 });
@@ -156,6 +167,9 @@ namespace Entity.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Lastname")
                         .IsRequired()
                         .HasColumnType("text");
@@ -174,6 +188,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             Firstname = "Admin",
+                            IsDeleted = false,
                             Lastname = "Principal",
                             PhoneNumber = "111111111"
                         },
@@ -182,6 +197,7 @@ namespace Entity.Migrations
                             Id = 2,
                             Asset = false,
                             Firstname = "Usuario",
+                            IsDeleted = false,
                             Lastname = "Demo",
                             PhoneNumber = "222222222"
                         });
@@ -202,6 +218,9 @@ namespace Entity.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -217,6 +236,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             Description = "Rol de administrador",
+                            IsDeleted = false,
                             Name = "Administrador"
                         },
                         new
@@ -224,6 +244,7 @@ namespace Entity.Migrations
                             Id = 2,
                             Asset = false,
                             Description = "Rol de usuario estándar",
+                            IsDeleted = false,
                             Name = "Usuario"
                         });
                 });
@@ -241,6 +262,9 @@ namespace Entity.Migrations
 
                     b.Property<int>("FormId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("PermissionId")
                         .HasColumnType("integer");
@@ -264,6 +288,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             FormId = 1,
+                            IsDeleted = false,
                             PermissionId = 1,
                             RolId = 1
                         },
@@ -272,6 +297,7 @@ namespace Entity.Migrations
                             Id = 2,
                             Asset = false,
                             FormId = 1,
+                            IsDeleted = false,
                             PermissionId = 2,
                             RolId = 1
                         },
@@ -280,6 +306,7 @@ namespace Entity.Migrations
                             Id = 3,
                             Asset = false,
                             FormId = 1,
+                            IsDeleted = false,
                             PermissionId = 1,
                             RolId = 2
                         });
@@ -294,6 +321,9 @@ namespace Entity.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<int>("RolId")
@@ -315,6 +345,7 @@ namespace Entity.Migrations
                         {
                             Id = 1,
                             Asset = false,
+                            IsDeleted = false,
                             RolId = 1,
                             UserId = 1
                         },
@@ -322,6 +353,7 @@ namespace Entity.Migrations
                         {
                             Id = 2,
                             Asset = false,
+                            IsDeleted = false,
                             RolId = 2,
                             UserId = 2
                         });
@@ -341,6 +373,9 @@ namespace Entity.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -365,6 +400,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             Email = "anibalalvaradoandrade@gmail.com",
+                            IsDeleted = false,
                             Password = "123",
                             PersonId = 1,
                             Username = "admin"
@@ -374,6 +410,7 @@ namespace Entity.Migrations
                             Id = 2,
                             Asset = false,
                             Email = "usuario@demo.com",
+                            IsDeleted = false,
                             Password = "usuario123",
                             PersonId = 2,
                             Username = "usuario"
@@ -395,6 +432,9 @@ namespace Entity.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -410,6 +450,7 @@ namespace Entity.Migrations
                             Id = 1,
                             Asset = false,
                             Description = "Módulo de gestión",
+                            IsDeleted = false,
                             Name = "Gestión"
                         });
                 });

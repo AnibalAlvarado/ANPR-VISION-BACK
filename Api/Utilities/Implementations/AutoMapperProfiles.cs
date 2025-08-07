@@ -57,6 +57,9 @@ namespace Utilities.Implementations
 
             CreateMap<User, UserDto>()
                  .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.Firstname));
+            //CreateMap<UserDto, User>()
+            //.ForPath(dest => dest.Person.Firstname, opt => opt.MapFrom(src => src.PersonName));
+
             CreateMap<UserDto, User>();
             CreateMap<User, UserResponseDto>().ReverseMap();
         }
