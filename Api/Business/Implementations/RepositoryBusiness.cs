@@ -21,9 +21,108 @@ namespace Business.Implementations
         private readonly IRepositoryData<T> _data;
         private readonly IMapper _mapper;
 
+        public IBlackListBusiness Data { get; }
+        public IClientBusiness Data1 { get; }
+        public RatesTypeBusiness Data2 { get; }
+        public IMembershipsBusiness Data3 { get; }
+        public IMemberShipTypeBusiness Data4 { get; }
+        public IParkingBusiness Data5 { get; }
+        public IParkingCategoryBusiness Data6 { get; }
+        public IRatesBusiness Data7 { get; }
+        public IRegisteredVehicleBusiness Data8 { get; }
+        public ISectorsBusiness Data9 { get; }
+        public ISlotsBusiness Data10 { get; }
+        public ITypeVehicleBusiness Data11 { get; }
+        public IVehicleBusiness Data12 { get; }
+        public IZonesBusiness Data13 { get; }
+
         public  RepositoryBusiness(IRepositoryData<T> data, IMapper mapper)
         {
             _data = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IBlackListBusiness data, IMapper mapper)
+        {
+            Data = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IClientBusiness data, IMapper mapper)
+        {
+            Data1 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(RatesTypeBusiness data, IMapper mapper)
+        {
+            Data2 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IMembershipsBusiness data, IMapper mapper)
+        {
+            Data3 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IMemberShipTypeBusiness data, IMapper mapper)
+        {
+            Data4 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IParkingBusiness data, IMapper mapper)
+        {
+            Data5 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IParkingCategoryBusiness data, IMapper mapper)
+        {
+            Data6 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IRatesBusiness data, IMapper mapper)
+        {
+            Data7 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IRegisteredVehicleBusiness data, IMapper mapper)
+        {
+            Data8 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(ISectorsBusiness data, IMapper mapper)
+        {
+            Data9 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(ISlotsBusiness data, IMapper mapper)
+        {
+            Data10 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(ITypeVehicleBusiness data, IMapper mapper)
+        {
+            Data11 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IVehicleBusiness data, IMapper mapper)
+        {
+            Data12 = data;
+            _mapper = mapper;
+        }
+
+        public RepositoryBusiness(IZonesBusiness data, IMapper mapper)
+        {
+            Data13 = data;
             _mapper = mapper;
         }
 
