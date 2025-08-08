@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Exceptions;
+using Utilities.Implementations;
 using Utilities.Interfaces;
 
 namespace Business.Implementations
@@ -24,8 +25,10 @@ namespace Business.Implementations
         private readonly IEmailService _emailService;
         private readonly IRolBusiness _rolBusiness;
         private readonly IRolUserBusiness _rolUserBusiness;
+        private readonly IJwtAuthenticationService _jwtAuthenticatonService;
+
         public UserBusiness(
-        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness) : base(data, mapper)
+        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService) : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
@@ -33,6 +36,8 @@ namespace Business.Implementations
             _emailService = emailService;
             _rolBusiness = rolBusiness;
             _rolUserBusiness = rolUserBusiness;
+            _jwtAuthenticatonService = jwtAuthenticatonService;
+
         }
 
         // Obtener todos los usuarios con información de persona
@@ -87,6 +92,50 @@ namespace Business.Implementations
             }
         }
 
+        //public async Task<UserResponseDto?> ValidateUserAsync(string username, string password)
+        //{
+        //    try
+        //    {
+        //        // Validaciones iniciales
+        //        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        //        {
+        //            _logger.LogWarning("Intento de validación con username o password vacíos");
+        //            return null;
+        //        }
+
+        //        // Obtener usuario por nombre de usuario
+        //        var user = await _data.GetUserByUsernameAsync(username);
+
+        //        // Si el usuario no existe o la contraseña no coincide, retorna null
+        //        if (user == null)
+        //        {
+        //            _logger.LogWarning("Usuario no encontrado durante validación: {Username}", username);
+        //            return null;
+        //        }
+
+        //        if (!VerifyPassword(password, user.Password))
+        //        {
+        //            _logger.LogWarning("Contraseña incorrecta para el usuario: {Username}", username);
+        //            return null;
+        //        }
+
+        //        // Obtener el rol del usuario a través de la tabla pivote
+        //        var roleName = await _data.GetUserRoleAsync(user.Id);
+
+        //        // Usar AutoMapper para crear el DTO de respuesta
+        //        var userResponseDto = _mapper.Map<UserResponseDto>(user);
+        //        userResponseDto.Role = roleName;
+        //        userResponseDto.UserId = user.Id;
+
+        //        return userResponseDto;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error durante la validación del usuario: {Username}", username);
+        //        throw;
+        //    }
+        //}
+
         public async Task<UserResponseDto?> ValidateUserAsync(string username, string password)
         {
             try
@@ -101,13 +150,21 @@ namespace Business.Implementations
                 // Obtener usuario por nombre de usuario
                 var user = await _data.GetUserByUsernameAsync(username);
 
-                // Si el usuario no existe o la contraseña no coincide, retorna null
+                // Si el usuario no existe
                 if (user == null)
                 {
                     _logger.LogWarning("Usuario no encontrado durante validación: {Username}", username);
                     return null;
                 }
 
+                // Validar que el hash tenga el formato correcto antes de verificar
+                if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2"))
+                {
+                    _logger.LogWarning("Formato de hash inválido para el usuario: {Username}. Hash recibido: {Hash}", username, user.Password);
+                    return null;
+                }
+
+                // Verificar la contraseña
                 if (!VerifyPassword(password, user.Password))
                 {
                     _logger.LogWarning("Contraseña incorrecta para el usuario: {Username}", username);
@@ -115,12 +172,17 @@ namespace Business.Implementations
                 }
 
                 // Obtener el rol del usuario a través de la tabla pivote
-                var roleName = await _data.GetUserRoleAsync(user.Id);
+                var roleNames = await _data.GetUserRoleAsync(user.Id);
 
                 // Usar AutoMapper para crear el DTO de respuesta
+                // Usar AutoMapper para crear el DTO de respuesta
                 var userResponseDto = _mapper.Map<UserResponseDto>(user);
-                userResponseDto.Role = roleName;
+                userResponseDto.Roles = roleNames;
                 userResponseDto.UserId = user.Id;
+
+                // ✅ Generar el token aquí mismo
+                userResponseDto.Token = _jwtAuthenticatonService.GenerarToken(user, roleNames);
+
 
                 return userResponseDto;
             }
@@ -130,6 +192,7 @@ namespace Business.Implementations
                 throw;
             }
         }
+
 
 
         public string HashPassword(string password)
@@ -147,11 +210,30 @@ namespace Business.Implementations
         }
 
         // Para verificar una contraseña contra un hash almacenado
+        //public bool VerifyPassword(string inputPassword, string storedPasswordHash)
+        //{
+        //    try
+        //    {
+        //        // BCrypt verifica la contraseña contra el hash (que incluye la sal)
+        //        return BCrypt.Net.BCrypt.Verify(inputPassword, storedPasswordHash);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error al verificar contraseña");
+        //        throw;
+        //    }
+        //}
+
         public bool VerifyPassword(string inputPassword, string storedPasswordHash)
         {
             try
             {
-                // BCrypt verifica la contraseña contra el hash (que incluye la sal)
+                if (string.IsNullOrWhiteSpace(storedPasswordHash) || !storedPasswordHash.StartsWith("$2"))
+                {
+                    _logger.LogError("Hash inválido o mal formado: {Hash}", storedPasswordHash);
+                    return false;
+                }
+
                 return BCrypt.Net.BCrypt.Verify(inputPassword, storedPasswordHash);
             }
             catch (Exception ex)
@@ -160,6 +242,8 @@ namespace Business.Implementations
                 throw;
             }
         }
+
+
 
         public async Task AssignDefaultRoleAsync(int userId)
         {

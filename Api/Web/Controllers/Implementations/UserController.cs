@@ -16,6 +16,7 @@ namespace Web.Controllers.Implementations
         private readonly IUserBusiness _business;
         private readonly ILogger<UserController> _logger;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+
         public UserController(IUserBusiness business, ILogger<UserController> logger, IBackgroundTaskQueue backgroundTaskQueue)
             : base(business)
         {
@@ -43,6 +44,8 @@ namespace Web.Controllers.Implementations
                 {
                     return Unauthorized(new ApiResponse<UserResponseDto>(null,false,"Nombre de usuario o contraseña incorrectos",null));
                 }
+
+               
 
                 // Devolver la información del usuario autenticado
                 return Ok(new ApiResponse<UserResponseDto>(user,true,"Inicio de sesión exitoso",null));

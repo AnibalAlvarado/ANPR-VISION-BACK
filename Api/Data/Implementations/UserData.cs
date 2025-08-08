@@ -81,30 +81,59 @@ namespace Data.Implementations
             }
         }
 
-        public async Task<string> GetUserRoleAsync(int userId)
+        //public async Task<string> GetUserRoleAsync(int userId)
+        //{
+        //    try
+        //    {
+        //        // Obtener el rol a través de la tabla pivote RolUser
+        //        var userRole = await _context.Set<RolUser>()
+        //            .Where(ru => ru.UserId == userId)
+        //            .Join(
+        //                _context.Set<Rol>(),
+        //                ru => ru.RolId,
+        //                r => r.Id,
+        //                (ru, r) => new { RolName = r.Name }
+        //            )
+        //            .FirstOrDefaultAsync();
+        //        await AuditAsync("GetUserRoleAsync", userId);
+
+        //        return userRole?.RolName ?? "Guest";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error al obtener rol para el usuario con ID: {UserId}", userId);
+        //        throw;
+        //    }
+        //}
+
+
+        public async Task<List<string>> GetUserRoleAsync(int userId)
         {
             try
             {
-                // Obtener el rol a través de la tabla pivote RolUser
-                var userRole = await _context.Set<RolUser>()
+                // Obtener todos los roles asociados al usuario
+                var userRoles = await _context.Set<RolUser>()
                     .Where(ru => ru.UserId == userId)
                     .Join(
                         _context.Set<Rol>(),
                         ru => ru.RolId,
                         r => r.Id,
-                        (ru, r) => new { RolName = r.Name }
+                        (ru, r) => r.Name
                     )
-                    .FirstOrDefaultAsync();
-                await AuditAsync("GetUserRoleAsync", userId);
+                    .ToListAsync();
 
-                return userRole?.RolName ?? "Guest";
+                await AuditAsync("GetUserRolesAsync", userId);
+
+                // Si no tiene roles, devolver "Guest" como único rol
+                return userRoles.Any() ? userRoles : new List<string> { "Guest" };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener rol para el usuario con ID: {UserId}", userId);
+                _logger.LogError(ex, "Error al obtener roles para el usuario con ID: {UserId}", userId);
                 throw;
             }
         }
+
 
         public async Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId)
         {
