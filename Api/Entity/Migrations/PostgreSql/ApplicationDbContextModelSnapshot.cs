@@ -402,7 +402,7 @@ namespace Entity.Migrations.PostgreSql
                             Asset = false,
                             Email = "anibalalvaradoandrade@gmail.com",
                             IsDeleted = false,
-                            Password = "123",
+                            Password = "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2",
                             PersonId = 1,
                             Username = "admin"
                         },
@@ -412,7 +412,7 @@ namespace Entity.Migrations.PostgreSql
                             Asset = false,
                             Email = "usuario@demo.com",
                             IsDeleted = false,
-                            Password = "usuario123",
+                            Password = "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2",
                             PersonId = 2,
                             Username = "usuario"
                         });

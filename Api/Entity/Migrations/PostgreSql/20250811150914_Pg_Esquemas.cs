@@ -634,8 +634,8 @@ namespace Entity.Migrations.PostgreSql
                 columns: new[] { "Id", "Asset", "Email", "IsDeleted", "Password", "PersonId", "Username" },
                 values: new object[,]
                 {
-                    { 1, false, "anibalalvaradoandrade@gmail.com", false, "123", 1, "admin" },
-                    { 2, false, "usuario@demo.com", false, "usuario123", 2, "usuario" }
+                    { 1, false, "anibalalvaradoandrade@gmail.com", false, "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2", 1, "admin" },
+                    { 2, false, "usuario@demo.com", false, "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2", 2, "usuario" }
                 });
 
             migrationBuilder.InsertData(

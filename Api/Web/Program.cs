@@ -36,6 +36,8 @@ builder.Services.AddAppServices();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 //builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+
+
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
@@ -44,6 +46,8 @@ app.UseSwaggerUI(options =>
     options.DocumentTitle = "Security API Docs";
     options.DefaultModelsExpandDepth(-1); // Ocultar esquema de modelos por defecto
 });
+
+
 
 
 // Configure the HTTP request pipeline.
