@@ -21,6 +21,7 @@ namespace Entity.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -36,6 +37,7 @@ namespace Entity.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -51,6 +53,7 @@ namespace Entity.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -67,7 +70,8 @@ namespace Entity.Migrations
                     Firstname = table.Column<string>(type: "text", nullable: false),
                     Lastname = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    Asset = table.Column<bool>(type: "boolean", nullable: false)
+                    Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -82,6 +86,7 @@ namespace Entity.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -97,7 +102,8 @@ namespace Entity.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FormId = table.Column<int>(type: "integer", nullable: false),
                     ModuleId = table.Column<int>(type: "integer", nullable: false),
-                    Asset = table.Column<bool>(type: "boolean", nullable: false)
+                    Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -126,7 +132,8 @@ namespace Entity.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
                     PersonId = table.Column<int>(type: "integer", nullable: false),
-                    Asset = table.Column<bool>(type: "boolean", nullable: false)
+                    Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -148,7 +155,8 @@ namespace Entity.Migrations
                     RolId = table.Column<int>(type: "integer", nullable: false),
                     FormId = table.Column<int>(type: "integer", nullable: false),
                     PermissionId = table.Column<int>(type: "integer", nullable: false),
-                    Asset = table.Column<bool>(type: "boolean", nullable: false)
+                    Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,7 +189,8 @@ namespace Entity.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     RolId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    Asset = table.Column<bool>(type: "boolean", nullable: false)
+                    Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,73 +211,73 @@ namespace Entity.Migrations
 
             migrationBuilder.InsertData(
                 table: "Forms",
-                columns: new[] { "Id", "Asset", "Description", "Name" },
-                values: new object[] { 1, false, "Formulario principal", "Principal" });
+                columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
+                values: new object[] { 1, false, "Formulario principal", false, "Principal" });
 
             migrationBuilder.InsertData(
                 table: "Modules",
-                columns: new[] { "Id", "Asset", "Description", "Name" },
-                values: new object[] { 1, false, "Módulo de gestión", "Gestión" });
+                columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
+                values: new object[] { 1, false, "Módulo de gestión", false, "Gestión" });
 
             migrationBuilder.InsertData(
                 table: "Permissions",
-                columns: new[] { "Id", "Asset", "Description", "Name" },
+                columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, false, "Permiso para ver", "Ver" },
-                    { 2, false, "Permiso para editar", "Editar" },
-                    { 3, false, "Permiso para eliminar", "Eliminar" }
+                    { 1, false, "Permiso para ver", false, "Ver" },
+                    { 2, false, "Permiso para editar", false, "Editar" },
+                    { 3, false, "Permiso para eliminar", false, "Eliminar" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Persons",
-                columns: new[] { "Id", "Asset", "Firstname", "Lastname", "PhoneNumber" },
+                columns: new[] { "Id", "Asset", "Firstname", "IsDeleted", "Lastname", "PhoneNumber" },
                 values: new object[,]
                 {
-                    { 1, false, "Admin", "Principal", "111111111" },
-                    { 2, false, "Usuario", "Demo", "222222222" }
+                    { 1, false, "Admin", false, "Principal", "111111111" },
+                    { 2, false, "Usuario", false, "Demo", "222222222" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Rol",
-                columns: new[] { "Id", "Asset", "Description", "Name" },
+                columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, false, "Rol de administrador", "Administrador" },
-                    { 2, false, "Rol de usuario estándar", "Usuario" }
+                    { 1, false, "Rol de administrador", false, "Administrador" },
+                    { 2, false, "Rol de usuario estándar", false, "Usuario" }
                 });
 
             migrationBuilder.InsertData(
                 table: "FormModule",
-                columns: new[] { "Id", "Asset", "FormId", "ModuleId" },
-                values: new object[] { 1, false, 1, 1 });
+                columns: new[] { "Id", "Asset", "FormId", "IsDeleted", "ModuleId" },
+                values: new object[] { 1, false, 1, false, 1 });
 
             migrationBuilder.InsertData(
                 table: "RolFormPermission",
-                columns: new[] { "Id", "Asset", "FormId", "PermissionId", "RolId" },
+                columns: new[] { "Id", "Asset", "FormId", "IsDeleted", "PermissionId", "RolId" },
                 values: new object[,]
                 {
-                    { 1, false, 1, 1, 1 },
-                    { 2, false, 1, 2, 1 },
-                    { 3, false, 1, 1, 2 }
+                    { 1, false, 1, false, 1, 1 },
+                    { 2, false, 1, false, 2, 1 },
+                    { 3, false, 1, false, 1, 2 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Asset", "Email", "Password", "PersonId", "Username" },
+                columns: new[] { "Id", "Asset", "Email", "IsDeleted", "Password", "PersonId", "Username" },
                 values: new object[,]
                 {
-                    { 1, false, "anibalalvaradoandrade@gmail.com", "123", 1, "admin" },
-                    { 2, false, "usuario@demo.com", "usuario123", 2, "usuario" }
+                    { 1, false, "anibalalvaradoandrade@gmail.com", false, "123", 1, "admin" },
+                    { 2, false, "usuario@demo.com", false, "usuario123", 2, "usuario" }
                 });
 
             migrationBuilder.InsertData(
                 table: "RolUser",
-                columns: new[] { "Id", "Asset", "RolId", "UserId" },
+                columns: new[] { "Id", "Asset", "IsDeleted", "RolId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, false, 1, 1 },
-                    { 2, false, 2, 2 }
+                    { 1, false, false, 1, 1 },
+                    { 2, false, false, 2, 2 }
                 });
 
             migrationBuilder.CreateIndex(
