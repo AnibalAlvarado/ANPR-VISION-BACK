@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace Business.Implementations
 {
-    public class BlackistBusiness : RepositoryBusiness<BlackList, BlackListDto>, IBlackListBusiness
-    {
-        private readonly IBlackListBusiness _data;
-        public BlackistBusiness(IBlackListBusiness data, IMapper mapper)
-            : base(data, mapper)
-        {
-            _data = data;
-        }
+    //public class BlackistBusiness : RepositoryBusiness<BlackList, BlackListDto>, IBlackListBusiness
+    //{
+    //    private readonly IBlackListBusiness _data;
+    //    public BlackistBusiness(IBlackListBusiness data, IMapper mapper)
+    //        : base(data, mapper)
+    //    {
+    //        _data = data;
+    //    }
 
-    }
+    //}
 }

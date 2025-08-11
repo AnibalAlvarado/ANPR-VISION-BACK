@@ -20,12 +20,10 @@ namespace Entity.Models
 
         public int ClientId { get; set; }
         public Client Client { get; set; }
-        public BlackList BlackList { get; set; }
 
     
         public Memberships Memberships { get; set; }
 
-        public RegisteredVehicles RegisteredVehicles { get; set; }
 
 
     }

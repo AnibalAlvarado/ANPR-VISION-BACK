@@ -14,7 +14,6 @@ namespace Entity.Models
         public bool IsAvailable { get; set; }
         public int SectorsId { get; set; }
         public Sectors Sector { get; set; }
-        public RegisteredVehicles RegisteredVehicles {get; set; }
 
     }
 }

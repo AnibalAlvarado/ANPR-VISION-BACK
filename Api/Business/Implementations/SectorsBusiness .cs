@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 namespace Business.Implementations
 {
    
-    public class SectorsBusiness : RepositoryBusiness<Sectors, SectorsDto>, ISectorsBusiness
-    {
-        private readonly ISectorsBusiness _data;
-        public SectorsBusiness(ISectorsBusiness data, IMapper mapper)
-            : base(data, mapper)
-        {
-            _data = data;
-        }
+    //public class SectorsBusiness : RepositoryBusiness<Sectors, SectorsDto>, ISectorsBusiness
+    //{
+    //    private readonly ISectorsBusiness _data;
+    //    public SectorsBusiness(ISectorsBusiness data, IMapper mapper)
+    //        : base(data, mapper)
+    //    {
+    //        _data = data;
+    //    }
 
-    }
+    //}
 }

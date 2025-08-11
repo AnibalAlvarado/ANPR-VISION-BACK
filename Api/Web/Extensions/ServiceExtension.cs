@@ -66,6 +66,11 @@ namespace Web.Extensions
             services.AddScoped<IUserBusiness, UserBusiness>();
             services.AddScoped<IUserData, UserData>();
 
+            services.AddScoped<IMemberShipTypeBusiness, MemberShipTypeBusiness>();
+            services.AddScoped<IMemberShipTypeData, MembershipTypeData>();
+
+
+
             services.AddTransient<Validations>();
             return services;
         }

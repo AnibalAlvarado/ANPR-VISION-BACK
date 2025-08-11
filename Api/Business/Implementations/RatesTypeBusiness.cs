@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 namespace Business.Implementations
 {
 
-    public class RatesTypeBusiness : RepositoryBusiness<RatesType, RatesTypeDto>, IRatesTypeBusiness
-    {
-        private readonly RatesTypeBusiness _data;
-        public RatesTypeBusiness(RatesTypeBusiness data, IMapper mapper)
-            : base(data, mapper)
-        {
-            _data = data;
-        }
+    //public class RatesTypeBusiness : RepositoryBusiness<RatesType, RatesTypeDto>, IRatesTypeBusiness
+    //{
+    //    private readonly RatesTypeBusiness _data;
+    //    public RatesTypeBusiness(RatesTypeBusiness data, IMapper mapper)
+    //        : base(data, mapper)
+    //    {
+    //        _data = data;
+    //    }
 
-    }
+    //}
 }

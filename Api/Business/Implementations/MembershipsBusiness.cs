@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 namespace Business.Implementations
 {
   
-    public class MembershipsBusiness : RepositoryBusiness<Memberships, MembershipsDto>, IMembershipsBusiness
-    {
-        private readonly IMembershipsBusiness _data;
-        public MembershipsBusiness(IMembershipsBusiness data, IMapper mapper)
-            : base(data, mapper)
-        {
-            _data = data;
-        }
+    //public class MembershipsBusiness : RepositoryBusiness<Memberships, MembershipsDto>, IMembershipsBusiness
+    //{
+    //    private readonly IMembershipsBusiness _data;
+    //    public MembershipsBusiness(IMembershipsBusiness data, IMapper mapper)
+    //        : base(data, mapper)
+    //    {
+    //        _data = data;
+    //    }
 
-    }
+    //}
 }

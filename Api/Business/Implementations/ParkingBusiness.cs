@@ -11,15 +11,15 @@ using System.Threading.Tasks;
 namespace Business.Implementations
 {
   
-    public class ParkingBusiness : RepositoryBusiness<Parking, ParkingDto>, IParkingBusiness
-    {
-        private readonly IParkingBusiness _data;
-        public ParkingBusiness(IParkingBusiness data, IMapper mapper)
-            : base(data, mapper)
-        {
-            _data = data;
-        }
+    //public class ParkingBusiness : RepositoryBusiness<Parking, ParkingDto>, IParkingBusiness
+    //{
+    //    private readonly IParkingBusiness _data;
+    //    public ParkingBusiness(IParkingBusiness data, IMapper mapper)
+    //        : base(data, mapper)
+    //    {
+    //        _data = data;
+    //    }
 
     
-    }
+    //}
 }

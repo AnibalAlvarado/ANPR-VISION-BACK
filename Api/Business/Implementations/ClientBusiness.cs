@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Business.Implementations
 {
-    public class ClientBusiness : RepositoryBusiness<Client, ClientDto>, IClientBusiness
-    {
-        private readonly IClientBusiness _data;
-        public ClientBusiness(IClientBusiness data, IMapper mapper)
-            : base(data, mapper)
-        {
-            _data = data;
-        }
+    //public class ClientBusiness : RepositoryBusiness<Client, ClientDto>, IClientBusiness
+    //{
+    //    private readonly IClientBusiness _data;
+    //    public ClientBusiness(IClientBusiness data, IMapper mapper)
+    //        : base(data, mapper)
+    //    {
+    //        _data = data;
+    //    }
 
-    }
+    //}
 }

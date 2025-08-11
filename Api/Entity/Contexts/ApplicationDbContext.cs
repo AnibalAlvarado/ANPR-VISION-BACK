@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Entity.Model;
+using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -44,12 +45,38 @@ namespace Entity.Contexts
         public DbSet<Form> Forms { get; set; }
         public DbSet<Module> Modules { get; set; }
 
+        public DbSet<FormModule> FormModule { get; set; }
+
         public DbSet<Rol> Rol { get; set; }
         public DbSet<Permission> Permissions { get; set; }
 
         public DbSet<RolUser> RolUser { get; set; }
         public DbSet<RolFormPermission> RolFormPermission { get; set; }
-        public DbSet<FormModule> FormModule { get; set; }
+        public DbSet<Client> Client { get; set; }
+
+        public DbSet<Vehicle> Vehicle { get; set; }
+
+        public DbSet<BlackList> BlackList { get; set; }
+        public DbSet<ParkingCategory> ParkingCategory { get; set; }
+
+        public DbSet<Parking> Parking { get; set; }
+        public DbSet<Camara> Camara { get; set; }
+        public DbSet<MemberShipType> MemberShipType { get; set; }
+        public DbSet<Memberships> Memberships { get; set; }
+        public DbSet<RatesType> RatesType { get; set; }
+
+        public DbSet<Rates> Rates { get; set; }
+
+        public DbSet<Zones> Zones { get; set; }
+
+        public DbSet<Sectors> Sectors { get; set; }
+
+        public DbSet<Slots> Slots { get; set; }
+        public DbSet<RegisteredVehicles> RegisteredVehicles { get; set; }
+
+        public DbSet<TypeVehicle> TypeVehicle { get; set; }
+        
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

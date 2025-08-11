@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 namespace Business.Implementations
 {
    
-    public class RegisteredVehicleBusiness : RepositoryBusiness<RegisteredVehicles, RegisteredVehiclesDto>, IRegisteredVehicleBusiness
-    {
-        private readonly IRegisteredVehicleBusiness _data;
-        public RegisteredVehicleBusiness(IRegisteredVehicleBusiness data, IMapper mapper)
-            : base(data, mapper)
-        {
-            _data = data;
-        }
+    //public class RegisteredVehicleBusiness : RepositoryBusiness<RegisteredVehicles, RegisteredVehiclesDto>, IRegisteredVehicleBusiness
+    //{
+    //    private readonly IRegisteredVehicleBusiness _data;
+    //    public RegisteredVehicleBusiness(IRegisteredVehicleBusiness data, IMapper mapper)
+    //        : base(data, mapper)
+    //    {
+    //        _data = data;
+    //    }
 
-    }
+    //}
 }

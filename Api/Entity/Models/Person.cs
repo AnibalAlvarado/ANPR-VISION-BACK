@@ -13,7 +13,7 @@ namespace Entity.Model
         public string Lastname { get; set; }
         public string PhoneNumber { get; set; }
 
-        public Client Client { get; set; }
+        //public Client Client { get; set; }
 
     }
 }
