@@ -8,7 +8,9 @@ using Web.Config;
 using Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
+///To run a Migration in this project
+///Add-Migration InitMainDb -StartupProject Web -Project Entity -Context ApplicationDbContext
+///Update-Database -StartupProject Web -Project Entity -Context ApplicationDbContext
 // Controllers
 builder.Services.AddControllers();
 
@@ -32,9 +34,7 @@ builder.Services.AddAppServices();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-
 //builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 
 var app = builder.Build();
 app.UseSwagger();
