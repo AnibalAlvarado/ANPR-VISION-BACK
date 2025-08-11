@@ -13,7 +13,12 @@ namespace Data.Interfaces
     public interface IUserData : IRepositoryData<User>
     {
         Task<User?> GetUserByUsernameAsync(string username);
-        Task<string> GetUserRoleAsync(int userId);
+
+        Task<List<string>> GetUserRoleAsync(int userId);
+
+        Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);
+
+
 
     }
 }

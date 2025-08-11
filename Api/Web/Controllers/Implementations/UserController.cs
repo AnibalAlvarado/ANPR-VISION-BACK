@@ -16,6 +16,7 @@ namespace Web.Controllers.Implementations
         private readonly IUserBusiness _business;
         private readonly ILogger<UserController> _logger;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+
         public UserController(IUserBusiness business, ILogger<UserController> logger, IBackgroundTaskQueue backgroundTaskQueue)
             : base(business)
         {
@@ -43,6 +44,8 @@ namespace Web.Controllers.Implementations
                 {
                     return Unauthorized(new ApiResponse<UserResponseDto>(null,false,"Nombre de usuario o contraseña incorrectos",null));
                 }
+
+               
 
                 // Devolver la información del usuario autenticado
                 return Ok(new ApiResponse<UserResponseDto>(user,true,"Inicio de sesión exitoso",null));
@@ -101,6 +104,21 @@ namespace Web.Controllers.Implementations
             {
                 var response = new ApiResponse<IEnumerable<UserDto>>(null!, false, ex.Message.ToString(), null!);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+        [HttpGet("roles/{userId}")]
+        public async Task<IActionResult> GetUserRolesWithState(int userId)
+        {
+            try
+            {
+                var roles = await _business.GetUserRolesAsync(userId);
+                return Ok(new { success = true, data = roles });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener roles con estado del usuario");
+                return StatusCode(500, new { success = false, message = "Error interno del servidor" });
             }
         }
     }

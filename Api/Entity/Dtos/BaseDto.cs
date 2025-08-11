@@ -13,5 +13,8 @@ namespace Entity.Dtos
         public bool Asset { get; set; }
         public bool IsDelete { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+
+
     }
 }

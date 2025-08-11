@@ -62,7 +62,7 @@ namespace Data.Implementations
             try
             {
                 var lstModel = await _context.Set<T>()
-                    .Where(x => x.IsDeleted == false) // 👈 Solo activos
+                    //.Where(x => x.IsDeleted == false) // 👈 Solo activos
                     .ToListAsync();
 
                 return lstModel;

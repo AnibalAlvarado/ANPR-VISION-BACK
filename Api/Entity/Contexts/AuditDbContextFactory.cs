@@ -16,7 +16,7 @@ namespace Entity.Contexts
             var optionsBuilder = new DbContextOptionsBuilder<AuditDbContext>();
 
             // Asegúrate que la cadena coincida con tu appsettings.json (ajusta si usas otra BD)
-            optionsBuilder.UseSqlServer("Server=localhost\\MSSQLSERVER2;Database=Auditories;Trusted_Connection=True;TrustServerCertificate=true;");
+            optionsBuilder.UseSqlServer("Server=LAPTOP-DDPC2U6E;Database=ANPR-VISION-LOG;Trusted_Connection=True;TrustServerCertificate=true");
 
             return new AuditDbContext(optionsBuilder.Options);
         }

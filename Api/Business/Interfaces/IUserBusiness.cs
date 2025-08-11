@@ -14,5 +14,10 @@ namespace Business.Interfaces
         Task<UserResponseDto?> ValidateUserAsync(string username, string password);
         Task AssignDefaultRoleAsync(int userId);
         Task SendWelcomeEmailAsync(string to);
+
+        Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);
+
+
+
     }
 }
