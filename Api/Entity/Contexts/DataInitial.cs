@@ -33,8 +33,8 @@ namespace Entity.Contexts
 
             // Usuarios
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", Email = "anibalalvaradoandrade@gmail.com", Password = "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2", PersonId = 1 },
-                new User { Id = 2, Username = "usuario", Email = "usuario@demo.com", Password = "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2", PersonId = 2 }
+                new User { Id = 1, Username = "admin", Email = "anibalalvaradoandrade@gmail.com", Password = "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2", PersonId = 1, Asset = true },
+                new User { Id = 2, Username = "usuario", Email = "usuario@demo.com", Password = "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2", PersonId = 2, Asset = true }
             );
 
             // Módulos

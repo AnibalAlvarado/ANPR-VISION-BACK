@@ -33,7 +33,7 @@ namespace Web.Controllers.Implementations
                 // Validar el modelo
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(new ApiResponse<UserResponseDto>(null,false,"Datos de inicio de sesión inválidos",ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                    return BadRequest(new ApiResponse<UserResponseDto>(null, false, "Datos de inicio de sesión inválidos", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
                 }
 
                 // Validar credenciales
@@ -42,19 +42,19 @@ namespace Web.Controllers.Implementations
                 // Si no se encuentra el usuario o las credenciales son incorrectas
                 if (user == null)
                 {
-                    return Unauthorized(new ApiResponse<UserResponseDto>(null,false,"Nombre de usuario o contraseña incorrectos",null));
+                    return Unauthorized(new ApiResponse<UserResponseDto>(null, false, "Nombre de usuario o contraseña incorrectos", null));
                 }
 
-               
+
 
                 // Devolver la información del usuario autenticado
-                return Ok(new ApiResponse<UserResponseDto>(user,true,"Inicio de sesión exitoso",null));
+                return Ok(new ApiResponse<UserResponseDto>(user, true, "Inicio de sesión exitoso", null));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error durante la autenticación del usuario");
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new ApiResponse<UserResponseDto>(null,false,"Error interno del servidor durante la autenticación",null));
+                    new ApiResponse<UserResponseDto>(null, false, "Error interno del servidor durante la autenticación", null));
             }
         }
 
