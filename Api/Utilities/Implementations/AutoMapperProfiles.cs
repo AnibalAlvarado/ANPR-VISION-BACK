@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Entity.Dtos;
+using Entity.DTOs;
+using Entity.Model;
 using Entity.Models;
 using System;
 using System.Security;

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Web.Controllers.Implementations
 {
     [ApiController]
-    [Route("api/[controller]")] 
-    public class MemberShipTypeController : RepositoryController<MemberShipType, MemberShipTypeDto>
+    [Route("api/[controller]")]
+    public class MemberShipTypeController: RepositoryController<MemberShipType, MemberShipTypeDto>
     {
         public MemberShipTypeController(IMemberShipTypeBusiness business)
             : base(business)
