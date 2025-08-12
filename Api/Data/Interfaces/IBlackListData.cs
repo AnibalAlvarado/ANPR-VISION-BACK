@@ -7,21 +7,12 @@ using System.Threading.Tasks;
 
 namespace Data.Interfaces
 {
-    public  interface IBlackListData : IRepositoryData<BlackList>
+    public  interface IBlackListData 
     {
-        public Task<IEnumerable<BlackList>> GetByReasonAsync(string reason)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<BlackList>> GetByRestrictionDateAsync(DateTime date)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<BlackList>> GetByVehicleIdAsync(int vehicleId)
-        {
-            throw new NotImplementedException();
-        }
+        Task<IEnumerable<BlackList>> GetAllAsync();
+        Task<BlackList> GetByIdAsync(int id);
+        Task<BlackList> CreateAsync(BlackList entity);
+        Task<BlackList> UpdateAsync(BlackList entity);
+        Task<bool> DeleteAsync(int id);
     }
 }

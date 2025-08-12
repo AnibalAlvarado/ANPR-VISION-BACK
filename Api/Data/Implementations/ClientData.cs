@@ -3,7 +3,9 @@ using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Model;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +16,19 @@ using Utilities.Interfaces;
 
 namespace Data.Implementations
 {
-    public class ClientData : RepositoryData<Client>, IClientData
+    public class ClientData
     {
-        public ClientData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        private readonly DbContext _context;
+        private readonly ILogger<ClientData> _logger;
+        private readonly IMapper _mapper;
+        private readonly IConfiguration _config;
+
+        public ClientData(DbContext context, ILogger<ClientData> logger, IMapper mapper, IConfiguration config)
         {
-
+            _context = context;
+            _logger = logger;
+            _mapper = mapper;
+            _config = config;
         }
-
-        
     }
 }

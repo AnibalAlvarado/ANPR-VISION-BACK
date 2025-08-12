@@ -5,42 +5,13 @@ using Entity.Models;
 
 namespace Business.Interfaces
 {
-    public interface IBlackListBusiness : IRepositoryBusiness<BlackList, BlackListDto>
+    public interface IBlackListBusiness
     {
 
-        public Task<int> CreateAsync(BlackList entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<BlackList>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<BlackList>> GetByDateAsync(DateTime restrictionDate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<BlackList> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<BlackList>> GetByReasonAsync(string reason)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> UpdateAsync(BlackList entity)
-        {
-            throw new NotImplementedException();
-        }
+        Task<IEnumerable<BlackListDto>> GetAllAsync();
+        Task<BlackListDto> GetByIdAsync(int id);
+        Task<BlackListDto> CreateAsync(BlackListDto dto);
+        Task<BlackListDto> UpdateAsync(int id, BlackListDto dto);
+        Task<bool> DeleteAsync(int id);
     }
 }

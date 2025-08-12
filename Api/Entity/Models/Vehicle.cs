@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Vehicle : BaseModel
+    public class Vehicle 
     {
-    
+        public int Id { get; set; }
         public string Plate { get; set; }
         public string color { get; set; }
 

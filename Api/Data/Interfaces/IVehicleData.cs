@@ -9,69 +9,13 @@ using System.Threading.Tasks;
 
 namespace Data.Interfaces
 {
-    public interface IVehicleData: IRepositoryData<Vehicle>
+    public interface IVehicleData
     {
-        public Task<Vehicle> GetVehicleByPlateAsync(string plate)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        public Task<IEnumerable<Vehicle>> GetAllVehiclesWithDetailsAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Vehicle>> GetRegisteredVehiclesAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-    
-        public Task<IEnumerable<Vehicle>> GetVehiclesByClientIdAsync(int clientId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Vehicle>> GetVehiclesInBlackListAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Vehicle>> GetVehiclesWithMembershipsAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Vehicle> GetVehicleWithDetailsByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-
-       
-
-
-
-
-        public Task<PagedResult<TDto>> GetAllPaginatedAsync<TDto>(QueryParameters query, Expression<Func<Client, bool>>? filter = null, Func<IQueryable<Client>, IQueryable<Client>>? include = null, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-       
-
-        public Task<Client> Save(Client entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Update(Client entity)
-        {
-            throw new NotImplementedException();
-        }
-
-
+        Task<IEnumerable<Vehicle>> GetAllAsync();
+        Task<Vehicle> GetByIdAsync(int id);
+        Task<Vehicle> GetByPlateAsync(string plate);
+        Task<int> AddAsync(Vehicle vehicle);
+        Task<bool> UpdateAsync(Vehicle vehicle);
+        Task<bool> DeleteAsync(int id);
     }
 }

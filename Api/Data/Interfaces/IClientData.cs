@@ -8,27 +8,20 @@ using System.Threading.Tasks;
 
 namespace Data.Interfaces
 {
-     public interface IClientData :IRepositoryData<Client>
+    public interface IClientData
     {
+        Task<Client> CreateAsync(Client entity);
+        Task<bool> DeleteAsync(int id);
+        Task<bool> ExistsByPersonIdAsync(int personId);
 
-        public Task<bool> ExistsByPersonIdAsync(int personId)
-        {
-            throw new NotImplementedException();
-        }
+        Task<IEnumerable<Client>> GetAllAsync();
+        Task<IEnumerable<Client>> GetAllWithPersonAsync();
 
-        public Task<IEnumerable<Client>> GetAllWithPersonAsync()
-        {
-            throw new NotImplementedException();
-        }
+        Task<Client> GetByIdAsync(int id);
+        Task<Client> GetByIdWithPersonAsync(int id);
 
-        public Task<Client> GetByIdWithPersonAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+        Task<IEnumerable<Client>> GetByPersonIdAsync(int personId);
 
-        public Task<IEnumerable<Client>> GetByPersonIdAsync(int personId)
-        {
-            throw new NotImplementedException();
-        }
+        Task<Client> UpdateAsync(int id, Client entity);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Entity.Model;
+using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -51,6 +52,34 @@ namespace Entity.Contexts
         public DbSet<RolFormPermission> RolFormPermission { get; set; }
         public DbSet<FormModule> FormModule { get; set; }
 
+        public DbSet<Client> Client { get; set; }
+
+        public DbSet<Vehicle> Vehicles { get; set; }
+
+        public DbSet<BlackList> BlackLists { get; set; }
+
+        public DbSet<Memberships> Memberships { get; set; }
+
+        public DbSet<MemberShipType> MemberShipTypes { get; set; }
+
+        public DbSet<TypeVehicle> TypeVehicles { get; set; }
+
+        public DbSet<Sectors> Sectors { get; set; }
+
+        public DbSet<Slots> Slots { get; set; }
+
+        public DbSet<Zones> Zones { get; set; }
+
+        public DbSet<RegisteredVehicles> RegisteredVehicles { get; set; }
+
+        public DbSet<Parking> Parkings { get; set; }
+
+        public DbSet<Rates> Rates { get; set; }
+
+
+        public DbSet<RatesType> RatesTypes { get; set; }
+
+        public DbSet<ParkingCategory> ParkingCategories { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // No es necesario configurar el proveedor aquí, ya que se hace a través de la fábrica

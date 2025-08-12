@@ -1,4 +1,5 @@
-﻿using Entity.Models.Audit;
+﻿using Entity.Models;
+using Entity.Models.Audit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,11 @@ namespace Utilities.Audit.Services
         public AuditService(IAuditStrategyFactory strategyFactory)
         {
             _strategyFactory = strategyFactory;
+        }
+
+        public void LogInsert(Vehicle entity, string v, object userId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task SaveAuditAsync(AuditLog entry)
