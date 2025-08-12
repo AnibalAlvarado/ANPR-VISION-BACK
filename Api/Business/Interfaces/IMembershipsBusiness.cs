@@ -9,14 +9,32 @@ using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
-    public interface IMembershipsBusiness
+    public interface IMembershipsBusiness : IRepositoryBusiness<Memberships, MembershipsDto>
     {
 
-        Task<IEnumerable<MembershipsDto>> GetAllAsync();
-        Task<MembershipsDto> GetByIdAsync(int id);
-        Task<MembershipsDto> CreateAsync(MembershipsDto membershipsDto);
-        Task<MembershipsDto> UpdateAsync(int id, MembershipsDto membershipsDto);
+        public Task<MembershipsDto> CreateAsync(MembershipsDto dto)
+        {
+            throw new NotImplementedException();
+        }
 
-        Task<bool> DeleteAsync(int id);
+        public Task<bool> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<MembershipsDto>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MembershipsDto> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateAsync(int id, MembershipsDto dto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

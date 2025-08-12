@@ -8,21 +8,14 @@ using System.Threading.Tasks;
 
 namespace Entity.Dtos
 {
-    public class VehicleDto
+    public class VehicleDto:GenericDto
     {
-        public string Plate { get; set; }
+        public string Plate { get; set; } 
+
         public string Color { get; set; }
+        public int TypeVehicleId { get; set; }
 
-
-        public TypeVehicleDto TypeVehicle { get; set; }
-
-    
-        public ClientDto Client { get; set; }
-
-
-        public BlackListDto BlackList { get; set; }
-        public MembershipsDto Memberships { get; set; }
-        public RegisteredVehiclesDto RegisteredVehicles { get; set; }
+        public int ClientId { get; set; }
 
     }
 }

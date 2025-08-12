@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Memberships 
+    public class Memberships : BaseModel
     {
-        public int id { get; set; }
+
         public int MemberShipTypeId { get; set; }
         public MemberShipType MemberShipType { get; set; }
         public DateTime StartDate { get; set; }

@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class BlackList
+    public class BlackList: BaseModel
     {
-        public int Id { get; set; }
-
         public string Reason { get; set; }
         public DateTime  RestrictionDate { get; set; }
 

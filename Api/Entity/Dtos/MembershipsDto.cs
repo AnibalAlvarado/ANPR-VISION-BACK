@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace Entity.Dtos
 {
-    public class MembershipsDto
+    public class MembershipsDto:GenericDto
     {
-        public MemberShipTypeDto MemberShipType { get; set; }
+        public int MemberShipTypeId { get; set; }
+        public MemberShipType MemberShipType { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool Active { get; set; }
-        public List<VehicleDto> Vehicles { get; set; }
+        public int VehicleId { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Entity.DTOs;
-using Entity.Model;
+﻿using Entity.Model;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -9,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Entity.Dtos
 {
-    public class ClientDto
+    public class ClientDto: GenericDto
     {
-        public string Name { get; set; }
         public int PersonaId { get; set; }
-        public Person Person { get; set; } // opcional, si quieres mostrar datos de la persona
     }
 }

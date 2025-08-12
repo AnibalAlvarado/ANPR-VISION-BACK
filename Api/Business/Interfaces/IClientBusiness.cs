@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
-    public interface IClientBusiness 
+    public interface IClientBusiness : IRepositoryBusiness<Client, ClientDto>
     {
 
         public Task<ClientDto> CreateAsync(ClientDto clientDto)

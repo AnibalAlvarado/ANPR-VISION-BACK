@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class TypeVehicle 
+    public class TypeVehicle : BaseModel
     {
-        public int Id {get; set;}
+  
         public string Name { get; set; }
         public  Vehicle Vehicle { get; set; }
 
