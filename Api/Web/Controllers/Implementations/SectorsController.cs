@@ -7,9 +7,9 @@ namespace Web.Controllers.Implementations
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ModuleController : RepositoryController<Module, ModuleDto>
+    public class SectorsController : RepositoryController<Sectors, SectorsDto>
     {
-        public ModuleController(IModuleBusiness business)
+        public SectorsController(ISectorsBusiness business)
             : base(business)
         {
         }

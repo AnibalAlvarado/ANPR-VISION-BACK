@@ -11,29 +11,5 @@ namespace Business.Interfaces
     public interface IParkingCategoryBusiness : IRepositoryBusiness<ParkingCategory, ParkingCategoryDto>
     {
 
-        public Task<ParkingCategoryDto> CreateAsync(ParkingCategoryDto dto)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ParkingCategoryDto>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ParkingCategoryDto> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> UpdateAsync(int id, ParkingCategoryDto dto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

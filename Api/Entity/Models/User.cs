@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Entity.Models;
 using Microsoft.Identity.Client;
 
-namespace Entity.Model
+namespace Entity.Models
 {
     public class User : BaseModel
     {

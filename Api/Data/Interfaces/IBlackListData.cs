@@ -9,19 +9,6 @@ namespace Data.Interfaces
 {
     public  interface IBlackListData : IRepositoryData<BlackList>
     {
-        public Task<IEnumerable<BlackList>> GetByReasonAsync(string reason)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<IEnumerable<BlackList>> GetByRestrictionDateAsync(DateTime date)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<BlackList>> GetByVehicleIdAsync(int vehicleId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

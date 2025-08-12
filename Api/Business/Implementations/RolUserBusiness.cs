@@ -2,8 +2,8 @@
 using Business.Interfaces;
 using Data.Implementations;
 using Data.Interfaces;
-using Entity.DTOs;
-using Entity.Model;
+using Entity.Dtos;
+using Entity.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

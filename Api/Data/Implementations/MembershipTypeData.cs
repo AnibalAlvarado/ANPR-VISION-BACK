@@ -13,9 +13,9 @@ using Utilities.Interfaces;
 
 namespace Data.Implementations
 {
-    public class MembershipTypeData : RepositoryData<MemberShipType>, IMemberShipTypeData
+    public class MemberShipTypeData : RepositoryData<MemberShipType>, IMemberShipTypeData
     {
-        public MembershipTypeData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+        public MemberShipTypeData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
             : base(context, configuration, auditService, currentUserService, mapper)
         {
 

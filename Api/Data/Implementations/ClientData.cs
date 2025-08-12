@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Data.Interfaces;
 using Entity.Contexts;
-using Entity.Model;
 using Entity.Models;
 using Microsoft.Extensions.Configuration;
 using System;
