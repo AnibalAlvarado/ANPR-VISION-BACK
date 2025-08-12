@@ -1,6 +1,6 @@
 ﻿using Business.Interfaces;
-using Entity.DTOs;
-using Entity.Model;
+using Entity.Dtos;
+using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers.Implementations

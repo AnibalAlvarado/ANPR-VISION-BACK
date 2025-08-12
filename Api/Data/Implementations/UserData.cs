@@ -2,8 +2,7 @@
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos;
-using Entity.DTOs;
-using Entity.Model;
+using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

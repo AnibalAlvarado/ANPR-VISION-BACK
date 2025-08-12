@@ -7,9 +7,9 @@ namespace Web.Controllers.Implementations
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ModuleController : RepositoryController<Module, ModuleDto>
+    public class TypeVehicleController : RepositoryController<TypeVehicle, TypeVehicleDto>
     {
-        public ModuleController(IModuleBusiness business)
+        public TypeVehicleController(ITypeVehicleBusiness business)
             : base(business)
         {
         }

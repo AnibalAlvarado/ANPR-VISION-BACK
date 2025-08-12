@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using Entity.Dtos;
-using Entity.DTOs;
-using Entity.Model;
 using Entity.Models;
 using System;
-using System.Reflection;
 using System.Security;
 using Utilities.Interfaces;
 
@@ -72,7 +69,11 @@ namespace Utilities.Implementations
             CreateMap<Rates, RatesDto>().ReverseMap();
             CreateMap<RatesType, RatesTypeDto>().ReverseMap();
             CreateMap<RegisteredVehicles, RegisteredVehiclesDto>().ReverseMap();
-            CreateMap<Client, ClientDto>().ReverseMap();
+            CreateMap<Sectors, SectorsDto>().ReverseMap();
+            CreateMap<Slots, SlotsDto>().ReverseMap();
+            CreateMap<TypeVehicle, TypeVehicleDto>().ReverseMap();
+            CreateMap<Vehicle, VehicleDto>().ReverseMap();
+            CreateMap<Zones, ZonesDto>().ReverseMap();
             CreateMap<Client, ClientDto>().ReverseMap();
         }
     }

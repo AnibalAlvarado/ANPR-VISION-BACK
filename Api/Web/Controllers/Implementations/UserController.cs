@@ -1,8 +1,6 @@
 ﻿using Business.Implementations;
 using Business.Interfaces;
 using Entity.Dtos;
-using Entity.DTOs;
-using Entity.Model;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.BackgroundTasks;

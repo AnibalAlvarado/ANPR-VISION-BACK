@@ -1,6 +1,6 @@
 ﻿using Entity.Contexts;
 using Entity.Database;
-using Entity.Model;
+using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Audit.Factory;
 using Utilities.Audit.Services;

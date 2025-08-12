@@ -1,10 +1,13 @@
-﻿using Entity.Model;
+﻿
 using Entity.Models;
 
-public class Module : GenericModel
+namespace Entity.Models
 {
-    public string Description { get; set; }
+	public class Module : GenericModel
+	{
+		public string Description { get; set; }
 
-    public virtual ICollection<FormModule> FormModules { get; set; } = new List<FormModule>();
+		public virtual ICollection<FormModule> FormModules { get; set; } = new List<FormModule>();
 
+	} 
 }

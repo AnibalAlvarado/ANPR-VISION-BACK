@@ -1,6 +1,4 @@
-﻿using Entity.Dtos;
-using Entity.DTOs;
-using Entity.Models;
+﻿using Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

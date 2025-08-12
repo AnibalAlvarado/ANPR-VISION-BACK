@@ -10,25 +10,6 @@ namespace Business.Interfaces
 {
     public interface ITypeVehicleBusiness : IRepositoryBusiness<TypeVehicle, TypeVehicleDto>
     {
-        public Task<TypeVehicleDto> CreateAsync(TypeVehicleDto dto)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<bool> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<IEnumerable<TypeVehicleDto>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-        public Task<TypeVehicleDto> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<TypeVehicleDto> UpdateAsync(int id, TypeVehicleDto dto)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }

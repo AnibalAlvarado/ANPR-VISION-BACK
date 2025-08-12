@@ -1,6 +1,6 @@
 ﻿using Business.Interfaces;
-using Entity.DTOs;
-using Entity.Model;
+using Entity.Dtos;
+using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers.Implementations
@@ -9,7 +9,6 @@ namespace Web.Controllers.Implementations
     [Route("api/[controller]")]
     public class FormController : RepositoryController<Form, FormDto>
     {
-
         public FormController(IFormBusiness business)
             : base(business)
         {

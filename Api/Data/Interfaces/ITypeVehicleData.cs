@@ -9,14 +9,6 @@ namespace Data.Interfaces
 {
     public interface ITypeVehicleData : IRepositoryData<TypeVehicle>
     {
-        public Task<IEnumerable<TypeVehicle>> GetAllWithRelationsAsync()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<TypeVehicle> GetByIdWithRelationsAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
