@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Entity.Migrations.PostgreSql
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250811150914_Pg_Esquemas")]
+    [Migration("20250812140309_Pg_Esquemas")]
     partial class Pg_Esquemas
     {
         /// <inheritdoc />
@@ -24,402 +24,6 @@ namespace Entity.Migrations.PostgreSql
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Entity.Model.Form", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Forms");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            Description = "Formulario principal",
-                            IsDeleted = false,
-                            Name = "Principal"
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.FormModule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("FormId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("ModuleId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormId");
-
-                    b.HasIndex("ModuleId");
-
-                    b.ToTable("FormModule");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            FormId = 1,
-                            IsDeleted = false,
-                            ModuleId = 1
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.Permission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permissions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            Description = "Permiso para ver",
-                            IsDeleted = false,
-                            Name = "Ver"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Asset = false,
-                            Description = "Permiso para editar",
-                            IsDeleted = false,
-                            Name = "Editar"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Asset = false,
-                            Description = "Permiso para eliminar",
-                            IsDeleted = false,
-                            Name = "Eliminar"
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.Person", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Firstname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Lastname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Persons");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            Firstname = "Admin",
-                            IsDeleted = false,
-                            Lastname = "Principal",
-                            PhoneNumber = "111111111"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Asset = false,
-                            Firstname = "Usuario",
-                            IsDeleted = false,
-                            Lastname = "Demo",
-                            PhoneNumber = "222222222"
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.Rol", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Rol");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            Description = "Rol de administrador",
-                            IsDeleted = false,
-                            Name = "Administrador"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Asset = false,
-                            Description = "Rol de usuario estándar",
-                            IsDeleted = false,
-                            Name = "Usuario"
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.RolFormPermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("FormId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RolId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RolId");
-
-                    b.ToTable("RolFormPermission");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            FormId = 1,
-                            IsDeleted = false,
-                            PermissionId = 1,
-                            RolId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Asset = false,
-                            FormId = 1,
-                            IsDeleted = false,
-                            PermissionId = 2,
-                            RolId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Asset = false,
-                            FormId = 1,
-                            IsDeleted = false,
-                            PermissionId = 1,
-                            RolId = 2
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.RolUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("RolId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RolId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RolUser");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            IsDeleted = false,
-                            RolId = 1,
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Asset = false,
-                            IsDeleted = false,
-                            RolId = 2,
-                            UserId = 2
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            Email = "anibalalvaradoandrade@gmail.com",
-                            IsDeleted = false,
-                            Password = "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2",
-                            PersonId = 1,
-                            Username = "admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Asset = false,
-                            Email = "usuario@demo.com",
-                            IsDeleted = false,
-                            Password = "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2",
-                            PersonId = 2,
-                            Username = "usuario"
-                        });
-                });
 
             modelBuilder.Entity("Entity.Models.BlackList", b =>
                 {
@@ -512,7 +116,84 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("Client");
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Entity.Models.Form", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Forms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            Description = "Formulario principal",
+                            IsDeleted = false,
+                            Name = "Principal"
+                        });
+                });
+
+            modelBuilder.Entity("Entity.Models.FormModule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("FormId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormId");
+
+                    b.HasIndex("ModuleId");
+
+                    b.ToTable("FormModule");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            FormId = 1,
+                            IsDeleted = false,
+                            ModuleId = 1
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.MemberShipType", b =>
@@ -546,7 +227,7 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasKey("Id");
 
-                    b.ToTable("MemberShipType");
+                    b.ToTable("MemberShipTypes");
                 });
 
             modelBuilder.Entity("Entity.Models.Memberships", b =>
@@ -585,6 +266,44 @@ namespace Entity.Migrations.PostgreSql
                     b.ToTable("Memberships");
                 });
 
+            modelBuilder.Entity("Entity.Models.Module", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Modules");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            Description = "Módulo de gestión",
+                            IsDeleted = false,
+                            Name = "Gestión"
+                        });
+                });
+
             modelBuilder.Entity("Entity.Models.Parking", b =>
                 {
                     b.Property<int>("Id")
@@ -614,7 +333,7 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasIndex("ParkingCategoryId");
 
-                    b.ToTable("Parking");
+                    b.ToTable("Parkings");
                 });
 
             modelBuilder.Entity("Entity.Models.ParkingCategory", b =>
@@ -645,7 +364,112 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasKey("Id");
 
-                    b.ToTable("ParkingCategory");
+                    b.ToTable("ParkingCategories");
+                });
+
+            modelBuilder.Entity("Entity.Models.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            Description = "Permiso para ver",
+                            IsDeleted = false,
+                            Name = "Ver"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = false,
+                            Description = "Permiso para editar",
+                            IsDeleted = false,
+                            Name = "Editar"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset = false,
+                            Description = "Permiso para eliminar",
+                            IsDeleted = false,
+                            Name = "Eliminar"
+                        });
+                });
+
+            modelBuilder.Entity("Entity.Models.Person", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Firstname")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Lastname")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Persons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            Firstname = "Admin",
+                            IsDeleted = false,
+                            Lastname = "Principal",
+                            PhoneNumber = "111111111"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = false,
+                            Firstname = "Usuario",
+                            IsDeleted = false,
+                            Lastname = "Demo",
+                            PhoneNumber = "222222222"
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Rates", b =>
@@ -723,7 +547,7 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasKey("Id");
 
-                    b.ToTable("RatesType");
+                    b.ToTable("RatesTypes");
                 });
 
             modelBuilder.Entity("Entity.Models.RegisteredVehicles", b =>
@@ -762,6 +586,162 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("VehicleId");
 
                     b.ToTable("RegisteredVehicles");
+                });
+
+            modelBuilder.Entity("Entity.Models.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rol");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            Description = "Rol de administrador",
+                            IsDeleted = false,
+                            Name = "Administrador"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = false,
+                            Description = "Rol de usuario estándar",
+                            IsDeleted = false,
+                            Name = "Usuario"
+                        });
+                });
+
+            modelBuilder.Entity("Entity.Models.RolFormPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("FormId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RolId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.HasIndex("RolId");
+
+                    b.ToTable("RolFormPermission");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            FormId = 1,
+                            IsDeleted = false,
+                            PermissionId = 1,
+                            RolId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = false,
+                            FormId = 1,
+                            IsDeleted = false,
+                            PermissionId = 2,
+                            RolId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset = false,
+                            FormId = 1,
+                            IsDeleted = false,
+                            PermissionId = 1,
+                            RolId = 2
+                        });
+                });
+
+            modelBuilder.Entity("Entity.Models.RolUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("RolId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RolUser");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = false,
+                            IsDeleted = false,
+                            RolId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = false,
+                            IsDeleted = false,
+                            RolId = 2,
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Sectors", b =>
@@ -851,7 +831,65 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasKey("Id");
 
-                    b.ToTable("TypeVehicle");
+                    b.ToTable("TypeVehicles");
+                });
+
+            modelBuilder.Entity("Entity.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Asset")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            Email = "anibalalvaradoandrade@gmail.com",
+                            IsDeleted = false,
+                            Password = "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2",
+                            PersonId = 1,
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            Email = "usuario@demo.com",
+                            IsDeleted = false,
+                            Password = "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2",
+                            PersonId = 2,
+                            Username = "usuario"
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Vehicle", b =>
@@ -894,7 +932,7 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("TypeVehicleId")
                         .IsUnique();
 
-                    b.ToTable("Vehicle");
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Entity.Models.Zones", b =>
@@ -925,120 +963,6 @@ namespace Entity.Migrations.PostgreSql
                     b.ToTable("Zones");
                 });
 
-            modelBuilder.Entity("Module", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Asset")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Modules");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Asset = false,
-                            Description = "Módulo de gestión",
-                            IsDeleted = false,
-                            Name = "Gestión"
-                        });
-                });
-
-            modelBuilder.Entity("Entity.Model.FormModule", b =>
-                {
-                    b.HasOne("Entity.Model.Form", "Form")
-                        .WithMany("FormModules")
-                        .HasForeignKey("FormId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Module", "Module")
-                        .WithMany("FormModules")
-                        .HasForeignKey("ModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Form");
-
-                    b.Navigation("Module");
-                });
-
-            modelBuilder.Entity("Entity.Model.RolFormPermission", b =>
-                {
-                    b.HasOne("Entity.Model.Form", "Form")
-                        .WithMany("RolFormPermission")
-                        .HasForeignKey("FormId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entity.Model.Permission", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entity.Model.Rol", "Rol")
-                        .WithMany()
-                        .HasForeignKey("RolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Form");
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Rol");
-                });
-
-            modelBuilder.Entity("Entity.Model.RolUser", b =>
-                {
-                    b.HasOne("Entity.Model.Rol", "Rol")
-                        .WithMany()
-                        .HasForeignKey("RolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entity.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Rol");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Entity.Model.User", b =>
-                {
-                    b.HasOne("Entity.Model.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Person");
-                });
-
             modelBuilder.Entity("Entity.Models.BlackList", b =>
                 {
                     b.HasOne("Entity.Models.Vehicle", "Vehicle")
@@ -1063,13 +987,32 @@ namespace Entity.Migrations.PostgreSql
 
             modelBuilder.Entity("Entity.Models.Client", b =>
                 {
-                    b.HasOne("Entity.Model.Person", "Person")
+                    b.HasOne("Entity.Models.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Entity.Models.FormModule", b =>
+                {
+                    b.HasOne("Entity.Models.Form", "Form")
+                        .WithMany("FormModules")
+                        .HasForeignKey("FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entity.Models.Module", "Module")
+                        .WithMany("FormModules")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+
+                    b.Navigation("Module");
                 });
 
             modelBuilder.Entity("Entity.Models.Memberships", b =>
@@ -1140,6 +1083,52 @@ namespace Entity.Migrations.PostgreSql
                     b.Navigation("Vehicle");
                 });
 
+            modelBuilder.Entity("Entity.Models.RolFormPermission", b =>
+                {
+                    b.HasOne("Entity.Models.Form", "Form")
+                        .WithMany("RolFormPermission")
+                        .HasForeignKey("FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entity.Models.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entity.Models.Rol", "Rol")
+                        .WithMany()
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("Entity.Models.RolUser", b =>
+                {
+                    b.HasOne("Entity.Models.Rol", "Rol")
+                        .WithMany()
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entity.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Entity.Models.Sectors", b =>
                 {
                     b.HasOne("Entity.Models.TypeVehicle", "TypeVehicle")
@@ -1168,6 +1157,17 @@ namespace Entity.Migrations.PostgreSql
                         .IsRequired();
 
                     b.Navigation("Sector");
+                });
+
+            modelBuilder.Entity("Entity.Models.User", b =>
+                {
+                    b.HasOne("Entity.Models.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Entity.Models.Vehicle", b =>
@@ -1208,7 +1208,7 @@ namespace Entity.Migrations.PostgreSql
                     b.Navigation("Parking");
                 });
 
-            modelBuilder.Entity("Entity.Model.Form", b =>
+            modelBuilder.Entity("Entity.Models.Form", b =>
                 {
                     b.Navigation("FormModules");
 
@@ -1223,6 +1223,11 @@ namespace Entity.Migrations.PostgreSql
             modelBuilder.Entity("Entity.Models.Memberships", b =>
                 {
                     b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("Entity.Models.Module", b =>
+                {
+                    b.Navigation("FormModules");
                 });
 
             modelBuilder.Entity("Entity.Models.Parking", b =>
@@ -1260,11 +1265,6 @@ namespace Entity.Migrations.PostgreSql
             modelBuilder.Entity("Entity.Models.Zones", b =>
                 {
                     b.Navigation("Sectors");
-                });
-
-            modelBuilder.Entity("Module", b =>
-                {
-                    b.Navigation("FormModules");
                 });
 #pragma warning restore 612, 618
         }

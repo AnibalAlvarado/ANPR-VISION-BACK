@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Entity.Model;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

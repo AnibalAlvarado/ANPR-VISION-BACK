@@ -31,7 +31,7 @@ namespace Entity.Migrations.PostgreSql
                 });
 
             migrationBuilder.CreateTable(
-                name: "MemberShipType",
+                name: "MemberShipTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -45,7 +45,7 @@ namespace Entity.Migrations.PostgreSql
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MemberShipType", x => x.Id);
+                    table.PrimaryKey("PK_MemberShipTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -65,7 +65,7 @@ namespace Entity.Migrations.PostgreSql
                 });
 
             migrationBuilder.CreateTable(
-                name: "ParkingCategory",
+                name: "ParkingCategories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -78,7 +78,7 @@ namespace Entity.Migrations.PostgreSql
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ParkingCategory", x => x.Id);
+                    table.PrimaryKey("PK_ParkingCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -115,7 +115,7 @@ namespace Entity.Migrations.PostgreSql
                 });
 
             migrationBuilder.CreateTable(
-                name: "RatesType",
+                name: "RatesTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -127,7 +127,7 @@ namespace Entity.Migrations.PostgreSql
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RatesType", x => x.Id);
+                    table.PrimaryKey("PK_RatesTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -147,7 +147,7 @@ namespace Entity.Migrations.PostgreSql
                 });
 
             migrationBuilder.CreateTable(
-                name: "TypeVehicle",
+                name: "TypeVehicles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -158,7 +158,7 @@ namespace Entity.Migrations.PostgreSql
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TypeVehicle", x => x.Id);
+                    table.PrimaryKey("PK_TypeVehicles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,9 +179,9 @@ namespace Entity.Migrations.PostgreSql
                 {
                     table.PrimaryKey("PK_Memberships", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Memberships_MemberShipType_MemberShipTypeId",
+                        name: "FK_Memberships_MemberShipTypes_MemberShipTypeId",
                         column: x => x.MemberShipTypeId,
-                        principalTable: "MemberShipType",
+                        principalTable: "MemberShipTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -215,7 +215,7 @@ namespace Entity.Migrations.PostgreSql
                 });
 
             migrationBuilder.CreateTable(
-                name: "Parking",
+                name: "Parkings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -228,17 +228,17 @@ namespace Entity.Migrations.PostgreSql
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Parking", x => x.Id);
+                    table.PrimaryKey("PK_Parkings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Parking_ParkingCategory_ParkingCategoryId",
+                        name: "FK_Parkings_ParkingCategories_ParkingCategoryId",
                         column: x => x.ParkingCategoryId,
-                        principalTable: "ParkingCategory",
+                        principalTable: "ParkingCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Client",
+                name: "Clients",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -251,9 +251,9 @@ namespace Entity.Migrations.PostgreSql
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Client", x => x.Id);
+                    table.PrimaryKey("PK_Clients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Client_Persons_PersonId",
+                        name: "FK_Clients_Persons_PersonId",
                         column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
@@ -335,9 +335,9 @@ namespace Entity.Migrations.PostgreSql
                 {
                     table.PrimaryKey("PK_Camara", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Camara_Parking_ParkingId",
+                        name: "FK_Camara_Parkings_ParkingId",
                         column: x => x.ParkingId,
-                        principalTable: "Parking",
+                        principalTable: "Parkings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -363,21 +363,21 @@ namespace Entity.Migrations.PostgreSql
                 {
                     table.PrimaryKey("PK_Rates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Rates_Parking_ParkingId",
+                        name: "FK_Rates_Parkings_ParkingId",
                         column: x => x.ParkingId,
-                        principalTable: "Parking",
+                        principalTable: "Parkings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Rates_RatesType_RatesTypeId",
+                        name: "FK_Rates_RatesTypes_RatesTypeId",
                         column: x => x.RatesTypeId,
-                        principalTable: "RatesType",
+                        principalTable: "RatesTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Rates_TypeVehicle_TypeVehicleId",
+                        name: "FK_Rates_TypeVehicles_TypeVehicleId",
                         column: x => x.TypeVehicleId,
-                        principalTable: "TypeVehicle",
+                        principalTable: "TypeVehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -397,15 +397,15 @@ namespace Entity.Migrations.PostgreSql
                 {
                     table.PrimaryKey("PK_Zones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Zones_Parking_ParkingId",
+                        name: "FK_Zones_Parkings_ParkingId",
                         column: x => x.ParkingId,
-                        principalTable: "Parking",
+                        principalTable: "Parkings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vehicle",
+                name: "Vehicles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -420,23 +420,23 @@ namespace Entity.Migrations.PostgreSql
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vehicle", x => x.Id);
+                    table.PrimaryKey("PK_Vehicles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Vehicle_Client_ClientId",
+                        name: "FK_Vehicles_Clients_ClientId",
                         column: x => x.ClientId,
-                        principalTable: "Client",
+                        principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Vehicle_Memberships_MembershipsId",
+                        name: "FK_Vehicles_Memberships_MembershipsId",
                         column: x => x.MembershipsId,
                         principalTable: "Memberships",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Vehicle_TypeVehicle_TypeVehicleId",
+                        name: "FK_Vehicles_TypeVehicles_TypeVehicleId",
                         column: x => x.TypeVehicleId,
-                        principalTable: "TypeVehicle",
+                        principalTable: "TypeVehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -486,9 +486,9 @@ namespace Entity.Migrations.PostgreSql
                 {
                     table.PrimaryKey("PK_Sectors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Sectors_TypeVehicle_TypeVehicleId",
+                        name: "FK_Sectors_TypeVehicles_TypeVehicleId",
                         column: x => x.TypeVehicleId,
-                        principalTable: "TypeVehicle",
+                        principalTable: "TypeVehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -515,9 +515,9 @@ namespace Entity.Migrations.PostgreSql
                 {
                     table.PrimaryKey("PK_BlackList", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BlackList_Vehicle_VehicleId",
+                        name: "FK_BlackList_Vehicles_VehicleId",
                         column: x => x.VehicleId,
-                        principalTable: "Vehicle",
+                        principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -569,9 +569,9 @@ namespace Entity.Migrations.PostgreSql
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RegisteredVehicles_Vehicle_VehicleId",
+                        name: "FK_RegisteredVehicles_Vehicles_VehicleId",
                         column: x => x.VehicleId,
-                        principalTable: "Vehicle",
+                        principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -634,8 +634,8 @@ namespace Entity.Migrations.PostgreSql
                 columns: new[] { "Id", "Asset", "Email", "IsDeleted", "Password", "PersonId", "Username" },
                 values: new object[,]
                 {
-                    { 1, false, "anibalalvaradoandrade@gmail.com", false, "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2", 1, "admin" },
-                    { 2, false, "usuario@demo.com", false, "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2", 2, "usuario" }
+                    { 1, true, "anibalalvaradoandrade@gmail.com", false, "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2", 1, "admin" },
+                    { 2, true, "usuario@demo.com", false, "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2", 2, "usuario" }
                 });
 
             migrationBuilder.InsertData(
@@ -658,8 +658,8 @@ namespace Entity.Migrations.PostgreSql
                 column: "ParkingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Client_PersonId",
-                table: "Client",
+                name: "IX_Clients_PersonId",
+                table: "Clients",
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
@@ -678,8 +678,8 @@ namespace Entity.Migrations.PostgreSql
                 column: "MemberShipTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Parking_ParkingCategoryId",
-                table: "Parking",
+                name: "IX_Parkings_ParkingCategoryId",
+                table: "Parkings",
                 column: "ParkingCategoryId");
 
             migrationBuilder.CreateIndex(
@@ -753,18 +753,18 @@ namespace Entity.Migrations.PostgreSql
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicle_ClientId",
-                table: "Vehicle",
+                name: "IX_Vehicles_ClientId",
+                table: "Vehicles",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicle_MembershipsId",
-                table: "Vehicle",
+                name: "IX_Vehicles_MembershipsId",
+                table: "Vehicles",
                 column: "MembershipsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicle_TypeVehicleId",
-                table: "Vehicle",
+                name: "IX_Vehicles_TypeVehicleId",
+                table: "Vehicles",
                 column: "TypeVehicleId",
                 unique: true);
 
@@ -802,13 +802,13 @@ namespace Entity.Migrations.PostgreSql
                 name: "Modules");
 
             migrationBuilder.DropTable(
-                name: "RatesType");
+                name: "RatesTypes");
 
             migrationBuilder.DropTable(
                 name: "Slots");
 
             migrationBuilder.DropTable(
-                name: "Vehicle");
+                name: "Vehicles");
 
             migrationBuilder.DropTable(
                 name: "Forms");
@@ -826,13 +826,13 @@ namespace Entity.Migrations.PostgreSql
                 name: "Sectors");
 
             migrationBuilder.DropTable(
-                name: "Client");
+                name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "Memberships");
 
             migrationBuilder.DropTable(
-                name: "TypeVehicle");
+                name: "TypeVehicles");
 
             migrationBuilder.DropTable(
                 name: "Zones");
@@ -841,13 +841,13 @@ namespace Entity.Migrations.PostgreSql
                 name: "Persons");
 
             migrationBuilder.DropTable(
-                name: "MemberShipType");
+                name: "MemberShipTypes");
 
             migrationBuilder.DropTable(
-                name: "Parking");
+                name: "Parkings");
 
             migrationBuilder.DropTable(
-                name: "ParkingCategory");
+                name: "ParkingCategories");
         }
     }
 }
