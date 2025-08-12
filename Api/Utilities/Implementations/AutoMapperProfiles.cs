@@ -2,6 +2,7 @@
 using Entity.Dtos;
 using Entity.DTOs;
 using Entity.Model;
+using Entity.Models;
 using System;
 using System.Reflection;
 using System.Security;
@@ -62,6 +63,17 @@ namespace Utilities.Implementations
 
             CreateMap<UserDto, User>();
             CreateMap<User, UserResponseDto>().ReverseMap();
+            CreateMap<BlackList, BlackListDto>().ReverseMap();
+            CreateMap<Client, ClientDto>().ReverseMap();
+            CreateMap<Memberships, MembershipsDto>().ReverseMap();
+            CreateMap<MemberShipType, MemberShipTypeDto>().ReverseMap();
+            CreateMap<Parking, ParkingDto>().ReverseMap();
+            CreateMap<ParkingCategory, ParkingCategoryDto>().ReverseMap();
+            CreateMap<Rates, RatesDto>().ReverseMap();
+            CreateMap<RatesType, RatesTypeDto>().ReverseMap();
+            CreateMap<RegisteredVehicles, RegisteredVehiclesDto>().ReverseMap();
+            CreateMap<Client, ClientDto>().ReverseMap();
+            CreateMap<Client, ClientDto>().ReverseMap();
         }
     }
 }

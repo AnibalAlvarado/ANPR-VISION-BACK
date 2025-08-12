@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
 using System;
@@ -13,8 +14,8 @@ namespace Business.Implementations
 
     public class SlotsBusiness : RepositoryBusiness<Slots, SlotsDto>, ISlotsBusiness
     {
-        private readonly ISlotsBusiness _data;
-        public SlotsBusiness(ISlotsBusiness data, IMapper mapper)
+        private readonly ISlotsData _data;
+        public SlotsBusiness(ISlotsData data, IMapper mapper)
             : base(data, mapper)
         {
             _data = data;

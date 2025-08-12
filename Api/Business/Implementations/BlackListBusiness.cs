@@ -15,8 +15,8 @@ namespace Business.Implementations
 {
     public class BlackistBusiness : RepositoryBusiness<BlackList, BlackListDto>, IBlackListBusiness
     {
-        private readonly IBlackListBusiness _data;
-        public BlackistBusiness(IBlackListBusiness data, IMapper mapper)
+        private readonly IBlackListData _data;
+        public BlackistBusiness(IBlackListData data, IMapper mapper)
             : base(data, mapper)
         {
             _data = data;

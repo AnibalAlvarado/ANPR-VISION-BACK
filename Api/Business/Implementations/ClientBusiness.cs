@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
 using System;
@@ -12,8 +13,8 @@ namespace Business.Implementations
 {
     public class ClientBusiness : RepositoryBusiness<Client, ClientDto>, IClientBusiness
     {
-        private readonly IClientBusiness _data;
-        public ClientBusiness(IClientBusiness data, IMapper mapper)
+        private readonly IClientData _data;
+        public ClientBusiness(IClientData data, IMapper mapper)
             : base(data, mapper)
         {
             _data = data;

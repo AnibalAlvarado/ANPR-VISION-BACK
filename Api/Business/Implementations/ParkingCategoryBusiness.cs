@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
 using System;
@@ -13,8 +14,8 @@ namespace Business.Implementations
  
     public class ParkingCategoryBusiness : RepositoryBusiness<ParkingCategory, ParkingCategoryDto>, IParkingCategoryBusiness
     {
-        private readonly IParkingCategoryBusiness _data;
-        public ParkingCategoryBusiness(IParkingCategoryBusiness data, IMapper mapper)
+        private readonly IParkingCategoryData _data;
+        public ParkingCategoryBusiness(IParkingCategoryData data, IMapper mapper)
             : base(data, mapper)
         {
             _data = data;

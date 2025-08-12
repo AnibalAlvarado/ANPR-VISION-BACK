@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
+using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
 using System;
@@ -13,8 +14,8 @@ namespace Business.Implementations
 
     public class RatesBusiness : RepositoryBusiness<Rates, RatesDto>, IRatesBusiness
     {
-        private readonly IRatesBusiness _data;
-        public RatesBusiness(IRatesBusiness data, IMapper mapper)
+        private readonly IRatesData _data;
+        public RatesBusiness(IRatesData data, IMapper mapper)
             : base(data, mapper)
         {
             _data = data;
