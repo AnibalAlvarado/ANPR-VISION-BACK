@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Data.Interfaces;
 using Entity.Contexts;
+using Entity.Dtos;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,28 @@ namespace Data.Implementations
 
         }
 
-       
+        public async Task<IEnumerable<ZonesDto>> GetAllJoinAsync()
+        {
+            return await _context.Zones
+                .AsNoTracking()
+                .Select(p => new ZonesDto
+                {
+                    // --- BaseDto ---
+                    Id = p.Id,                      // int? en BaseDto
+                    Asset = p.Asset,                 // bool? en BaseDto
+                    IsDeleted = p.IsDeleted,         // bool en BaseDto
+
+                    // --- GenericDto ---
+                    Name = p.Name,                   // string en GenericDto
+
+                    // --- ZonesDto ---
+                    ParkingId = p.ParkingId,
+                    Parking = p.Parking != null
+                        ? p.Parking.Name
+                        : null
+                })
+                .ToListAsync();
+        }
+
     }
 }

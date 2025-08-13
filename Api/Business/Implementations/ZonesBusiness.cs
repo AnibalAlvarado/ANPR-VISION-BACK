@@ -15,10 +15,18 @@ namespace Business.Implementations
     public class ZonesBusiness : RepositoryBusiness<Zones,ZonesDto>, IZonesBusiness
     {
         private readonly IZonesData _data;
+        private readonly IMapper _mapper;
         public ZonesBusiness(IZonesData data, IMapper mapper)
             : base(data, mapper)
         {
             _data = data;
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<ZonesDto>> GetAllJoinAsync()
+        {
+            var entities = await _data.GetAllJoinAsync();
+            return _mapper.Map<IEnumerable<ZonesDto>>(entities);
         }
 
     }

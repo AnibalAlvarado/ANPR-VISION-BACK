@@ -10,6 +10,6 @@ namespace Business.Interfaces
 {
     public interface IZonesBusiness : IRepositoryBusiness<Zones, ZonesDto>
     {
-    
+        Task<IEnumerable<ZonesDto>> GetAllJoinAsync();
     }
 }

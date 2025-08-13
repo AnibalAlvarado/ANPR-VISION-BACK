@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Zones : BaseModel
+    public class Zones : GenericModel
     {
-        public string Name { get; set; }
         public int ParkingId { get; set; }
-        public Parking Parking { get; set; }
-        public List<Sectors> Sectors { get; set; }
+        public Parking? Parking { get; set; }
+        public List<Sectors>? Sectors { get; set; }
         
     }
 }
