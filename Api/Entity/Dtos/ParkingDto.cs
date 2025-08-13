@@ -11,5 +11,6 @@ namespace Entity.Dtos
     {
         public string Location { get; set; }
         public int ParkingCategoryId { get; set; }
+
     }
 }

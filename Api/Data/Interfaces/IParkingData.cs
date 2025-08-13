@@ -10,5 +10,6 @@ namespace Data.Interfaces
     public interface IParkingData : IRepositoryData<Parking>
     {
 
+
     }
 }

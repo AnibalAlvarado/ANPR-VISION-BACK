@@ -9,9 +9,35 @@ namespace Web.Controllers.Implementations
     [Route("api/[controller]")]
     public class ZonesController : RepositoryController<Zones, ZonesDto>
     {
+        private readonly IZonesBusiness _business;
+
         public ZonesController(IZonesBusiness business)
             : base(business)
         {
+            _business = business;
+
+        }
+
+        // Endpoint personalizado para GetAllJoinAsync
+        [HttpGet("join")]
+        public async Task<ActionResult<IEnumerable<ZonesDto>>> GetAllJoinAsync()
+        {
+            try
+            {
+                var data = await _business.GetAllJoinAsync();
+                if (data == null || !data.Any())
+                {
+                    var responseNull = new ApiResponse<IEnumerable<ZonesDto>>(null, false, "Registro no encontrado", null);
+                    return NotFound(responseNull);
+                }
+                var response = new ApiResponse<IEnumerable<ZonesDto>>(data, true, "Ok", null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<IEnumerable<ZonesDto>>(null, false, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
         }
     }
 }

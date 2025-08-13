@@ -9,6 +9,8 @@ namespace Data.Interfaces
 {
     public interface IZonesData : IRepositoryData<Zones>
     {
+        Task<IEnumerable<Zones>> GetAllJoinAsync();
+
 
     }
 }
