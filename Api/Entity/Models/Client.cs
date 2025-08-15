@@ -9,9 +9,9 @@ namespace Entity.Models
 {
     public class Client : BaseModel
     {
-
-        public string Name { get; set; }
         public int  PersonaId { get; set; }
-        public Person Person { get; set; }
+        // Navigation
+        public Person Person { get; set; } = null!;
+        public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
     }
 }

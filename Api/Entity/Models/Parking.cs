@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Parking : BaseModel
+    public class Parking : GenericModel
     {
     
-        public string Name { get; set; }
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
         public int ParkingCategoryId { get; set; }
-        public ParkingCategory ParkingCategory { get; set; }
-        public List<Zones> Zones { get; set; }
-        public List<Camara> Camaras { get; set; }
+
+        public ParkingCategory ParkingCategory { get; set; } = null!;
+        public IEnumerable<Zones> Zones { get; set; } = new List<Zones>();
+        public ICollection<Rates> Rates { get; set; } = new List<Rates>();
+        public IEnumerable<Camera> Camaras { get; set; } = new List<Camera>();
     }
 }

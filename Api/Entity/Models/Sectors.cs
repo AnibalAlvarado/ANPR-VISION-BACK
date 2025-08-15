@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Sectors : BaseModel
+    public class Sectors : GenericModel
     {
-       
-        public string Name { get; set; }
         public int Capacity { get; set; }
-        public int ZoneId { get; set; }
-        public Zones Zone { get; set; }
-        public List<Slots> Slots { get; set; } 
+        public int ZonesId { get; set; }
         public int TypeVehicleId { get; set; }
-        public TypeVehicle TypeVehicle { get; set; }
+
+        public Zones Zones { get; set; } = null!;
+        public TypeVehicle TypeVehicle { get; set; } = null!;
+        public ICollection<Slots> Slots { get; set; } = new List<Slots>();
 
     }
 }

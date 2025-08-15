@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-     public class ParkingCategory : BaseModel
+     public class ParkingCategory : GenericModel
     {
        
-        public string code { get; set; }
-        public string Description { get; set; }
-        public string Name { get; set; }
+        public string code { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
-        public List<Parking> Parking { get; set; }
+        // Navigation
+        public ICollection<Parking> Parkings { get; set; } = new List<Parking>();
     }
 }

@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-     public class Slots : BaseModel
+     public class Slots : GenericModel
     {
-   
-
-        public string Name { get; set; }
         public bool IsAvailable { get; set; }
         public int SectorsId { get; set; }
-        public Sectors Sector { get; set; }
 
+        public Sectors Sectors { get; set; } = null!;
+        public ICollection<RegisteredVehicles> RegisteredVehicles { get; set; } = new List<RegisteredVehicles>();
     }
 }
