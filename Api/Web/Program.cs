@@ -11,6 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 ///To run a Migration in this project
 ///Add-Migration InitMainDb -StartupProject Web -Project Entity -Context ApplicationDbContext
 ///Update-Database -StartupProject Web -Project Entity -Context ApplicationDbContext
+///// 👇 Esto asegura que se lean los secrets en dev
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
 // Controllers
 builder.Services.AddControllers();
 
