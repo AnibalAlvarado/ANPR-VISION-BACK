@@ -8,7 +8,7 @@ namespace Entity.Models
 {
     public class RatesType : GenericModel
     {
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public ICollection<Rates> Rates { get; set; } = new List<Rates>();
     }
 }

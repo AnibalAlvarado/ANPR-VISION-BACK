@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Entity.Dtos
 {
-    public class BlackListDto: GenericDto
-    {   
-        public string Reason { get; set; }
-        public DateTime RestrictionDate { get; set; }   
+    public class BlackListDto: BaseDto
+    {
+        public string Reason { get; set; } = string.Empty;
+        public DateTime? RestrictionDate { get; set; }
+        public int VehicleId { get; set; }
+        public string? Vehicle { get; set; }
     }
 }

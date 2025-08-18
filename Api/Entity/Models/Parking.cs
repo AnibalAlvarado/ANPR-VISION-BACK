@@ -8,7 +8,6 @@ namespace Entity.Models
 {
     public class Parking : GenericModel
     {
-    
         public string Location { get; set; } = string.Empty;
         public int ParkingCategoryId { get; set; }
 

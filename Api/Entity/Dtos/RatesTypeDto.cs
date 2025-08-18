@@ -8,7 +8,6 @@ namespace Entity.Dtos
 {
     public class RatesTypeDto:GenericDto
     {
-    
-        public string Description { get; set; }
+        public string? Description { get; set; } 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entity.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,7 @@ namespace Entity.Dtos
     {
         public bool IsAvailable { get; set; }
         public int SectorsId { get; set; }
+
+        public string? Sectors { get; set; }
     }
 }

@@ -6,10 +6,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Entity.Migrations.PostgreSql
+namespace Entity.Migrations
 {
     /// <inheritdoc />
-    public partial class Pg_Esquemas : Migration
+    public partial class InitMainDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,7 +22,7 @@ namespace Entity.Migrations.PostgreSql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -36,12 +36,12 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Duration = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    PriceBase = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    DurationDaysBase = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,7 +56,7 @@ namespace Entity.Migrations.PostgreSql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -71,10 +71,10 @@ namespace Entity.Migrations.PostgreSql
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     code = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,7 +89,7 @@ namespace Entity.Migrations.PostgreSql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -103,11 +103,14 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Firstname = table.Column<string>(type: "text", nullable: false),
-                    Lastname = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Document = table.Column<string>(type: "text", nullable: false),
+                    Phone = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Age = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -120,10 +123,10 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,7 +141,7 @@ namespace Entity.Migrations.PostgreSql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
@@ -152,38 +155,13 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TypeVehicles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Memberships",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MemberShipTypeId = table.Column<int>(type: "integer", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Active = table.Column<bool>(type: "boolean", nullable: false),
-                    VehicleId = table.Column<int>(type: "integer", nullable: false),
-                    Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Memberships", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Memberships_MemberShipTypes_MemberShipTypeId",
-                        column: x => x.MemberShipTypeId,
-                        principalTable: "MemberShipTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,7 +173,7 @@ namespace Entity.Migrations.PostgreSql
                     FormId = table.Column<int>(type: "integer", nullable: false),
                     ModuleId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -220,11 +198,11 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
                     Location = table.Column<string>(type: "text", nullable: false),
                     ParkingCategoryId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -243,11 +221,10 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    PersonaId = table.Column<int>(type: "integer", nullable: false),
                     PersonId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -271,7 +248,7 @@ namespace Entity.Migrations.PostgreSql
                     Password = table.Column<string>(type: "text", nullable: false),
                     PersonId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -294,7 +271,7 @@ namespace Entity.Migrations.PostgreSql
                     FormId = table.Column<int>(type: "integer", nullable: false),
                     PermissionId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -320,22 +297,23 @@ namespace Entity.Migrations.PostgreSql
                 });
 
             migrationBuilder.CreateTable(
-                name: "Camara",
+                name: "Camera",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Resolution = table.Column<string>(type: "text", nullable: false),
-                    Ip = table.Column<string>(type: "text", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: false),
                     ParkingId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Camara", x => x.Id);
+                    table.PrimaryKey("PK_Camera", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Camara_Parkings_ParkingId",
+                        name: "FK_Camera_Parkings_ParkingId",
                         column: x => x.ParkingId,
                         principalTable: "Parkings",
                         principalColumn: "Id",
@@ -352,12 +330,13 @@ namespace Entity.Migrations.PostgreSql
                     Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     StarHour = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndHour = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Year = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Year = table.Column<int>(type: "integer", nullable: false),
                     ParkingId = table.Column<int>(type: "integer", nullable: false),
                     RatesTypeId = table.Column<int>(type: "integer", nullable: false),
                     TypeVehicleId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -388,10 +367,10 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
                     ParkingId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -411,12 +390,11 @@ namespace Entity.Migrations.PostgreSql
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Plate = table.Column<string>(type: "text", nullable: false),
-                    color = table.Column<string>(type: "text", nullable: false),
+                    Color = table.Column<string>(type: "text", nullable: true),
                     TypeVehicleId = table.Column<int>(type: "integer", nullable: false),
                     ClientId = table.Column<int>(type: "integer", nullable: false),
-                    MembershipsId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -425,12 +403,6 @@ namespace Entity.Migrations.PostgreSql
                         name: "FK_Vehicles_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Vehicles_Memberships_MembershipsId",
-                        column: x => x.MembershipsId,
-                        principalTable: "Memberships",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -450,7 +422,7 @@ namespace Entity.Migrations.PostgreSql
                     RolId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -475,12 +447,12 @@ namespace Entity.Migrations.PostgreSql
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
                     Capacity = table.Column<int>(type: "integer", nullable: false),
-                    ZoneId = table.Column<int>(type: "integer", nullable: false),
+                    ZonesId = table.Column<int>(type: "integer", nullable: false),
                     TypeVehicleId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -492,8 +464,8 @@ namespace Entity.Migrations.PostgreSql
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Sectors_Zones_ZoneId",
-                        column: x => x.ZoneId,
+                        name: "FK_Sectors_Zones_ZonesId",
+                        column: x => x.ZonesId,
                         principalTable: "Zones",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -509,7 +481,7 @@ namespace Entity.Migrations.PostgreSql
                     RestrictionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     VehicleId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -523,16 +495,49 @@ namespace Entity.Migrations.PostgreSql
                 });
 
             migrationBuilder.CreateTable(
+                name: "Memberships",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MembershipTypeId = table.Column<int>(type: "integer", nullable: false),
+                    VehicleId = table.Column<int>(type: "integer", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    PriceAtPurchase = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    DurationDays = table.Column<int>(type: "integer", nullable: false),
+                    Currency = table.Column<string>(type: "text", nullable: true),
+                    Asset = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Memberships", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Memberships_MemberShipTypes_MembershipTypeId",
+                        column: x => x.MembershipTypeId,
+                        principalTable: "MemberShipTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Memberships_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Slots",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
                     IsAvailable = table.Column<bool>(type: "boolean", nullable: false),
                     SectorsId = table.Column<int>(type: "integer", nullable: false),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -553,21 +558,19 @@ namespace Entity.Migrations.PostgreSql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EntryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExitDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    VehiceId = table.Column<int>(type: "integer", nullable: false),
                     VehicleId = table.Column<int>(type: "integer", nullable: false),
-                    SlotId = table.Column<int>(type: "integer", nullable: false),
+                    SlotsId = table.Column<int>(type: "integer", nullable: true),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RegisteredVehicles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RegisteredVehicles_Slots_SlotId",
-                        column: x => x.SlotId,
+                        name: "FK_RegisteredVehicles_Slots_SlotsId",
+                        column: x => x.SlotsId,
                         principalTable: "Slots",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RegisteredVehicles_Vehicles_VehicleId",
                         column: x => x.VehicleId,
@@ -579,54 +582,105 @@ namespace Entity.Migrations.PostgreSql
             migrationBuilder.InsertData(
                 table: "Forms",
                 columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
-                values: new object[] { 1, false, "Formulario principal", false, "Principal" });
+                values: new object[] { 1, true, "Formulario principal", false, "Principal" });
+
+            migrationBuilder.InsertData(
+                table: "MemberShipTypes",
+                columns: new[] { "Id", "Asset", "Description", "DurationDaysBase", "IsDeleted", "Name", "PriceBase" },
+                values: new object[,]
+                {
+                    { 1, true, "Membresía mensual", 30, false, "Mensual", 50m },
+                    { 2, true, "Membresía anual", 365, false, "Anual", 500m }
+                });
 
             migrationBuilder.InsertData(
                 table: "Modules",
                 columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
-                values: new object[] { 1, false, "Módulo de gestión", false, "Gestión" });
+                values: new object[] { 1, true, "Módulo de gestión", false, "Gestión" });
+
+            migrationBuilder.InsertData(
+                table: "ParkingCategories",
+                columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name", "code" },
+                values: new object[,]
+                {
+                    { 1, true, "Categoría general", false, "General", "GEN" },
+                    { 2, true, "Categoría exclusiva", false, "VIP", "VIP" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Permissions",
                 columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, false, "Permiso para ver", false, "Ver" },
-                    { 2, false, "Permiso para editar", false, "Editar" },
-                    { 3, false, "Permiso para eliminar", false, "Eliminar" }
+                    { 1, true, "Permiso para ver", false, "Ver" },
+                    { 2, true, "Permiso para editar", false, "Editar" },
+                    { 3, true, "Permiso para eliminar", false, "Eliminar" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Persons",
-                columns: new[] { "Id", "Asset", "Firstname", "IsDeleted", "Lastname", "PhoneNumber" },
+                columns: new[] { "Id", "Age", "Asset", "Document", "Email", "FirstName", "IsDeleted", "LastName", "Phone" },
                 values: new object[,]
                 {
-                    { 1, false, "Admin", false, "Principal", "111111111" },
-                    { 2, false, "Usuario", false, "Demo", "222222222" }
+                    { 1, 30, true, "0001", "admin@mail.com", "Admin", false, "Principal", "111111111" },
+                    { 2, 25, true, "0002", "usuario@mail.com", "Usuario", false, "Demo", "222222222" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "RatesTypes",
+                columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
+                values: new object[] { 1, true, "Tarifa por hora", false, "Hora" });
 
             migrationBuilder.InsertData(
                 table: "Rol",
                 columns: new[] { "Id", "Asset", "Description", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, false, "Rol de administrador", false, "Administrador" },
-                    { 2, false, "Rol de usuario estándar", false, "Usuario" }
+                    { 1, true, "Rol de administrador", false, "Administrador" },
+                    { 2, true, "Rol de usuario estándar", false, "Usuario" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TypeVehicles",
+                columns: new[] { "Id", "Asset", "IsDeleted", "Name" },
+                values: new object[,]
+                {
+                    { 1, true, false, "Auto" },
+                    { 2, true, false, "Moto" },
+                    { 3, true, false, "Camión" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Clients",
+                columns: new[] { "Id", "Asset", "IsDeleted", "Name", "PersonId" },
+                values: new object[,]
+                {
+                    { 1, true, false, "Cliente Demo", 1 },
+                    { 2, true, false, "Cliente Premium", 2 }
                 });
 
             migrationBuilder.InsertData(
                 table: "FormModule",
                 columns: new[] { "Id", "Asset", "FormId", "IsDeleted", "ModuleId" },
-                values: new object[] { 1, false, 1, false, 1 });
+                values: new object[] { 1, true, 1, false, 1 });
+
+            migrationBuilder.InsertData(
+                table: "Parkings",
+                columns: new[] { "Id", "Asset", "IsDeleted", "Location", "Name", "ParkingCategoryId" },
+                values: new object[,]
+                {
+                    { 1, true, false, "Centro", "Parqueadero Central", 1 },
+                    { 2, true, false, "Norte", "Parqueadero Norte", 2 }
+                });
 
             migrationBuilder.InsertData(
                 table: "RolFormPermission",
                 columns: new[] { "Id", "Asset", "FormId", "IsDeleted", "PermissionId", "RolId" },
                 values: new object[,]
                 {
-                    { 1, false, 1, false, 1, 1 },
-                    { 2, false, 1, false, 2, 1 },
-                    { 3, false, 1, false, 1, 2 }
+                    { 1, true, 1, false, 1, 1 },
+                    { 2, true, 1, false, 2, 1 },
+                    { 3, true, 1, false, 1, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -634,8 +688,27 @@ namespace Entity.Migrations.PostgreSql
                 columns: new[] { "Id", "Asset", "Email", "IsDeleted", "Password", "PersonId", "Username" },
                 values: new object[,]
                 {
-                    { 1, true, "anibalalvaradoandrade@gmail.com", false, "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2", 1, "admin" },
-                    { 2, true, "usuario@demo.com", false, "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2", 2, "usuario" }
+                    { 1, true, "admin@mail.com", false, "$2a$12$C3DSGP6PRwi3a4hsLdnrs.kYnRkJ0PgR3ky/AbI5Dmem7U3e/lSpq", 1, "admin" },
+                    { 2, true, "usuario@mail.com", false, "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm", 2, "usuario" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Camera",
+                columns: new[] { "Id", "Asset", "IsDeleted", "Name", "ParkingId", "Resolution", "Url" },
+                values: new object[,]
+                {
+                    { 1, true, false, "Cam 1", 1, "1080p", "http://cam1" },
+                    { 2, true, false, "Cam VIP", 2, "4K", "http://cam-vip" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Rates",
+                columns: new[] { "Id", "Amount", "Asset", "EndHour", "IsDeleted", "Name", "ParkingId", "RatesTypeId", "StarHour", "Type", "TypeVehicleId", "Year" },
+                values: new object[,]
+                {
+                    { 1, 2.5m, true, new DateTime(2025, 1, 1, 20, 0, 0, 0, DateTimeKind.Utc), false, "Tarifa Día", 1, 1, new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc), "Hora", 1, 2025 },
+                    { 2, 1.5m, true, new DateTime(2025, 1, 2, 6, 0, 0, 0, DateTimeKind.Utc), false, "Tarifa Noche", 1, 1, new DateTime(2025, 1, 1, 20, 0, 0, 0, DateTimeKind.Utc), "Hora", 2, 2025 },
+                    { 3, 5m, true, new DateTime(2025, 1, 1, 20, 0, 0, 0, DateTimeKind.Utc), false, "Tarifa VIP", 2, 1, new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc), "Hora", 1, 2025 }
                 });
 
             migrationBuilder.InsertData(
@@ -643,8 +716,72 @@ namespace Entity.Migrations.PostgreSql
                 columns: new[] { "Id", "Asset", "IsDeleted", "RolId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, false, false, 1, 1 },
-                    { 2, false, false, 2, 2 }
+                    { 1, true, false, 1, 1 },
+                    { 2, true, false, 2, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Vehicles",
+                columns: new[] { "Id", "Asset", "ClientId", "Color", "IsDeleted", "Plate", "TypeVehicleId" },
+                values: new object[,]
+                {
+                    { 1, true, 1, "Rojo", false, "ABC123", 1 },
+                    { 2, true, 1, "Negro", false, "XYZ987", 2 },
+                    { 3, true, 2, "Blanco", false, "TRK456", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Zones",
+                columns: new[] { "Id", "Asset", "IsDeleted", "Name", "ParkingId" },
+                values: new object[,]
+                {
+                    { 1, true, false, "Zona A", 1 },
+                    { 2, true, false, "Zona B", 1 },
+                    { 3, true, false, "Zona VIP", 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "BlackList",
+                columns: new[] { "Id", "Asset", "IsDeleted", "Reason", "RestrictionDate", "VehicleId" },
+                values: new object[] { 1, true, false, "Infracción grave", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3 });
+
+            migrationBuilder.InsertData(
+                table: "Memberships",
+                columns: new[] { "Id", "Asset", "Currency", "DurationDays", "EndDate", "IsDeleted", "MembershipTypeId", "PriceAtPurchase", "StartDate", "VehicleId" },
+                values: new object[,]
+                {
+                    { 1, true, "USD", 30, new DateTime(2025, 1, 31, 0, 0, 0, 0, DateTimeKind.Utc), false, 1, 50m, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1 },
+                    { 2, true, "USD", 365, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, 2, 500m, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Sectors",
+                columns: new[] { "Id", "Asset", "Capacity", "IsDeleted", "Name", "TypeVehicleId", "ZonesId" },
+                values: new object[,]
+                {
+                    { 1, true, 10, false, "Sector 1", 1, 1 },
+                    { 2, true, 5, false, "Sector 2", 2, 2 },
+                    { 3, true, 3, false, "Sector VIP", 1, 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Slots",
+                columns: new[] { "Id", "Asset", "IsAvailable", "IsDeleted", "Name", "SectorsId" },
+                values: new object[,]
+                {
+                    { 1, true, true, false, "A1", 1 },
+                    { 2, true, true, false, "A2", 1 },
+                    { 3, true, true, false, "B1", 2 },
+                    { 4, true, true, false, "VIP1", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RegisteredVehicles",
+                columns: new[] { "Id", "Asset", "EntryDate", "ExitDate", "IsDeleted", "SlotsId", "VehicleId" },
+                values: new object[,]
+                {
+                    { 1, true, new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), false, 1, 1 },
+                    { 2, true, new DateTime(2025, 1, 1, 9, 0, 0, 0, DateTimeKind.Utc), null, false, 3, 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -653,8 +790,8 @@ namespace Entity.Migrations.PostgreSql
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Camara_ParkingId",
-                table: "Camara",
+                name: "IX_Camera_ParkingId",
+                table: "Camera",
                 column: "ParkingId");
 
             migrationBuilder.CreateIndex(
@@ -673,9 +810,14 @@ namespace Entity.Migrations.PostgreSql
                 column: "ModuleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Memberships_MemberShipTypeId",
+                name: "IX_Memberships_MembershipTypeId",
                 table: "Memberships",
-                column: "MemberShipTypeId");
+                column: "MembershipTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Memberships_VehicleId",
+                table: "Memberships",
+                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Parkings_ParkingCategoryId",
@@ -698,9 +840,9 @@ namespace Entity.Migrations.PostgreSql
                 column: "TypeVehicleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisteredVehicles_SlotId",
+                name: "IX_RegisteredVehicles_SlotsId",
                 table: "RegisteredVehicles",
-                column: "SlotId");
+                column: "SlotsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegisteredVehicles_VehicleId",
@@ -738,9 +880,9 @@ namespace Entity.Migrations.PostgreSql
                 column: "TypeVehicleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sectors_ZoneId",
+                name: "IX_Sectors_ZonesId",
                 table: "Sectors",
-                column: "ZoneId");
+                column: "ZonesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Slots_SectorsId",
@@ -758,15 +900,9 @@ namespace Entity.Migrations.PostgreSql
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_MembershipsId",
-                table: "Vehicles",
-                column: "MembershipsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_TypeVehicleId",
                 table: "Vehicles",
-                column: "TypeVehicleId",
-                unique: true);
+                column: "TypeVehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Zones_ParkingId",
@@ -781,10 +917,13 @@ namespace Entity.Migrations.PostgreSql
                 name: "BlackList");
 
             migrationBuilder.DropTable(
-                name: "Camara");
+                name: "Camera");
 
             migrationBuilder.DropTable(
                 name: "FormModule");
+
+            migrationBuilder.DropTable(
+                name: "Memberships");
 
             migrationBuilder.DropTable(
                 name: "Rates");
@@ -800,6 +939,9 @@ namespace Entity.Migrations.PostgreSql
 
             migrationBuilder.DropTable(
                 name: "Modules");
+
+            migrationBuilder.DropTable(
+                name: "MemberShipTypes");
 
             migrationBuilder.DropTable(
                 name: "RatesTypes");
@@ -829,9 +971,6 @@ namespace Entity.Migrations.PostgreSql
                 name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "Memberships");
-
-            migrationBuilder.DropTable(
                 name: "TypeVehicles");
 
             migrationBuilder.DropTable(
@@ -839,9 +978,6 @@ namespace Entity.Migrations.PostgreSql
 
             migrationBuilder.DropTable(
                 name: "Persons");
-
-            migrationBuilder.DropTable(
-                name: "MemberShipTypes");
 
             migrationBuilder.DropTable(
                 name: "Parkings");

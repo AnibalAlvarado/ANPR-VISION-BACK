@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Entity.Migrations.PostgreSql
+namespace Entity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250812140309_Pg_Esquemas")]
-    partial class Pg_Esquemas
+    [Migration("20250818083057_InitMainDb")]
+    partial class InitMainDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Reason")
@@ -54,9 +54,20 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("VehicleId");
 
                     b.ToTable("BlackList");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            IsDeleted = false,
+                            Reason = "Infracción grave",
+                            RestrictionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            VehicleId = 3
+                        });
                 });
 
-            modelBuilder.Entity("Entity.Models.Camara", b =>
+            modelBuilder.Entity("Entity.Models.Camera", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,12 +78,13 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Ip")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("ParkingId")
                         .HasColumnType("integer");
@@ -81,11 +93,37 @@ namespace Entity.Migrations.PostgreSql
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ParkingId");
 
-                    b.ToTable("Camara");
+                    b.ToTable("Camera");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Cam 1",
+                            ParkingId = 1,
+                            Resolution = "1080p",
+                            Url = "http://cam1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Cam VIP",
+                            ParkingId = 2,
+                            Resolution = "4K",
+                            Url = "http://cam-vip"
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Client", b =>
@@ -99,17 +137,15 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("PersonId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PersonaId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -117,6 +153,24 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("PersonId");
 
                     b.ToTable("Clients");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Cliente Demo",
+                            PersonId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Cliente Premium",
+                            PersonId = 2
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Form", b =>
@@ -134,7 +188,7 @@ namespace Entity.Migrations.PostgreSql
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -150,7 +204,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
+                            Asset = true,
                             Description = "Formulario principal",
                             IsDeleted = false,
                             Name = "Principal"
@@ -171,7 +225,7 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<int>("FormId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<int>("ModuleId")
@@ -189,7 +243,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
+                            Asset = true,
                             FormId = 1,
                             IsDeleted = false,
                             ModuleId = 1
@@ -208,26 +262,48 @@ namespace Entity.Migrations.PostgreSql
                         .HasColumnType("boolean");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Duration")
+                    b.Property<int>("DurationDaysBase")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("PriceBase")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
                     b.HasKey("Id");
 
                     b.ToTable("MemberShipTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            Description = "Membresía mensual",
+                            DurationDaysBase = 30,
+                            IsDeleted = false,
+                            Name = "Mensual",
+                            PriceBase = 50m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            Description = "Membresía anual",
+                            DurationDaysBase = 365,
+                            IsDeleted = false,
+                            Name = "Anual",
+                            PriceBase = 500m
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Memberships", b =>
@@ -238,20 +314,27 @@ namespace Entity.Migrations.PostgreSql
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<string>("Currency")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DurationDays")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("MemberShipTypeId")
+                    b.Property<int>("MembershipTypeId")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("PriceAtPurchase")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -261,9 +344,39 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MemberShipTypeId");
+                    b.HasIndex("MembershipTypeId");
+
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("Memberships");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            Currency = "USD",
+                            DurationDays = 30,
+                            EndDate = new DateTime(2025, 1, 31, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            MembershipTypeId = 1,
+                            PriceAtPurchase = 50m,
+                            StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            Currency = "USD",
+                            DurationDays = 365,
+                            EndDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            MembershipTypeId = 2,
+                            PriceAtPurchase = 500m,
+                            StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            VehicleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Module", b =>
@@ -281,7 +394,7 @@ namespace Entity.Migrations.PostgreSql
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -297,7 +410,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
+                            Asset = true,
                             Description = "Módulo de gestión",
                             IsDeleted = false,
                             Name = "Gestión"
@@ -315,7 +428,7 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Location")
@@ -324,7 +437,8 @@ namespace Entity.Migrations.PostgreSql
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("ParkingCategoryId")
                         .HasColumnType("integer");
@@ -334,6 +448,26 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("ParkingCategoryId");
 
                     b.ToTable("Parkings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            IsDeleted = false,
+                            Location = "Centro",
+                            Name = "Parqueadero Central",
+                            ParkingCategoryId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            IsDeleted = false,
+                            Location = "Norte",
+                            Name = "Parqueadero Norte",
+                            ParkingCategoryId = 2
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.ParkingCategory", b =>
@@ -348,15 +482,15 @@ namespace Entity.Migrations.PostgreSql
                         .HasColumnType("boolean");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("code")
                         .IsRequired()
@@ -365,6 +499,26 @@ namespace Entity.Migrations.PostgreSql
                     b.HasKey("Id");
 
                     b.ToTable("ParkingCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            Description = "Categoría general",
+                            IsDeleted = false,
+                            Name = "General",
+                            code = "GEN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            Description = "Categoría exclusiva",
+                            IsDeleted = false,
+                            Name = "VIP",
+                            code = "VIP"
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Permission", b =>
@@ -382,7 +536,7 @@ namespace Entity.Migrations.PostgreSql
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -398,7 +552,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
+                            Asset = true,
                             Description = "Permiso para ver",
                             IsDeleted = false,
                             Name = "Ver"
@@ -406,7 +560,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 2,
-                            Asset = false,
+                            Asset = true,
                             Description = "Permiso para editar",
                             IsDeleted = false,
                             Name = "Editar"
@@ -414,7 +568,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 3,
-                            Asset = false,
+                            Asset = true,
                             Description = "Permiso para eliminar",
                             IsDeleted = false,
                             Name = "Eliminar"
@@ -429,21 +583,32 @@ namespace Entity.Migrations.PostgreSql
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Firstname")
+                    b.Property<string>("Document")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Lastname")
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -455,20 +620,26 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
-                            Firstname = "Admin",
+                            Age = 30,
+                            Asset = true,
+                            Document = "0001",
+                            Email = "admin@mail.com",
+                            FirstName = "Admin",
                             IsDeleted = false,
-                            Lastname = "Principal",
-                            PhoneNumber = "111111111"
+                            LastName = "Principal",
+                            Phone = "111111111"
                         },
                         new
                         {
                             Id = 2,
-                            Asset = false,
-                            Firstname = "Usuario",
+                            Age = 25,
+                            Asset = true,
+                            Document = "0002",
+                            Email = "usuario@mail.com",
+                            FirstName = "Usuario",
                             IsDeleted = false,
-                            Lastname = "Demo",
-                            PhoneNumber = "222222222"
+                            LastName = "Demo",
+                            Phone = "222222222"
                         });
                 });
 
@@ -490,8 +661,13 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<DateTime>("EndHour")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("ParkingId")
                         .HasColumnType("integer");
@@ -509,8 +685,8 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<int>("TypeVehicleId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Year")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -521,6 +697,53 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("TypeVehicleId");
 
                     b.ToTable("Rates");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 2.5m,
+                            Asset = true,
+                            EndHour = new DateTime(2025, 1, 1, 20, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Tarifa Día",
+                            ParkingId = 1,
+                            RatesTypeId = 1,
+                            StarHour = new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc),
+                            Type = "Hora",
+                            TypeVehicleId = 1,
+                            Year = 2025
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 1.5m,
+                            Asset = true,
+                            EndHour = new DateTime(2025, 1, 2, 6, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Tarifa Noche",
+                            ParkingId = 1,
+                            RatesTypeId = 1,
+                            StarHour = new DateTime(2025, 1, 1, 20, 0, 0, 0, DateTimeKind.Utc),
+                            Type = "Hora",
+                            TypeVehicleId = 2,
+                            Year = 2025
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 5m,
+                            Asset = true,
+                            EndHour = new DateTime(2025, 1, 1, 20, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            Name = "Tarifa VIP",
+                            ParkingId = 2,
+                            RatesTypeId = 1,
+                            StarHour = new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc),
+                            Type = "Hora",
+                            TypeVehicleId = 1,
+                            Year = 2025
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.RatesType", b =>
@@ -535,19 +758,29 @@ namespace Entity.Migrations.PostgreSql
                         .HasColumnType("boolean");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 
                     b.ToTable("RatesTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            Description = "Tarifa por hora",
+                            IsDeleted = false,
+                            Name = "Hora"
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.RegisteredVehicles", b =>
@@ -567,13 +800,10 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<DateTime?>("ExitDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("SlotId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("VehiceId")
+                    b.Property<int?>("SlotsId")
                         .HasColumnType("integer");
 
                     b.Property<int>("VehicleId")
@@ -581,11 +811,32 @@ namespace Entity.Migrations.PostgreSql
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SlotId");
+                    b.HasIndex("SlotsId");
 
                     b.HasIndex("VehicleId");
 
                     b.ToTable("RegisteredVehicles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            EntryDate = new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc),
+                            ExitDate = new DateTime(2025, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            SlotsId = 1,
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            EntryDate = new DateTime(2025, 1, 1, 9, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false,
+                            SlotsId = 3,
+                            VehicleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Rol", b =>
@@ -603,7 +854,7 @@ namespace Entity.Migrations.PostgreSql
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -619,7 +870,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
+                            Asset = true,
                             Description = "Rol de administrador",
                             IsDeleted = false,
                             Name = "Administrador"
@@ -627,7 +878,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 2,
-                            Asset = false,
+                            Asset = true,
                             Description = "Rol de usuario estándar",
                             IsDeleted = false,
                             Name = "Usuario"
@@ -648,7 +899,7 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<int>("FormId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<int>("PermissionId")
@@ -671,7 +922,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
+                            Asset = true,
                             FormId = 1,
                             IsDeleted = false,
                             PermissionId = 1,
@@ -680,7 +931,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 2,
-                            Asset = false,
+                            Asset = true,
                             FormId = 1,
                             IsDeleted = false,
                             PermissionId = 2,
@@ -689,7 +940,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 3,
-                            Asset = false,
+                            Asset = true,
                             FormId = 1,
                             IsDeleted = false,
                             PermissionId = 1,
@@ -708,7 +959,7 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<int>("RolId")
@@ -729,7 +980,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 1,
-                            Asset = false,
+                            Asset = true,
                             IsDeleted = false,
                             RolId = 1,
                             UserId = 1
@@ -737,7 +988,7 @@ namespace Entity.Migrations.PostgreSql
                         new
                         {
                             Id = 2,
-                            Asset = false,
+                            Asset = true,
                             IsDeleted = false,
                             RolId = 2,
                             UserId = 2
@@ -758,26 +1009,59 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<int>("Capacity")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("TypeVehicleId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ZoneId")
+                    b.Property<int>("ZonesId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TypeVehicleId");
 
-                    b.HasIndex("ZoneId");
+                    b.HasIndex("ZonesId");
 
                     b.ToTable("Sectors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            Capacity = 10,
+                            IsDeleted = false,
+                            Name = "Sector 1",
+                            TypeVehicleId = 1,
+                            ZonesId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            Capacity = 5,
+                            IsDeleted = false,
+                            Name = "Sector 2",
+                            TypeVehicleId = 2,
+                            ZonesId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset = true,
+                            Capacity = 3,
+                            IsDeleted = false,
+                            Name = "Sector VIP",
+                            TypeVehicleId = 1,
+                            ZonesId = 3
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Slots", b =>
@@ -794,12 +1078,13 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("SectorsId")
                         .HasColumnType("integer");
@@ -809,6 +1094,44 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("SectorsId");
 
                     b.ToTable("Slots");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            IsAvailable = true,
+                            IsDeleted = false,
+                            Name = "A1",
+                            SectorsId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            IsAvailable = true,
+                            IsDeleted = false,
+                            Name = "A2",
+                            SectorsId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset = true,
+                            IsAvailable = true,
+                            IsDeleted = false,
+                            Name = "B1",
+                            SectorsId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Asset = true,
+                            IsAvailable = true,
+                            IsDeleted = false,
+                            Name = "VIP1",
+                            SectorsId = 3
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.TypeVehicle", b =>
@@ -822,16 +1145,40 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 
                     b.ToTable("TypeVehicles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Auto"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Moto"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Camión"
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.User", b =>
@@ -849,7 +1196,7 @@ namespace Entity.Migrations.PostgreSql
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Password")
@@ -874,9 +1221,9 @@ namespace Entity.Migrations.PostgreSql
                         {
                             Id = 1,
                             Asset = true,
-                            Email = "anibalalvaradoandrade@gmail.com",
+                            Email = "admin@mail.com",
                             IsDeleted = false,
-                            Password = "$2a$11$DaXH05pwqLLvo3VQjk7ddeOGxfED9..AXkgw.j1ZTnmu6ylhh6S/2",
+                            Password = "$2a$12$C3DSGP6PRwi3a4hsLdnrs.kYnRkJ0PgR3ky/AbI5Dmem7U3e/lSpq",
                             PersonId = 1,
                             Username = "admin"
                         },
@@ -884,9 +1231,9 @@ namespace Entity.Migrations.PostgreSql
                         {
                             Id = 2,
                             Asset = true,
-                            Email = "usuario@demo.com",
+                            Email = "usuario@mail.com",
                             IsDeleted = false,
-                            Password = "$2a$11$qqw7WlPtGhlGmJvtYeHFTOrv3lOVPrVzLl2u9wbrF.n1yNspJt7p2",
+                            Password = "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm",
                             PersonId = 2,
                             Username = "usuario"
                         });
@@ -906,11 +1253,11 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
 
-                    b.Property<int>("MembershipsId")
-                        .HasColumnType("integer");
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Plate")
                         .IsRequired()
@@ -919,20 +1266,45 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<int>("TypeVehicleId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("color")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("MembershipsId");
-
-                    b.HasIndex("TypeVehicleId")
-                        .IsUnique();
+                    b.HasIndex("TypeVehicleId");
 
                     b.ToTable("Vehicles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            ClientId = 1,
+                            Color = "Rojo",
+                            IsDeleted = false,
+                            Plate = "ABC123",
+                            TypeVehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            ClientId = 1,
+                            Color = "Negro",
+                            IsDeleted = false,
+                            Plate = "XYZ987",
+                            TypeVehicleId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset = true,
+                            ClientId = 2,
+                            Color = "Blanco",
+                            IsDeleted = false,
+                            Plate = "TRK456",
+                            TypeVehicleId = 3
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.Zones", b =>
@@ -946,12 +1318,13 @@ namespace Entity.Migrations.PostgreSql
                     b.Property<bool>("Asset")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("ParkingId")
                         .HasColumnType("integer");
@@ -961,6 +1334,32 @@ namespace Entity.Migrations.PostgreSql
                     b.HasIndex("ParkingId");
 
                     b.ToTable("Zones");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Zona A",
+                            ParkingId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Zona B",
+                            ParkingId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset = true,
+                            IsDeleted = false,
+                            Name = "Zona VIP",
+                            ParkingId = 2
+                        });
                 });
 
             modelBuilder.Entity("Entity.Models.BlackList", b =>
@@ -974,7 +1373,7 @@ namespace Entity.Migrations.PostgreSql
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Entity.Models.Camara", b =>
+            modelBuilder.Entity("Entity.Models.Camera", b =>
                 {
                     b.HasOne("Entity.Models.Parking", "Parking")
                         .WithMany("Camaras")
@@ -1017,19 +1416,27 @@ namespace Entity.Migrations.PostgreSql
 
             modelBuilder.Entity("Entity.Models.Memberships", b =>
                 {
-                    b.HasOne("Entity.Models.MemberShipType", "MemberShipType")
+                    b.HasOne("Entity.Models.MemberShipType", "MembershipType")
                         .WithMany("Memberships")
-                        .HasForeignKey("MemberShipTypeId")
+                        .HasForeignKey("MembershipTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MemberShipType");
+                    b.HasOne("Entity.Models.Vehicle", "Vehicle")
+                        .WithMany("Memberships")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MembershipType");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Entity.Models.Parking", b =>
                 {
                     b.HasOne("Entity.Models.ParkingCategory", "ParkingCategory")
-                        .WithMany("Parking")
+                        .WithMany("Parkings")
                         .HasForeignKey("ParkingCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1040,7 +1447,7 @@ namespace Entity.Migrations.PostgreSql
             modelBuilder.Entity("Entity.Models.Rates", b =>
                 {
                     b.HasOne("Entity.Models.Parking", "Parking")
-                        .WithMany()
+                        .WithMany("Rates")
                         .HasForeignKey("ParkingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1066,19 +1473,17 @@ namespace Entity.Migrations.PostgreSql
 
             modelBuilder.Entity("Entity.Models.RegisteredVehicles", b =>
                 {
-                    b.HasOne("Entity.Models.Slots", "Slot")
-                        .WithMany()
-                        .HasForeignKey("SlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Entity.Models.Slots", "Slots")
+                        .WithMany("RegisteredVehicles")
+                        .HasForeignKey("SlotsId");
 
                     b.HasOne("Entity.Models.Vehicle", "Vehicle")
-                        .WithMany()
+                        .WithMany("RegisteredVehicles")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Slot");
+                    b.Navigation("Slots");
 
                     b.Navigation("Vehicle");
                 });
@@ -1132,31 +1537,31 @@ namespace Entity.Migrations.PostgreSql
             modelBuilder.Entity("Entity.Models.Sectors", b =>
                 {
                     b.HasOne("Entity.Models.TypeVehicle", "TypeVehicle")
-                        .WithMany("sectors")
+                        .WithMany("Sectors")
                         .HasForeignKey("TypeVehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entity.Models.Zones", "Zone")
+                    b.HasOne("Entity.Models.Zones", "Zones")
                         .WithMany("Sectors")
-                        .HasForeignKey("ZoneId")
+                        .HasForeignKey("ZonesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("TypeVehicle");
 
-                    b.Navigation("Zone");
+                    b.Navigation("Zones");
                 });
 
             modelBuilder.Entity("Entity.Models.Slots", b =>
                 {
-                    b.HasOne("Entity.Models.Sectors", "Sector")
+                    b.HasOne("Entity.Models.Sectors", "Sectors")
                         .WithMany("Slots")
                         .HasForeignKey("SectorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Sector");
+                    b.Navigation("Sectors");
                 });
 
             modelBuilder.Entity("Entity.Models.User", b =>
@@ -1173,26 +1578,18 @@ namespace Entity.Migrations.PostgreSql
             modelBuilder.Entity("Entity.Models.Vehicle", b =>
                 {
                     b.HasOne("Entity.Models.Client", "Client")
-                        .WithMany()
+                        .WithMany("Vehicles")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entity.Models.Memberships", "Memberships")
-                        .WithMany("Vehicles")
-                        .HasForeignKey("MembershipsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Entity.Models.TypeVehicle", "TypeVehicle")
-                        .WithOne("Vehicle")
-                        .HasForeignKey("Entity.Models.Vehicle", "TypeVehicleId")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("TypeVehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
-
-                    b.Navigation("Memberships");
 
                     b.Navigation("TypeVehicle");
                 });
@@ -1208,6 +1605,11 @@ namespace Entity.Migrations.PostgreSql
                     b.Navigation("Parking");
                 });
 
+            modelBuilder.Entity("Entity.Models.Client", b =>
+                {
+                    b.Navigation("Vehicles");
+                });
+
             modelBuilder.Entity("Entity.Models.Form", b =>
                 {
                     b.Navigation("FormModules");
@@ -1220,11 +1622,6 @@ namespace Entity.Migrations.PostgreSql
                     b.Navigation("Memberships");
                 });
 
-            modelBuilder.Entity("Entity.Models.Memberships", b =>
-                {
-                    b.Navigation("Vehicles");
-                });
-
             modelBuilder.Entity("Entity.Models.Module", b =>
                 {
                     b.Navigation("FormModules");
@@ -1234,12 +1631,14 @@ namespace Entity.Migrations.PostgreSql
                 {
                     b.Navigation("Camaras");
 
+                    b.Navigation("Rates");
+
                     b.Navigation("Zones");
                 });
 
             modelBuilder.Entity("Entity.Models.ParkingCategory", b =>
                 {
-                    b.Navigation("Parking");
+                    b.Navigation("Parkings");
                 });
 
             modelBuilder.Entity("Entity.Models.RatesType", b =>
@@ -1252,14 +1651,25 @@ namespace Entity.Migrations.PostgreSql
                     b.Navigation("Slots");
                 });
 
+            modelBuilder.Entity("Entity.Models.Slots", b =>
+                {
+                    b.Navigation("RegisteredVehicles");
+                });
+
             modelBuilder.Entity("Entity.Models.TypeVehicle", b =>
                 {
                     b.Navigation("Rates");
 
-                    b.Navigation("Vehicle")
-                        .IsRequired();
+                    b.Navigation("Sectors");
 
-                    b.Navigation("sectors");
+                    b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("Entity.Models.Vehicle", b =>
+                {
+                    b.Navigation("Memberships");
+
+                    b.Navigation("RegisteredVehicles");
                 });
 
             modelBuilder.Entity("Entity.Models.Zones", b =>

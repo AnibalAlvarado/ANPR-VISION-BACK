@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace Entity.Dtos
 {
-    public class VehicleDto:GenericDto
+    public class VehicleDto: BaseDto
     {
-        public string Plate { get; set; } 
-
-        public string Color { get; set; }
+        public string Plate { get; set; } = string.Empty;
+        public string? Color { get; set; }
         public int TypeVehicleId { get; set; }
-
         public int ClientId { get; set; }
 
+        // Navegación 
+        public string? Client { get; set; }
+        public string? TypeVehicle { get; set; } 
     }
 }

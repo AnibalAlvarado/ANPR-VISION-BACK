@@ -35,7 +35,7 @@ namespace Data.Implementations
                     .Include(u => u.Person)
                     .ToListAsync();
 
-                await AuditAsync("GetAll");
+                //await AuditAsync("GetAll");
 
                 return users;
             }
@@ -51,7 +51,7 @@ namespace Data.Implementations
             try
             {
                 // Auditar acción GetById, enviamos la entidad si la encontró
-                await AuditAsync("GetById", id);
+                //await AuditAsync("GetById", id);
                 return await _context.Users
                     .Include(u => u.Person)
                     .FirstOrDefaultAsync(u => u.Id == id);
@@ -69,7 +69,7 @@ namespace Data.Implementations
         {
             try
             {
-                await AuditAsync("GetUserByUsernameAsync");
+                //await AuditAsync("GetUserByUsernameAsync");
                 return await _context.Set<User>()
                     .FirstOrDefaultAsync(u => u.Username == username && u.Asset);
             }
@@ -121,7 +121,7 @@ namespace Data.Implementations
                     )
                     .ToListAsync();
 
-                await AuditAsync("GetUserRolesAsync", userId);
+                //await AuditAsync("GetUserRolesAsync", userId);
 
                 // Si no tiene roles, devolver "Guest" como único rol
                 return userRoles.Any() ? userRoles : new List<string> { "Guest" };
@@ -153,7 +153,7 @@ namespace Data.Implementations
                     )
                     .ToListAsync();
 
-                await AuditAsync("GetUserRolesAsync", userId);
+                //await AuditAsync("GetUserRolesAsync", userId);
 
                 return userRoles;
             }

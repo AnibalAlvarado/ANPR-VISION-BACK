@@ -112,6 +112,7 @@ namespace Web.Extensions
 
 
             services.AddTransient<Validations>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
             return services;
         }
     }

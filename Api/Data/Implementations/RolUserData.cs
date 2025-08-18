@@ -28,7 +28,7 @@ namespace Data.Implementations
 
         public async Task<IEnumerable<RolUser>> GetAllJoinAsync()
         {
-            await AuditAsync("GetAllJoinAsync");
+            //await AuditAsync("GetAllJoinAsync");
 
             return await _context.RolUser
                 .Include(x => x.User)

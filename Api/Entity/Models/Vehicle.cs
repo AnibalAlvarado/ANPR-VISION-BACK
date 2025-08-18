@@ -9,9 +9,8 @@ namespace Entity.Models
 {
     public class Vehicle : BaseModel
     {
-    
-        public string Plate { get; set; }
-        public string? color { get; set; }
+        public string Plate { get; set; } = string.Empty;
+        public string? Color { get; set; }
         public int TypeVehicleId { get; set; }
         public int ClientId { get; set; }
 

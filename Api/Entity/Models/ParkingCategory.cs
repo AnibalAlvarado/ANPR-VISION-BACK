@@ -10,7 +10,7 @@ namespace Entity.Models
     {
        
         public string code { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         // Navigation
         public ICollection<Parking> Parkings { get; set; } = new List<Parking>();

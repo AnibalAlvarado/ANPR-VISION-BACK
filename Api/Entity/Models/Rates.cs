@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Rates : BaseModel
+    public class Rates : GenericModel
     {
   
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         public decimal Amount { get; set; }
         public DateTime  StarHour { get; set; }
         public DateTime EndHour { get; set; }

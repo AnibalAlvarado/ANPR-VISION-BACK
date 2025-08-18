@@ -9,16 +9,18 @@ namespace Entity.Dtos
 {
     public class RatesDto:GenericDto
     {
-    
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         public decimal Amount { get; set; }
-        public DateTime StarHour { get; set; }
-        public DateTime EndHour { get; set; }
+        public DateTime? StarHour { get; set; }
+        public DateTime? EndHour { get; set; }
+        public int? Year { get; set; }
 
-        public DateTime Year { get; set; }
         public int ParkingId { get; set; }
-
         public int RatesTypeId { get; set; }
         public int TypeVehicleId { get; set; }
+
+        public string? RatesType { get; set; }
+        public string? TypeVehicle { get; set; }
+        public string? Parking { get; set; }
     }
 }
