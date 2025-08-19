@@ -9,9 +9,11 @@ namespace Entity.Dtos
 {
     public class SectorsDto:GenericDto
     {
- 
         public int Capacity { get; set; }
-        public int ZoneId { get; set; }
+        public int ZonesId { get; set; }
         public int TypeVehicleId { get; set; }
+
+        public string? Zones { get; set; }
+        public string? TypeVehicle { get; set; }
     }
 }

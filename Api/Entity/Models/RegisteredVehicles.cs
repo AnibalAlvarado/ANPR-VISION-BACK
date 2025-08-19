@@ -8,13 +8,15 @@ namespace Entity.Models
 {
     public class RegisteredVehicles : BaseModel
     {
-       
         public DateTime EntryDate { get; set; }
         public DateTime? ExitDate { get; set; }
-        public int VehiceId { get; set; }
-        public Vehicle Vehicle { get; set; }
 
-        public Slots Slot { get; set; }
+        public int VehicleId { get; set; }
+        public Vehicle Vehicle { get; set; } = null!;
+
+        // Opcional
+        public int? SlotsId { get; set; }
+        public Slots? Slots { get; set; }
 
     }
 }

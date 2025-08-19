@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utilities.Audit.Services;
 using Utilities.Exceptions;
+using Utilities.Helpers;
 using Utilities.Interfaces;
 
 namespace Data.Implementations
@@ -28,7 +29,7 @@ namespace Data.Implementations
 
         public async Task<IEnumerable<RolUser>> GetAllJoinAsync()
         {
-            await AuditAsync("GetAllJoinAsync");
+            //await AuditAsync("GetAllJoinAsync");
 
             return await _context.RolUser
                 .Include(x => x.User)
@@ -37,17 +38,24 @@ namespace Data.Implementations
         }
 
 
-        public override async Task<IEnumerable<RolUser>> GetAll()
+        public override async Task<IEnumerable<RolUser>> GetAll(IDictionary<string, string?>? filters = null)
         {
-            var entities = await _context.RolUser
+            var query = _context.RolUser
                 .Include(ru => ru.User)
                 .Include(ru => ru.Rol)
-                .ToListAsync();
+                .AsQueryable();
 
-            await AuditAsync("GetAll");
+            // si quieres, también puedes aplicar filtros genéricos aquí
+            if (filters != null && filters.Any())
+                query = query.ApplyFilters(filters);
+
+            var entities = await query.ToListAsync();
+
+            //await AuditAsync("GetAll");
 
             return entities;
         }
+
         public override async Task<RolUser> GetById(int id)
         {
             await AuditAsync("GetById", id);

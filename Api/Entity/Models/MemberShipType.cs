@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class MemberShipType : BaseModel
+    public class MemberShipType : GenericModel
     {
-        
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        public int Duration { get; set; } 
-        public List<Memberships> Memberships { get; set; } 
+
+        public string? Description { get; set; }
+        public decimal PriceBase { get; set; }
+        public int DurationDaysBase { get; set; }
+
+        public ICollection<Memberships> Memberships { get; set; } = new List<Memberships>();
     }
 }

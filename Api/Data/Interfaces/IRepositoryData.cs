@@ -19,7 +19,7 @@ namespace Data.Interfaces
         /// <returns></returns>
         /// 
 
-        Task<IEnumerable<T>> GetAll();
+        Task<IEnumerable<T>> GetAll(IDictionary<string, string?>? filters = null);
 
         /// <summary>
         /// Obtener por ID

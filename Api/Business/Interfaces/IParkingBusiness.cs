@@ -10,6 +10,6 @@ namespace Business.Interfaces
 {
     public interface IParkingBusiness : IRepositoryBusiness<Parking, ParkingDto>
     {
-
+        Task<IEnumerable<ParkingDto>> GetAllJoinAsync();
     }
 }

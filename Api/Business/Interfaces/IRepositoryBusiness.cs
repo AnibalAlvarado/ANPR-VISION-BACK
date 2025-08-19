@@ -12,12 +12,12 @@ namespace Business.Interfaces
 {
     public interface IRepositoryBusiness<T,D> where T : BaseModel where D : BaseDto
     {
-     
+
         /// <summary>
         /// Obtener 
         /// </summary>
         /// <returns></returns>
-        Task<List<D>> GetAll();
+        Task<List<D>> GetAll(IDictionary<string, string?>? filters = null);
         /// <summary>
         /// Obtener por ID
         /// </summary>

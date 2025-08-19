@@ -10,11 +10,8 @@ namespace Entity.Dtos
     public class BaseDto
     {
         public int Id { get; set; }
-        public bool Asset { get; set; }
-        //public bool IsDelete { get; set; }
-
-        public bool IsDeleted { get; set; } = false;
-
+        public bool? Asset { get; set; }
+        public bool? IsDeleted { get; set; } = false;
 
     }
 }

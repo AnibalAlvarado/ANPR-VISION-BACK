@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Client : BaseModel
+    public class Client : GenericModel
     {
-
-        public string Name { get; set; }
-        public int  PersonaId { get; set; }
-        public Person Person { get; set; }
+        public int  PersonId { get; set; }
+        // Navigation
+        public Person Person { get; set; } = null!;
+        public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
     }
 }

@@ -17,7 +17,7 @@ namespace Business.Implementations
         /// Obtener 
         /// </summary>
         /// <returns></returns>
-        public abstract Task<List<D>> GetAll();
+        public abstract Task<List<D>> GetAll(IDictionary<string, string?>? filters = null);
         /// <summary>
         /// Obtener por ID
         /// </summary>

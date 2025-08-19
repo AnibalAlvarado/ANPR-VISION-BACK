@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Audit.Services;
+using Utilities.Helpers;
 using Utilities.Interfaces;
 
 namespace Data.Implementations
@@ -27,15 +28,21 @@ namespace Data.Implementations
             _auditService = auditService;
         }
 
-        public override async Task<IEnumerable<User>> GetAll()
+        public override async Task<IEnumerable<User>> GetAll(IDictionary<string, string?>? filters = null)
         {
             try
             {
-                var users = await _context.Users
+                var query = _context.Users
                     .Include(u => u.Person)
-                    .ToListAsync();
+                    .AsQueryable();
 
-                await AuditAsync("GetAll");
+                // 👉 aplicar filtros dinámicos si vienen
+                if (filters != null && filters.Any())
+                    query = query.ApplyFilters(filters);
+
+                var users = await query.ToListAsync();
+
+                //await AuditAsync("GetAll");
 
                 return users;
             }
@@ -46,12 +53,13 @@ namespace Data.Implementations
             }
         }
 
+
         public override async Task<User?> GetById(int id)
         {
             try
             {
                 // Auditar acción GetById, enviamos la entidad si la encontró
-                await AuditAsync("GetById", id);
+                //await AuditAsync("GetById", id);
                 return await _context.Users
                     .Include(u => u.Person)
                     .FirstOrDefaultAsync(u => u.Id == id);
@@ -69,7 +77,7 @@ namespace Data.Implementations
         {
             try
             {
-                await AuditAsync("GetUserByUsernameAsync");
+                //await AuditAsync("GetUserByUsernameAsync");
                 return await _context.Set<User>()
                     .FirstOrDefaultAsync(u => u.Username == username && u.Asset);
             }
@@ -121,7 +129,7 @@ namespace Data.Implementations
                     )
                     .ToListAsync();
 
-                await AuditAsync("GetUserRolesAsync", userId);
+                //await AuditAsync("GetUserRolesAsync", userId);
 
                 // Si no tiene roles, devolver "Guest" como único rol
                 return userRoles.Any() ? userRoles : new List<string> { "Guest" };
@@ -153,7 +161,7 @@ namespace Data.Implementations
                     )
                     .ToListAsync();
 
-                await AuditAsync("GetUserRolesAsync", userId);
+                //await AuditAsync("GetUserRolesAsync", userId);
 
                 return userRoles;
             }

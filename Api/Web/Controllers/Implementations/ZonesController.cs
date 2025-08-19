@@ -10,17 +10,14 @@ namespace Web.Controllers.Implementations
     public class ZonesController : RepositoryController<Zones, ZonesDto>
     {
         private readonly IZonesBusiness _business;
-
         public ZonesController(IZonesBusiness business)
             : base(business)
         {
             _business = business;
-
         }
 
-        // Endpoint personalizado para GetAllJoinAsync
         [HttpGet("join")]
-        public async Task<ActionResult<IEnumerable<ZonesDto>>> GetAllJoinAsync()
+        public async Task<ActionResult<IEnumerable<ZonesDto>>> GetAllJoin()
         {
             try
             {
@@ -35,7 +32,28 @@ namespace Web.Controllers.Implementations
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse<IEnumerable<ZonesDto>>(null, false, ex.Message, null);
+                var response = new ApiResponse<IEnumerable<ZonesDto>>(null, false, ex.Message.ToString(), null);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+        [HttpGet("by-parking/{parkingId}")]
+        public async Task<ActionResult<IEnumerable<ZonesDto>>> GetAllByParkingId([FromRoute]int parkingId)
+        {
+            try
+            {
+                IEnumerable<ZonesDto> data = await _business.GetAllByParkingId(parkingId);
+                if (data == null || !data.Any())
+                {
+                    var responseNull = new ApiResponse<IEnumerable<ZonesDto>>(null, false, "Registro no encontrado", null);
+                    return NotFound(responseNull);
+                }
+                var response = new ApiResponse<IEnumerable<ZonesDto>>(data, true, "Ok", null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<IEnumerable<ZonesDto>>(null, false, ex.Message.ToString(), null);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }

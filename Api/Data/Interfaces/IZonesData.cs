@@ -1,4 +1,5 @@
-﻿using Entity.Models;
+﻿using Entity.Dtos;
+using Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,7 @@ namespace Data.Interfaces
 {
     public interface IZonesData : IRepositoryData<Zones>
     {
-        Task<IEnumerable<Zones>> GetAllJoinAsync();
-
-
+        Task<IEnumerable<ZonesDto>> GetAllJoinAsync();
+        Task<IEnumerable<Zones>> GetAllByParkingId(int parkingId);
     }
 }

@@ -46,11 +46,6 @@ namespace Business.Implementations
             var entities = await _data.GetAllJoinAsync();
             return _mapper.Map<IEnumerable<RolUserDto>>(entities);
         }
-        public override async Task<List<RolUserDto>> GetAll()
-        {
-            var entities = await _data.GetAll();
-            return _mapper.Map<List<RolUserDto>>(entities);
-        }
 
         public override async Task<RolUserDto> GetById(int id)
         {

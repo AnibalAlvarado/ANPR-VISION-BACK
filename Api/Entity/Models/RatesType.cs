@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class RatesType : BaseModel
+    public class RatesType : GenericModel
     {
-     
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<Rates> Rates { get; set; }
+        public string? Description { get; set; }
+        public ICollection<Rates> Rates { get; set; } = new List<Rates>();
     }
 }
