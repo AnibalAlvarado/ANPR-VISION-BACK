@@ -6,7 +6,7 @@ namespace Web.Controllers.Interfaces
 {
     public interface IRepositoryController<T,D> where T : BaseModel where D : BaseDto
     {
-        Task<ActionResult<IEnumerable<D>>> GetAll();
+        Task<ActionResult<IEnumerable<D>>> GetAll([FromQuery] Dictionary<string, string?> filters);
 
         Task<ActionResult<D>> GetById(int id);
 

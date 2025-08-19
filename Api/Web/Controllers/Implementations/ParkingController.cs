@@ -32,7 +32,7 @@ namespace Web.Controllers.Implementations
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse<IEnumerable<ParkingDto>>(null, false, ex.Message.ToString(), null);
+                var response = new ApiResponse<IEnumerable<ParkingDto>>(null, false, ex.Message, null);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }

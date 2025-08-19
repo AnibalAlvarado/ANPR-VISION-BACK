@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Audit.Services;
@@ -43,6 +44,14 @@ namespace Data.Implementations
                         ? p.Parking.Name
                         : null
                 })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Zones>> GetAllByParkingId(int parkingId)
+        {
+            return await _context.Zones
+                .AsNoTracking()
+                .Where(s => s.ParkingId == parkingId && s.IsDeleted == false)
                 .ToListAsync();
         }
 

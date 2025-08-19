@@ -10,6 +10,7 @@ namespace Business.Interfaces
 {
     public interface ISlotsBusiness : IRepositoryBusiness<Slots, SlotsDto>
     {
-
+        Task<IEnumerable<SlotsDto>> GetAllJoinAsync();
+        Task<IEnumerable<SlotsDto>> GetAllBySectorId(int sectorId);
     }
 }

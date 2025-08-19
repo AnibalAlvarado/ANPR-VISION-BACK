@@ -57,24 +57,19 @@ namespace Data.Implementations
             await _auditService.SaveAuditAsync(entry);
         }
 
-        public override async Task<IEnumerable<T>> GetAll()
+        public override async Task<IEnumerable<T>> GetAll(IDictionary<string, string?>? filters = null)
         {
             try
             {
-                var lstModel = await _context.Set<T>()
-                    //.Where(x => x.IsDeleted == false) // 👈 Solo activos
-                    .ToListAsync();
+                var query = _context.Set<T>().AsQueryable();
 
-                return lstModel;
+                if (filters != null && filters.Any())
+                    query = query.ApplyFilters(filters);
+
+                return await query.ToListAsync();
             }
-            catch (DbException ex)
+            catch (Exception)
             {
-                Console.WriteLine("Database error: " + ex.Message);
-                throw;
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine("Database update (EF) failed: " + ex.InnerException?.Message);
                 throw;
             }
         }

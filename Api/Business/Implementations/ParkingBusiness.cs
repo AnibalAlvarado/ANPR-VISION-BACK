@@ -25,8 +25,24 @@ namespace Business.Implementations
 
         public async Task<IEnumerable<ParkingDto>> GetAllJoinAsync()
         {
-            var entities = await _data.GetAllJoinAsync();
-            return _mapper.Map<IEnumerable<ParkingDto>>(entities);
+            try
+            {
+                IEnumerable<ParkingDto> entities = await _data.GetAllJoinAsync();
+                if (!entities.Any()) throw new InvalidOperationException("No se encontraron los parqueaderos.");
+                return entities;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException("error: ", invEx);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException("error: ", argEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los parqueaderos.", ex);
+            }
         }
 
     }

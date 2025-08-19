@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Audit.Services;
+using Utilities.Helpers;
 using Utilities.Interfaces;
 
 namespace Data.Implementations
@@ -27,13 +28,19 @@ namespace Data.Implementations
             _auditService = auditService;
         }
 
-        public override async Task<IEnumerable<User>> GetAll()
+        public override async Task<IEnumerable<User>> GetAll(IDictionary<string, string?>? filters = null)
         {
             try
             {
-                var users = await _context.Users
+                var query = _context.Users
                     .Include(u => u.Person)
-                    .ToListAsync();
+                    .AsQueryable();
+
+                // 👉 aplicar filtros dinámicos si vienen
+                if (filters != null && filters.Any())
+                    query = query.ApplyFilters(filters);
+
+                var users = await query.ToListAsync();
 
                 //await AuditAsync("GetAll");
 
@@ -45,6 +52,7 @@ namespace Data.Implementations
                 throw;
             }
         }
+
 
         public override async Task<User?> GetById(int id)
         {
