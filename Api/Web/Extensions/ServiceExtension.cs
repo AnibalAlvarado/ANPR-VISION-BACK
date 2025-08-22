@@ -66,7 +66,7 @@ namespace Web.Extensions
             services.AddScoped<IUserBusiness, UserBusiness>();
             services.AddScoped<IUserData, UserData>();
 
-            services.AddScoped<IBlackListBusiness, BlackistBusiness>();
+            services.AddScoped<IBlackListBusiness, BlackListBusiness>();
             services.AddScoped<IBlackListData, BlackListData>();
 
             services.AddScoped<IClientBusiness, ClientBusiness>();

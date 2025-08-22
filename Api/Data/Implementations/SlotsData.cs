@@ -55,5 +55,14 @@ namespace Data.Implementations
                 .ToListAsync();
         }
 
+        public Task<bool> ExistsAsync<T>(Func<object, bool> value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task GetByIdAsync<T>(int sectorsId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

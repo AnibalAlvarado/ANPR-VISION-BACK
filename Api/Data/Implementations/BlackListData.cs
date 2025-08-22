@@ -20,5 +20,10 @@ namespace Data.Implementations
         {
 
         }
+
+        public Task<bool> ExistsAsync<T>(Func<object, bool> value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
