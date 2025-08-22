@@ -21,7 +21,7 @@ namespace Data.Implementations
         /// <returns></returns>
         /// 
 
-        public abstract Task<IEnumerable<T>> GetAll();
+        public abstract Task<IEnumerable<T>> GetAll(IDictionary<string, string?>? filters = null);
 
         /// <summary>
         /// Obtener por ID

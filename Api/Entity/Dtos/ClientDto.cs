@@ -11,5 +11,7 @@ namespace Entity.Dtos
     public class ClientDto: GenericDto
     {
         public int PersonaId { get; set; }
+        // Navigation
+        public string? Person { get; set; }
     }
 }

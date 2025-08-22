@@ -45,14 +45,19 @@ namespace Business.Implementations
             return await _data.Delete(id);
         }
 
-        public override async Task<List<D>> GetAll()
+        public override async Task<List<D>> GetAll(IDictionary<string, string?>? filters = null)
         {
             try
             {
-                var entities = await _data.GetAll();
+                var entities = await _data.GetAll(filters);
                 var dtos = _mapper.Map<List<D>>(entities);
-
+                if (dtos.Count <= 0)
+                    throw new InvalidOperationException("No se encontraron registros.");
                 return dtos;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException($"Error: {invEx.Message}", invEx);
             }
             catch (Exception ex)
             {

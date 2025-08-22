@@ -43,12 +43,14 @@ namespace Entity.Contexts
         public DbSet<Form> Forms { get; set; }
         public DbSet<Module> Modules { get; set; }
 
+        public DbSet<FormModule> FormModule { get; set; }
+
         public DbSet<Rol> Rol { get; set; }
         public DbSet<Permission> Permissions { get; set; }
 
         public DbSet<RolUser> RolUser { get; set; }
         public DbSet<RolFormPermission> RolFormPermission { get; set; }
-        public DbSet<FormModule> FormModule { get; set; }
+        
 
 
         public DbSet<BlackList> BlackList { get; set; }

@@ -25,23 +25,20 @@ namespace Web.Controllers.Implementations
         /// </summary>
         /// <returns></returns>
         [HttpGet("select")]
-        public override  async Task<ActionResult<IEnumerable<D>>> GetAll()
+        public override async Task<ActionResult<IEnumerable<D>>> GetAll([FromQuery] Dictionary<string, string?> filters)
         {
             try
             {
-                var data = await _business.GetAll();
-                if (data == null)
-                {
-                    var responseNull = new ApiResponse<IEnumerable<D>>(null, false, "Registro no encontrado", null);
-                    return NotFound(responseNull);
-                }
-                var response = new ApiResponse<IEnumerable<D>>((IEnumerable<D>)data, true, "Ok", null);
-                return Ok(response);
+                var data = await _business.GetAll(filters);
+                if (data == null || !data.Any())
+                    return NotFound(new ApiResponse<IEnumerable<D>>(null, false, "Registro no encontrado", null));
+
+                return Ok(new ApiResponse<IEnumerable<D>>(data, true, "Ok", null));
             }
             catch (Exception ex)
             {
-                var response = new ApiResponse<IEnumerable<D>>(null, false, ex.Message.ToString(), null);
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new ApiResponse<IEnumerable<D>>(null, false, ex.Message, null));
             }
         }
 

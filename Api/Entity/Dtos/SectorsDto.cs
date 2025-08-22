@@ -11,7 +11,10 @@ namespace Entity.Dtos
     {
  
         public int Capacity { get; set; }
-        public int ZoneId { get; set; }
+        public int ZonesId { get; set; }
         public int TypeVehicleId { get; set; }
+
+        public string? Zones { get; set; }
+        public string? TypeVehicle { get; set; }
     }
 }

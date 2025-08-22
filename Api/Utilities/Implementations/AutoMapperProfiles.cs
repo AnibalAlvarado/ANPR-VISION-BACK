@@ -54,7 +54,7 @@ namespace Utilities.Implementations
             CreateMap<RolUserDto, RolUser>();
 
             CreateMap<User, UserDto>()
-                 .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.Firstname));
+                 .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.FirstName));
             //CreateMap<UserDto, User>()
             //.ForPath(dest => dest.Person.Firstname, opt => opt.MapFrom(src => src.PersonName));
 
@@ -75,6 +75,13 @@ namespace Utilities.Implementations
             CreateMap<Vehicle, VehicleDto>().ReverseMap();
             CreateMap<Zones, ZonesDto>().ReverseMap();
             CreateMap<Client, ClientDto>().ReverseMap();
+
+        
+
+           
+
+
+
         }
     }
 }

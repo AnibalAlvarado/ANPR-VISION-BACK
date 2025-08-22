@@ -108,7 +108,11 @@ namespace Web.Extensions
             services.AddScoped<IZonesBusiness, ZonesBusiness>();
             services.AddScoped<IZonesData, ZonesData>();
 
+          
+
+
             services.AddTransient<Validations>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
             return services;
         }
     }

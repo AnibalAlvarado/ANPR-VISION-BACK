@@ -9,9 +9,11 @@ namespace Entity.Models
 {
     public class BlackList: BaseModel
     {
-        public string Reason { get; set; }
-        public DateTime  RestrictionDate { get; set; }
+        public string Reason { get; set; } = string.Empty;
+        public DateTime RestrictionDate { get; set; }
+        public int VehicleId { get; set; }
 
-        public Vehicle Vehicle { get; set; }
+        // Navigation property
+        public Vehicle Vehicle { get; set; } = null!;
     }
 }

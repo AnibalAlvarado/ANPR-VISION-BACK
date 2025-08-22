@@ -24,7 +24,7 @@ namespace Data.Implementations
 
         public async Task<IEnumerable<RolFormPermission>> GetAllJoinAsync()
         {
-            await AuditAsync("GetAllJoinAsync");
+            //await AuditAsync("GetAllJoinAsync");
 
             return await _context.RolFormPermission
                 .Include(x => x.Rol)

@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class TypeVehicle : BaseModel
+    public class TypeVehicle : GenericModel
     {
-  
-        public string Name { get; set; }
-        public  Vehicle Vehicle { get; set; }
-
-        public List<Sectors>sectors { get; set; }
-        public List<Rates> Rates { get; set; }
+        // Nav
+        public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
+        public ICollection<Rates> Rates { get; set; } = new List<Rates>();
+        public ICollection<Sectors> Sectors { get; set; } = new List<Sectors>();
     }
 }

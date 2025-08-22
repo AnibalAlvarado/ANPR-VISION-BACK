@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Data.Interfaces;
 using Entity.Contexts;
+using Entity.Dtos;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,38 @@ namespace Data.Implementations
             : base(context, configuration, auditService, currentUserService, mapper)
         {
 
+        }
+
+        public async Task<IEnumerable<SlotsDto>> GetAllJoinAsync()
+        {
+            return await _context.Slots
+                .AsNoTracking()
+                .Select(p => new SlotsDto
+                {
+                    // --- BaseDto ---
+                    Id = p.Id,                      // int? en BaseDto
+                    Asset = p.Asset,                 // bool? en BaseDto
+                    IsDeleted = p.IsDeleted,         // bool en BaseDto
+
+                    // --- GenericDto ---
+                    Name = p.Name,                   // string en GenericDto
+
+                    // --- SectorsDto ---
+                    IsAvailable = p.IsAvailable,
+                    SectorsId = p.SectorsId,
+                    Sectors = p.Sectors != null
+                        ? p.Sectors.Name
+                        : null
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Slots>> GetAllBySectorId(int sectorId)
+        {
+            return await _context.Slots
+                .AsNoTracking()
+                .Where(s => s.SectorsId == sectorId && s.IsDeleted == false)
+                .ToListAsync();
         }
 
     }

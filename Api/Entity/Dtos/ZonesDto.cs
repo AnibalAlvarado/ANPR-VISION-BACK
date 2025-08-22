@@ -9,5 +9,6 @@ namespace Entity.Dtos
     public class ZonesDto:GenericDto
     {
         public int ParkingId { get; set; }
+        public string? Parking { get; set; }
     }
 }

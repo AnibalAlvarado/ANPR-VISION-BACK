@@ -25,9 +25,10 @@ namespace Business.Implementations
         private readonly IRolBusiness _rolBusiness;
         private readonly IRolUserBusiness _rolUserBusiness;
         private readonly IJwtAuthenticationService _jwtAuthenticatonService;
+        private readonly IPasswordHasher _passwordHasher;
 
         public UserBusiness(
-        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService) : base(data, mapper)
+        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher) : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
@@ -36,7 +37,7 @@ namespace Business.Implementations
             _rolBusiness = rolBusiness;
             _rolUserBusiness = rolUserBusiness;
             _jwtAuthenticatonService = jwtAuthenticatonService;
-
+            _passwordHasher = passwordHasher;
         }
 
         // Obtener todos los usuarios con información de persona
@@ -69,7 +70,7 @@ namespace Business.Implementations
                 // Hashear la contraseña antes de guardar
                 if (!string.IsNullOrEmpty(dto.Password))
                 {
-                    dto.Password = HashPassword(dto.Password);
+                    dto.Password = _passwordHasher.HashPassword(dto.Password);
                 }
 
                 // Mapear DTO a entidad
@@ -192,8 +193,6 @@ namespace Business.Implementations
             }
         }
 
-
-
         public string HashPassword(string password)
         {
             try
@@ -207,21 +206,6 @@ namespace Business.Implementations
                 throw;
             }
         }
-
-        // Para verificar una contraseña contra un hash almacenado
-        //public bool VerifyPassword(string inputPassword, string storedPasswordHash)
-        //{
-        //    try
-        //    {
-        //        // BCrypt verifica la contraseña contra el hash (que incluye la sal)
-        //        return BCrypt.Net.BCrypt.Verify(inputPassword, storedPasswordHash);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error al verificar contraseña");
-        //        throw;
-        //    }
-        //}
 
         public bool VerifyPassword(string inputPassword, string storedPasswordHash)
         {

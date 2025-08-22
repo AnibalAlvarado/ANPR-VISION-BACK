@@ -19,5 +19,7 @@ namespace Business.Implementations
         {
             _data = data;
         }
+
+
     }
 }
