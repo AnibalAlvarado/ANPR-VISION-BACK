@@ -157,11 +157,17 @@ namespace Business.Implementations
                     return null;
                 }
 
+                // Validar que el hash tenga el formato correcto antes de verificar
+                if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2"))
+                {
+                    _logger.LogWarning("Formato de hash inválido para el usuario: {Username}. Hash recibido: {Hash}", username, user.Password);
+                    return null;
+                }
 
                 // Verificar la contraseña
-                if (!_passwordHasher.VerifyPassword(password, user.Password))
+                if (!VerifyPassword(password, user.Password))
                 {
-                    _logger.LogWarning($"Contraseña incorrecta para el usuario: {username}");
+                    _logger.LogWarning("Contraseña incorrecta para el usuario: {Username}", username);
                     return null;
                 }
 
@@ -174,7 +180,7 @@ namespace Business.Implementations
                 userResponseDto.Roles = roleNames;
                 userResponseDto.UserId = user.Id;
 
-                //  Generar el token aquí mismo
+                // ✅ Generar el token aquí mismo
                 userResponseDto.Token = _jwtAuthenticatonService.GenerarToken(user, roleNames);
 
 
@@ -182,11 +188,43 @@ namespace Business.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error durante la validación del usuario: {username}");
+                _logger.LogError(ex, "Error durante la validación del usuario: {Username}", username);
                 throw;
             }
         }
 
+        public string HashPassword(string password)
+        {
+            try
+            {
+                // BCrypt automáticamente genera y maneja la sal
+                return BCrypt.Net.BCrypt.HashPassword(password);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al generar hash de contraseña");
+                throw;
+            }
+        }
+
+        public bool VerifyPassword(string inputPassword, string storedPasswordHash)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(storedPasswordHash) || !storedPasswordHash.StartsWith("$2"))
+                {
+                    _logger.LogError("Hash inválido o mal formado: {Hash}", storedPasswordHash);
+                    return false;
+                }
+
+                return BCrypt.Net.BCrypt.Verify(inputPassword, storedPasswordHash);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al verificar contraseña");
+                throw;
+            }
+        }
 
 
 
