@@ -5,6 +5,7 @@ using Entity.Dtos;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,13 @@ namespace Data.Implementations
 {
     public class ZonesData : RepositoryData<Zones>, IZonesData
     {
-        public ZonesData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+        private readonly ILogger<ZonesData> _logger;
+
+        public ZonesData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, ILogger<ZonesData> logger)
             : base(context, configuration, auditService, currentUserService, mapper)
         {
+            _logger = logger;
+
 
         }
 
@@ -54,6 +59,6 @@ namespace Data.Implementations
                 .Where(s => s.ParkingId == parkingId && s.IsDeleted == false)
                 .ToListAsync();
         }
-
+       
     }
 }

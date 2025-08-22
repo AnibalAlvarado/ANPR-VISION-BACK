@@ -10,7 +10,7 @@ namespace Entity.Models
     {
         public string Location { get; set; } = string.Empty;
         public int ParkingCategoryId { get; set; }
-
+    
         public ParkingCategory ParkingCategory { get; set; } = null!;
         public IEnumerable<Zones> Zones { get; set; } = new List<Zones>();
         public ICollection<Rates> Rates { get; set; } = new List<Rates>();

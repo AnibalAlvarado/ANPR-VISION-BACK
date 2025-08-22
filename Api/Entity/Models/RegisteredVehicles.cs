@@ -8,6 +8,7 @@ namespace Entity.Models
 {
     public class RegisteredVehicles : BaseModel
     {
+       
         public DateTime EntryDate { get; set; }
         public DateTime? ExitDate { get; set; }
 

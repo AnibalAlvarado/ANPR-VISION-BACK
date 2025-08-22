@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,7 @@ namespace Business.Implementations
                 throw new Exception("Error al obtener los parqueaderos.", ex);
             }
         }
+
         public override async Task<ParkingDto> Save(ParkingDto dto)
         {
             try
@@ -148,7 +150,6 @@ namespace Business.Implementations
                 throw new BusinessException("Error al actualizar el registro de parking.", ex);
             }
         }
-
-
+        
     }
 }

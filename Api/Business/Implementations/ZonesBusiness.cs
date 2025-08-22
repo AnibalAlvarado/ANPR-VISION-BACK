@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Business.Implementations
             catch (Exception ex)
             {
                 throw new Exception("Error al obtener las zonas .", ex);
-            }
+        }
         }
 
         public async Task<IEnumerable<ZonesDto>> GetAllByParkingId(int parkingId)
@@ -67,6 +68,5 @@ namespace Business.Implementations
                 throw new Exception("Error al obtener las zonas del estacionamiento.", ex);
             }
         }
-
     }
 }

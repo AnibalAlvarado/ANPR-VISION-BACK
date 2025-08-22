@@ -75,6 +75,13 @@ namespace Utilities.Implementations
             CreateMap<Vehicle, VehicleDto>().ReverseMap();
             CreateMap<Zones, ZonesDto>().ReverseMap();
             CreateMap<Client, ClientDto>().ReverseMap();
+
+        
+
+           
+
+
+
         }
     }
 }

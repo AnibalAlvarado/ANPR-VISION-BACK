@@ -28,7 +28,7 @@ namespace Entity.Contexts
             );
 
             // Usuarios (contraseñas hasheadas con BCrypt)
-            // Admin123!  → hash generado
+            // Admin123!  → hash generado admin123
             // User123!   → hash generado
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, Username = "admin", Email = "admin@mail.com", Password = "$2a$12$C3DSGP6PRwi3a4hsLdnrs.kYnRkJ0PgR3ky/AbI5Dmem7U3e/lSpq", PersonId = 1, Asset = true },
