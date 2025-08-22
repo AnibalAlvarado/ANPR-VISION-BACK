@@ -12,5 +12,7 @@ namespace Data.Interfaces
     {
        Task<IEnumerable<SlotsDto>> GetAllJoinAsync();
         Task<IEnumerable<Slots>> GetAllBySectorId(int sectorId);
+        Task<bool> ExistsAsync<T>(Func<object, bool> value);
+        Task GetByIdAsync<T>(int sectorsId);
     }
 }

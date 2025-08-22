@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
@@ -67,5 +69,118 @@ namespace Business.Implementations
                 throw new Exception("Error al obtener los sectores de la zona.", ex);
             }
         }
+
+        // Pseudocódigo detallado:
+        // 1. El método Save intenta validar que no exista un sector duplicado usando _data.ExistsAsync<Sectors>.
+        // 2. Sin embargo, ISectorsData no tiene un método ExistsAsync definido.
+        // 3. Solución: Reemplazar la llamada a ExistsAsync por una consulta manual usando GetAllByZoneId y filtrando por TypeVehicleId y Asset.
+        // 4. Obtener todos los sectores de la zona, filtrar por TypeVehicleId y Asset == true, y verificar si existe alguno.
+
+        public override async Task<SectorsDto> Save(SectorsDto dto)
+        {
+            try
+            {
+            
+                Validations.ValidateDto(dto, "Capacity", "ZonesId", "TypeVehicleId");
+
+           
+                if (dto.Capacity <= 0)
+                    throw new ArgumentException("El campo Capacity debe ser mayor a 0.");
+                if (dto.Capacity > 5000)
+                    throw new ArgumentException("El campo Capacity no puede superar los 5000 espacios.");
+
+               
+                if (dto.ZonesId <= 0)
+                    throw new ArgumentException("El campo ZonesId debe ser mayor a 0.");
+
+             
+                if (dto.TypeVehicleId <= 0)
+                    throw new ArgumentException("El campo TypeVehicleId debe ser mayor a 0.");
+
+
+                var sectoresZona = await _data.GetAllByZoneId(dto.ZonesId);
+                var sectorDuplicado = sectoresZona.Any(x => x.TypeVehicleId == dto.TypeVehicleId && x.Asset == true);
+                if (sectorDuplicado)
+                    throw new InvalidOperationException(
+                        "Ya existe un sector activo en la misma zona para el mismo tipo de vehículo."
+                    );
+
+                dto.Asset = true;
+
+                BaseModel entity = _mapper.Map<Sectors>(dto);
+                entity = await _data.Save((Sectors)entity);
+
+                return _mapper.Map<SectorsDto>(entity);
+            }
+            catch (InvalidOperationException invOe)
+            {
+                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al crear el registro del sector.", ex);
+            }
+        }
+
+        public override async Task Update(SectorsDto dto)
+        {
+            try
+            {
+                Validations.ValidateDto(dto, "Id", "Capacity", "ZonesId", "TypeVehicleId");
+
+                if (dto.Id <= 0)
+                    throw new ArgumentException("El campo Id debe ser mayor a 0.");
+
+                var sectorExistente = await _data.GetById(dto.Id);
+                if (sectorExistente == null)
+                    throw new InvalidOperationException($"No existe un sector con Id {dto.Id}.");
+
+                if (!sectorExistente.Asset)
+                    throw new InvalidOperationException("No se puede actualizar un sector deshabilitado.");
+
+                if (dto.Capacity <= 0)
+                    throw new ArgumentException("El campo Capacity debe ser mayor a 0.");
+                if (dto.Capacity > 5000)
+                    throw new ArgumentException("El campo Capacity no puede superar los 5000 espacios.");
+
+                if (dto.ZonesId <= 0)
+                    throw new ArgumentException("El campo ZonesId debe ser mayor a 0.");
+
+                if (dto.TypeVehicleId <= 0)
+                    throw new ArgumentException("El campo TypeVehicleId debe ser mayor a 0.");
+
+                var sectoresZona = await _data.GetAllByZoneId(dto.ZonesId);
+                var sectorDuplicado = sectoresZona.Any(x =>
+                    x.TypeVehicleId == dto.TypeVehicleId &&
+                    x.Id != dto.Id &&
+                    x.Asset == true
+                );
+                if (sectorDuplicado)
+                    throw new InvalidOperationException(
+                        "Ya existe otro sector activo en la misma zona para el mismo tipo de vehículo."
+                    );
+
+                BaseModel entity = _mapper.Map<Sectors>(dto);
+                await _data.Update((Sectors)entity);
+            }
+            catch (InvalidOperationException invOe)
+            {
+                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al actualizar el registro del sector.", ex);
+            }
+        }
+
+
     }
 }

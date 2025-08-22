@@ -22,6 +22,11 @@ namespace Data.Implementations
 
         }
 
+        public Task<bool> ExistsAsync<T>(Func<object, bool> value)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<ParkingDto>> GetAllJoinAsync()
         {
             return await _context.Parkings

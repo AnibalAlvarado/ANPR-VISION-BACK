@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Data.Interfaces
 {
-    public  interface IBlackListData : IRepositoryData<BlackList>
+    public interface IBlackListData : IRepositoryData<BlackList>
     {
-
+        Task<bool> ExistsAsync<T>(Func<object, bool> value);
     }
 }
