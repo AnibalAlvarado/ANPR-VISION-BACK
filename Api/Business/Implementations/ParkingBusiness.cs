@@ -45,6 +45,6 @@ namespace Business.Implementations
                 throw new Exception("Error al obtener los parqueaderos.", ex);
             }
         }
-
+    
     }
 }

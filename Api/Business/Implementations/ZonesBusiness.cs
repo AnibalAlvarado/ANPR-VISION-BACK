@@ -43,7 +43,7 @@ namespace Business.Implementations
             catch (Exception ex)
             {
                 throw new Exception("Error al obtener las zonas .", ex);
-            }
+        }
         }
 
         public async Task<IEnumerable<ZonesDto>> GetAllByParkingId(int parkingId)

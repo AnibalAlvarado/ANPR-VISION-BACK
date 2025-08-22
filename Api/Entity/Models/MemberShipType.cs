@@ -8,7 +8,7 @@ namespace Entity.Models
 {
     public class MemberShipType : GenericModel
     {
-
+        
         public string? Description { get; set; }
         public decimal PriceBase { get; set; }
         public int DurationDaysBase { get; set; }

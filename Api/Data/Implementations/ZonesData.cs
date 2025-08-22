@@ -59,6 +59,6 @@ namespace Data.Implementations
                 .Where(s => s.ParkingId == parkingId && s.IsDeleted == false)
                 .ToListAsync();
         }
-
+       
     }
 }

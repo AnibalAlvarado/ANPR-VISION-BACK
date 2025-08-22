@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class Zones : GenericModel
+    public class Camara : BaseModel
     {
+       
+        public string Resolution { get; set; }
+        public string Ip { get; set; }
         public int ParkingId { get; set; }
-
-        public Parking Parking { get; set; } = null!;
-        public ICollection<Sectors> Sectors { get; set; } = new List<Sectors>();
-        
+        public Parking Parking { get; set; }
     }
 }
