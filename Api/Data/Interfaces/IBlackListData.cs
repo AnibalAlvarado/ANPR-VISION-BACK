@@ -9,6 +9,5 @@ namespace Data.Interfaces
 {
     public interface IBlackListData : IRepositoryData<BlackList>
     {
-        Task<bool> ExistsAsync<T>(Func<object, bool> value);
     }
 }

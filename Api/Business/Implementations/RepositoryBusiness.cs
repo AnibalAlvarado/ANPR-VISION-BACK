@@ -27,6 +27,19 @@ namespace Business.Implementations
             _mapper = mapper;
         }
 
+        public override async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            try
+            {
+                return await _data.ExistsAsync(predicate);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al validar existencia de la entidad.", ex);
+            }
+        }
+
+
         public override async Task<bool> PermanentDelete(int id)
         {
             if (id <= 0)

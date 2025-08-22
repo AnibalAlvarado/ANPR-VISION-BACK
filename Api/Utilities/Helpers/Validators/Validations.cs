@@ -41,28 +41,28 @@ namespace Utilities.Helpers.Validators
                 var value = prop.GetValue(dto);
 
                 if (value == null)
-                    throw new ArgumentException($"The field {prop.Name} cannot be null.");
+                    throw new ArgumentException($"El Campo{prop.Name} no puede ser nulo.");
 
                 if (prop.PropertyType == typeof(string) && string.IsNullOrWhiteSpace((string)value))
-                    throw new ArgumentException($"The field {prop.Name} cannot be empty.");
+                    throw new ArgumentException($"El Campo{prop.Name} no puede ser nulo.");
 
                 if (prop.PropertyType == typeof(int) && (int)value <= 0)
-                    throw new ArgumentException($"The field {prop.Name} must be greater than 0.");
+                    throw new ArgumentException($"El Campo{prop.Name} debe ser mayor a 0.");
 
                 if (prop.PropertyType == typeof(long) && (long)value <= 0)
-                    throw new ArgumentException($"The field {prop.Name} must be greater than 0.");
+                    throw new ArgumentException($"El Campo{prop.Name} debe ser mayor a 0.");
 
                 if (prop.PropertyType == typeof(string) && prop.Name.ToLower().Contains("hora"))
                 {
                     if (!TimeSpan.TryParseExact((string)value, @"hh\:mm\:ss", null, out TimeSpan timeSpanValue))
                     {
-                        throw new ArgumentException($"The field {prop.Name} must have the format HH:mm:ss.");
+                        throw new ArgumentException($"El Campo{prop.Name} must have the format HH:mm:ss.");
                     }
 
                     // Validación del rango de la hora
                     if (timeSpanValue.Ticks <= 0 || timeSpanValue > TimeSpan.FromHours(24))
                     {
-                        throw new ArgumentException($"The field {prop.Name} must be a valid time and cannot exceed 24 hours.");
+                        throw new ArgumentException($"El Campo{prop.Name} must be a valid time and cannot exceed 24 hours.");
                     }
                 }
 

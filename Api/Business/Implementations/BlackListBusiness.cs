@@ -2,8 +2,6 @@
 using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
-using Entity.DTOs;
-using Entity.Model;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -19,50 +17,33 @@ namespace Business.Implementations
     {
         private readonly IBlackListData _data;
         private readonly IMapper _mapper;
-        public BlackListBusiness(IBlackListData data, IMapper mapper)
+        private readonly IVehicleBusiness _vehicleBusiness;
+        public BlackListBusiness(IBlackListData data, IMapper mapper, IVehicleBusiness vehicleBusiness)
             : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
+            _vehicleBusiness = vehicleBusiness;
         }
 
         public override async Task<BlackListDto> Save(BlackListDto dto)
         {
             try
             {
-                Validations.ValidateDto(dto, "Reason", "VehicleId");
-
                 if (dto.VehicleId <= 0)
-                    throw new ArgumentException("no se encuentra este Id vehicle.");
+                    throw new ArgumentException("no se selecciono ningun vehiculo.");
 
                 if (!string.IsNullOrWhiteSpace(dto.Reason) && dto.Reason.Length > 250)
-                    throw new ArgumentException("El campo Reason no puede tener más de 250 caracteres.");
+                    throw new ArgumentException("La razón no puede tener más de 250 caracteres.");
 
-                if (!string.IsNullOrWhiteSpace(dto.Reason) &&
-                    !System.Text.RegularExpressions.Regex.IsMatch(dto.Reason, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.,-]+$"))
-                {
-                    throw new ArgumentException("El campo Reason contiene caracteres no permitidos.");
-                }
+                VehicleDto existVehicle = await _vehicleBusiness.GetById(dto.VehicleId) ?? throw new InvalidOperationException("No se ha seleccionado ningún vehiculo valido");
 
-                var fechaActual = DateTime.UtcNow;
-                if (dto.RestrictionDate != default && dto.RestrictionDate > fechaActual)
-                    throw new ArgumentException("La fecha de restricción no puede ser una fecha futura.");
-
-        
-
-                var existe = await _data.ExistsAsync<BlackList>(x =>
-                {
-                    var entity = x as BlackList;
-                    return entity != null && entity.VehicleId == dto.VehicleId && entity.Asset == true;
-                });
-
+                //  Validación usando ExistsAsync genérico
+                var existe = await ExistsAsync(x => x.VehicleId == dto.VehicleId);
                 if (existe)
-                    throw new InvalidOperationException($"El vehículo con ID {dto.VehicleId} ya está en la lista negra.");
+                    throw new InvalidOperationException($"El vehículo ya está en la lista negra.");
 
-                if (dto.Asset == false)
-                    throw new ArgumentException("No se puede guardar un registro deshabilitado.");
-
-                dto.RestrictionDate = fechaActual;
+                dto.RestrictionDate = DateTime.UtcNow;
                 dto.Asset = true;
 
                 BaseModel entity = _mapper.Map<BlackList>(dto);
@@ -88,39 +69,23 @@ namespace Business.Implementations
         {
             try
             {
-                Validations.ValidateDto(dto, "Id", "Reason", "VehicleId");
-
                 if (dto.Id <= 0)
-                    throw new ArgumentException("El campo Id debe ser mayor a 0.");
-
-
-                var entityExistente = await _data.GetById(dto.Id);
-                if (entityExistente == null)
-                    throw new InvalidOperationException($"No existe un registro con Id {dto.Id}.");
-
-                if (!entityExistente.Asset)
-                    throw new InvalidOperationException("No se puede actualizar un registro que está deshabilitado.");
+                    throw new ArgumentException("No ha seleccionado ningún registro.");
+                var entityExistente = await _data.GetById(dto.Id) ?? throw new InvalidOperationException($"No se ha seleccionado ningún registro válido.");
 
                 if (dto.VehicleId <= 0)
-                    throw new ArgumentException("El campo VehicleId debe ser mayor a 0.");
-
-                var existeDuplicado = await _data.ExistsAsync<BlackList>(x =>
                 {
-                    var entity = x as BlackList; 
-                    return entity != null && entity.VehicleId == dto.VehicleId && entity.Id != dto.Id && entity.Asset == true;
-                });
+                    var existe = await ExistsAsync(x => x.VehicleId == dto.VehicleId);
+                    if (existe)
+                        throw new InvalidOperationException($"El vehículo ya está en la lista negra.");
+                }
 
-                if (existeDuplicado)
-                    throw new InvalidOperationException($"Ya existe un registro activo para el vehículo con ID {dto.VehicleId}.");
+
+                //if (existeDuplicado)
+                //    throw new InvalidOperationException($"Ya existe un registro activo para el vehículo con ID {dto.VehicleId}.");
 
                 if (!string.IsNullOrWhiteSpace(dto.Reason) && dto.Reason.Length > 250)
                     throw new ArgumentException("El campo Reason no puede tener más de 250 caracteres.");
-
-                if (!string.IsNullOrWhiteSpace(dto.Reason) &&
-                    !System.Text.RegularExpressions.Regex.IsMatch(dto.Reason, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.,-]+$"))
-                {
-                    throw new ArgumentException("El campo Reason contiene caracteres no permitidos.");
-                }
 
                 BaseModel entity = _mapper.Map<BlackList>(dto);
                 await _data.Update((BlackList)entity);
