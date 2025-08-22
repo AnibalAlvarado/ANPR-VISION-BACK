@@ -9,6 +9,6 @@ namespace Data.Interfaces
 {
     public interface IMembershipsData : IRepositoryData<Memberships>
     {
-
+        Task<bool> ExistsAsync<T>(Func<object, bool> value);
     }
 }

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Utilities.Helpers.Validators
 {
-    public class Validations
+    public static class Validations
     {
-        public Task<bool> SizeNumValidation(string num, int size)
+        public static Task<bool> SizeNumValidation(string num, int size)
         {
             if (num.Length > size)
             {
@@ -18,7 +18,7 @@ namespace Utilities.Helpers.Validators
             return Task.FromResult(true);
         }
 
-        public Task<bool> DocumentValidation(string documento)
+        public static Task<bool> DocumentValidation(string documento)
         {
             if (documento.Length < 8 || documento.Length > 10)
             {
@@ -27,7 +27,7 @@ namespace Utilities.Helpers.Validators
             return Task.FromResult(true);
         }
 
-        public void ValidateDto<T>(T dto, params string[] includedProperties)
+        public static void ValidateDto<T>(T dto, params string[] includedProperties)
         {
             if (dto == null)
                 throw new ArgumentException($"{typeof(T).Name} cannot be null.");
@@ -69,7 +69,7 @@ namespace Utilities.Helpers.Validators
             }
         }
 
-        public Task<bool> ValidDates(string fechaInicio, string fechaFin)
+        public static Task<bool> ValidDates(string fechaInicio, string fechaFin)
         {
             DateTime inicio, fin;
 
@@ -84,13 +84,13 @@ namespace Utilities.Helpers.Validators
         }
 
 
-        public Task<bool> IsValidDate(string fecha)
+        public static Task<bool> IsValidDate(string fecha)
         {
             bool isValid = DateTime.TryParseExact(fecha, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
             return Task.FromResult(isValid);
         }
 
-        public Task<bool> IsValidHour(string tick)
+        public static Task<bool> IsValidHour(string tick)
         {
             bool isValid = DateTime.TryParseExact(tick, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
             return Task.FromResult(isValid);

@@ -10,6 +10,7 @@ namespace Data.Interfaces
 {
     public interface IParkingData : IRepositoryData<Parking>
     {
+        Task<bool> ExistsAsync<T>(Func<object, bool> value);
         Task<IEnumerable<ParkingDto>> GetAllJoinAsync();
     }
 }

@@ -14,3 +14,4 @@ namespace Entity.Dtos
         public string? Vehicle { get; set; }
     }
 }
+
