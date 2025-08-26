@@ -13,24 +13,13 @@ namespace Business.Interfaces
     public interface IVehicleBusiness : IRepositoryBusiness<Vehicle, VehicleDto>
     {
 
-        public Task<VehicleDto> GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
+     
+        Task<IEnumerable<VehicleDto>> GetAllJoinAsync();
+        // Nuevo método para registrar vehículo + slot automáticamente
+        Task<RegisteredVehicles> RegisterVehicleWithSlotAsync(int vehicleId);
 
-        public Task<bool> PermanentDelete(int id)
-        {
-            throw new NotImplementedException();
-        }
+        Task<RegisteredVehiclesDto?> GetActiveVehicleBySlotAsync(int slotId);
 
-        public Task<VehicleDto> Save(VehicleDto entityDto)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task Update(VehicleDto entityDto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

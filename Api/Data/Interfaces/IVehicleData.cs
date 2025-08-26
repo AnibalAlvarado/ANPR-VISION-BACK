@@ -11,6 +11,8 @@ namespace Data.Interfaces
 {
     public interface IVehicleData: IRepositoryData<Vehicle>
     {
+        Task<IEnumerable<VehicleDto>> GetAllJoinAsync();
+        Task<RegisteredVehicles?> GetActiveRegisteredVehicleBySlotAsync(int slotId);
 
     }
 }
