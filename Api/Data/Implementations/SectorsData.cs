@@ -58,5 +58,18 @@ namespace Data.Implementations
                 .Where(s => s.ZonesId == zoneId && s.IsDeleted == false)
                 .ToListAsync();
         }
+
+        public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId)
+        {
+            // Traer sectores que tengan el mismo tipo de vehículo
+            // e incluir los slots relacionados
+            var sectors = await _context.Sectors
+                .Where(s => s.TypeVehicleId == vehicleTypeId)
+                .Include(s => s.Slots)
+                .ToListAsync();
+
+            return sectors;
+        }
+
     }
 }

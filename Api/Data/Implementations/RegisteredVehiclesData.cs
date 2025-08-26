@@ -2,6 +2,7 @@
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,11 @@ namespace Data.Implementations
 
         }
 
-     
+        // Método que valida si un slot está ocupado
+        public async Task<bool> AnyActiveRegisteredVehicleInSlotAsync(int slotId)
+        {
+            return await _context.RegisteredVehicles
+                .AnyAsync(rv => rv.SlotsId == slotId && rv.ExitDate == null);
+        }
     }
 }

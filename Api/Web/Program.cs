@@ -6,6 +6,7 @@ using Utilities.Interfaces;
 using Web;
 using Web.Config;
 using Web.Extensions;
+using Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 ///To run a Migration in this project
@@ -18,6 +19,7 @@ if (builder.Environment.IsDevelopment())
 }
 // Controllers
 builder.Services.AddControllers();
+builder.Services.AddSignalR(); // habilitar signalR
 
 //swager
 builder.Services.AddCustomSwagger();
@@ -64,10 +66,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<parkingHub>("/parkingHub"); 
 app.Run();
 

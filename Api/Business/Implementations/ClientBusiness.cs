@@ -19,6 +19,26 @@ namespace Business.Implementations
         {
             _data = data;
         }
-
+        public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
+        {
+            try
+            {
+                IEnumerable<ClientDto> entities = await _data.GetAllJoinAsync();
+                if (!entities.Any()) throw new InvalidOperationException("No se encontraron clientes.");
+                return entities;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException("error: ", invEx);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException("error: ", argEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las clientes .", ex);
+            }
+        }
     }
 }
