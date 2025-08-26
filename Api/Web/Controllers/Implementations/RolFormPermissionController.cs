@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Entity.Dtos;
+using Entity.DtoSpecific.RolFormPermission;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,6 +34,28 @@ namespace Web.Controllers.Implementations
             catch (Exception ex)
             {
                 var response = new ApiResponse<IEnumerable<RolFormPermissionDto>>(null, false, ex.Message.ToString(), null);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+        [HttpGet("byRol/{rolId:int}")]
+        public async Task<ActionResult<IEnumerable<RolFormPermissionGroupedDto>>> GetAllByRolId(int rolId)
+        {
+            try
+            {
+                var data = await _business.GetAllByRolId(rolId);
+                if (data == null)
+                {
+                    var responseNull = new ApiResponse<RolFormPermissionGroupedDto>(null, false, "No se encontraron permisos para el rol seleccionado.", null);
+                    return NotFound(responseNull);
+                }
+
+                var response = new ApiResponse<RolFormPermissionGroupedDto>(data, true, "Ok", null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<RolFormPermissionGroupedDto>(null, false, ex.Message, null);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }

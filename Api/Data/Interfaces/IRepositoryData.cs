@@ -12,6 +12,7 @@ namespace Data.Interfaces
 {
     public interface IRepositoryData<T> where T : BaseModel
     {
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// Obtener

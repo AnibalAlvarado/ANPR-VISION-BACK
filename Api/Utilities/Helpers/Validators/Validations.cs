@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Utilities.Helpers.Validators
 {
-    public class Validations
+    public  class Validations
     {
-        public Task<bool> SizeNumValidation(string num, int size)
+        public static Task<bool> SizeNumValidation(string num, int size)
         {
             if (num.Length > size)
             {
@@ -18,7 +18,7 @@ namespace Utilities.Helpers.Validators
             return Task.FromResult(true);
         }
 
-        public Task<bool> DocumentValidation(string documento)
+        public static Task<bool> DocumentValidation(string documento)
         {
             if (documento.Length < 8 || documento.Length > 10)
             {
@@ -27,7 +27,7 @@ namespace Utilities.Helpers.Validators
             return Task.FromResult(true);
         }
 
-        public void ValidateDto<T>(T dto, params string[] includedProperties)
+        public static void ValidateDto<T>(T dto, params string[] includedProperties)
         {
             if (dto == null)
                 throw new ArgumentException($"{typeof(T).Name} cannot be null.");
@@ -41,35 +41,35 @@ namespace Utilities.Helpers.Validators
                 var value = prop.GetValue(dto);
 
                 if (value == null)
-                    throw new ArgumentException($"The field {prop.Name} cannot be null.");
+                    throw new ArgumentException($"El Campo{prop.Name} no puede ser nulo.");
 
                 if (prop.PropertyType == typeof(string) && string.IsNullOrWhiteSpace((string)value))
-                    throw new ArgumentException($"The field {prop.Name} cannot be empty.");
+                    throw new ArgumentException($"El Campo{prop.Name} no puede ser nulo.");
 
                 if (prop.PropertyType == typeof(int) && (int)value <= 0)
-                    throw new ArgumentException($"The field {prop.Name} must be greater than 0.");
+                    throw new ArgumentException($"El Campo{prop.Name} debe ser mayor a 0.");
 
                 if (prop.PropertyType == typeof(long) && (long)value <= 0)
-                    throw new ArgumentException($"The field {prop.Name} must be greater than 0.");
+                    throw new ArgumentException($"El Campo{prop.Name} debe ser mayor a 0.");
 
                 if (prop.PropertyType == typeof(string) && prop.Name.ToLower().Contains("hora"))
                 {
                     if (!TimeSpan.TryParseExact((string)value, @"hh\:mm\:ss", null, out TimeSpan timeSpanValue))
                     {
-                        throw new ArgumentException($"The field {prop.Name} must have the format HH:mm:ss.");
+                        throw new ArgumentException($"El Campo{prop.Name} must have the format HH:mm:ss.");
                     }
 
                     // Validación del rango de la hora
                     if (timeSpanValue.Ticks <= 0 || timeSpanValue > TimeSpan.FromHours(24))
                     {
-                        throw new ArgumentException($"The field {prop.Name} must be a valid time and cannot exceed 24 hours.");
+                        throw new ArgumentException($"El Campo{prop.Name} must be a valid time and cannot exceed 24 hours.");
                     }
                 }
 
             }
         }
 
-        public Task<bool> ValidDates(string fechaInicio, string fechaFin)
+        public static Task<bool> ValidDates(string fechaInicio, string fechaFin)
         {
             DateTime inicio, fin;
 
@@ -84,16 +84,43 @@ namespace Utilities.Helpers.Validators
         }
 
 
-        public Task<bool> IsValidDate(string fecha)
+        public static Task<bool> IsValidDate(string fecha)
         {
             bool isValid = DateTime.TryParseExact(fecha, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
             return Task.FromResult(isValid);
         }
 
-        public Task<bool> IsValidHour(string tick)
+        public static Task<bool> IsValidHour(string tick)
         {
             bool isValid = DateTime.TryParseExact(tick, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
             return Task.FromResult(isValid);
+        }
+
+        /// <summary>
+        /// Valida que la fecha inicial no sea mayor que la fecha final.
+        /// </summary>
+        public static void ValidateRangeDate(DateTime? start, DateTime? end)
+        {
+            if (!start.HasValue || !end.HasValue)
+                throw new ArgumentException("Las fechas de inicio y fin no pueden ser nulas.");
+
+            if (start.Value > end.Value)
+                throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha fin.");
+        }
+
+        /// <summary>
+        /// Valida que todas las fechas proporcionadas no sean nulas.
+        /// </summary>
+        public static void ValidateNotNullDate(params DateTime?[] dates)
+        {
+            if (dates == null || dates.Length == 0)
+                throw new ArgumentException("No se proporcionaron fechas para validar.");
+
+            foreach (var date in dates)
+            {
+                if (!date.HasValue)
+                    throw new ArgumentException("Una o más fechas son nulas.");
+            }
         }
     }
 }

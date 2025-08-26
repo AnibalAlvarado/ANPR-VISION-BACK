@@ -12,7 +12,7 @@ namespace Business.Interfaces
 {
     public interface IRepositoryBusiness<T,D> where T : BaseModel where D : BaseDto
     {
-
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
         /// <summary>
         /// Obtener 
         /// </summary>

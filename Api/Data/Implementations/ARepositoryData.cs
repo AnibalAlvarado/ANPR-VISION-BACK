@@ -15,6 +15,8 @@ namespace Data.Implementations
 {
     public abstract class ARepositoryData<T> : IRepositoryData<T> where T : BaseModel
     {
+        public abstract Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+
         /// <summary>
         /// Obtener
         /// </summary>

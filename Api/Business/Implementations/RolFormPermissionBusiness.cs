@@ -2,7 +2,9 @@
 using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.DtoSpecific.RolFormPermission;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +30,18 @@ namespace Business.Implementations
             var entities = await _data.GetAllJoinAsync();
             return _mapper.Map<IEnumerable<RolFormPermissionDto>>(entities);
         }
+
+        public async Task<RolFormPermissionGroupedDto?> GetAllByRolId(int rolId)
+        {
+            // Traer los datos planos desde Data
+            RolFormPermissionGroupedDto? groupedData = await _data.GetAllByRolId(rolId);
+
+            if (groupedData == null)
+                return null;
+
+            return groupedData;
+        }
+
 
     }
 }
