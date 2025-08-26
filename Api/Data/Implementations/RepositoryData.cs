@@ -34,6 +34,7 @@ namespace Data.Implementations
         protected readonly IMapper _mapper; 
 
 
+
         public RepositoryData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
         {
             _context = context;

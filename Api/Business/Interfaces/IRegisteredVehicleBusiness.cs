@@ -11,6 +11,7 @@ namespace Business.Interfaces
 {
     public interface IRegisteredVehicleBusiness : IRepositoryBusiness<RegisteredVehicles, RegisteredVehiclesDto>
     {
+        Task<IEnumerable<RegisteredVehiclesDto>> GetAllJoinAsync();
 
     }
 }
