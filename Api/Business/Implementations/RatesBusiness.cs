@@ -18,10 +18,10 @@ namespace Business.Implementations
     {
         private readonly IRatesData _data;
         private readonly IMapper _mapper;
-        private readonly ParkingBusiness _parkingBusiness;
-        private readonly RatesTypeBusiness _ratesTypeBusiness;
-        private readonly TypeVehicleBusiness _typeVehicleBusiness;
-        public RatesBusiness(IRatesData data, IMapper mapper, ParkingBusiness parkingBusiness, RatesTypeBusiness ratesTypeBusiness, TypeVehicleBusiness typeVehicleBusiness)
+        private readonly IParkingBusiness _parkingBusiness;
+        private readonly IRatesTypeBusiness _ratesTypeBusiness;
+        private readonly ITypeVehicleBusiness _typeVehicleBusiness;
+        public RatesBusiness(IRatesData data, IMapper mapper, IParkingBusiness parkingBusiness, IRatesTypeBusiness ratesTypeBusiness, ITypeVehicleBusiness typeVehicleBusiness)
             : base(data, mapper)
         {
             _data = data;

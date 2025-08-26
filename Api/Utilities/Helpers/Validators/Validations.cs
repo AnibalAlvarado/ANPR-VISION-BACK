@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Utilities.Helpers.Validators
 {
-    public static class Validations
+    public  class Validations
     {
         public static Task<bool> SizeNumValidation(string num, int size)
         {

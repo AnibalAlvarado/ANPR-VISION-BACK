@@ -86,24 +86,13 @@ namespace Business.Implementations
            
                 if (dto.Capacity <= 0)
                     throw new ArgumentException("El campo Capacity debe ser mayor a 0.");
-                if (dto.Capacity > 5000)
+                if (dto.Capacity > 100000)
                     throw new ArgumentException("El campo Capacity no puede superar los 5000 espacios.");
-
-               
                 if (dto.ZonesId <= 0)
                     throw new ArgumentException("El campo ZonesId debe ser mayor a 0.");
-
-             
                 if (dto.TypeVehicleId <= 0)
                     throw new ArgumentException("El campo TypeVehicleId debe ser mayor a 0.");
 
-
-                var sectoresZona = await _data.GetAllByZoneId(dto.ZonesId);
-                var sectorDuplicado = sectoresZona.Any(x => x.TypeVehicleId == dto.TypeVehicleId && x.Asset == true);
-                if (sectorDuplicado)
-                    throw new InvalidOperationException(
-                        "Ya existe un sector activo en la misma zona para el mismo tipo de vehículo."
-                    );
 
                 dto.Asset = true;
 
@@ -135,12 +124,9 @@ namespace Business.Implementations
                 if (dto.Id <= 0)
                     throw new ArgumentException("El campo Id debe ser mayor a 0.");
 
-                var sectorExistente = await _data.GetById(dto.Id);
+                Sectors sectorExistente = await _data.GetById(dto.Id);
                 if (sectorExistente == null)
                     throw new InvalidOperationException($"No existe un sector con Id {dto.Id}.");
-
-                if (!sectorExistente.Asset)
-                    throw new InvalidOperationException("No se puede actualizar un sector deshabilitado.");
 
                 if (dto.Capacity <= 0)
                     throw new ArgumentException("El campo Capacity debe ser mayor a 0.");
@@ -152,17 +138,6 @@ namespace Business.Implementations
 
                 if (dto.TypeVehicleId <= 0)
                     throw new ArgumentException("El campo TypeVehicleId debe ser mayor a 0.");
-
-                var sectoresZona = await _data.GetAllByZoneId(dto.ZonesId);
-                var sectorDuplicado = sectoresZona.Any(x =>
-                    x.TypeVehicleId == dto.TypeVehicleId &&
-                    x.Id != dto.Id &&
-                    x.Asset == true
-                );
-                if (sectorDuplicado)
-                    throw new InvalidOperationException(
-                        "Ya existe otro sector activo en la misma zona para el mismo tipo de vehículo."
-                    );
 
                 BaseModel entity = _mapper.Map<Sectors>(dto);
                 await _data.Update((Sectors)entity);

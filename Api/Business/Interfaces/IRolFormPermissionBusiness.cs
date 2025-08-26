@@ -1,4 +1,5 @@
 ﻿using Entity.Dtos;
+using Entity.DtoSpecific.RolFormPermission;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace Business.Interfaces
     {
 
         Task<IEnumerable<RolFormPermissionDto>> GetAllJoinAsync();
+
+        Task<RolFormPermissionGroupedDto?> GetAllByRolId(int rolId);
 
     }
 

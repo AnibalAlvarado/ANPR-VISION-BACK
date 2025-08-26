@@ -76,12 +76,6 @@ namespace Utilities.Implementations
             CreateMap<Zones, ZonesDto>().ReverseMap();
             CreateMap<Client, ClientDto>().ReverseMap();
 
-        
-
-           
-
-
-
         }
     }
 }
