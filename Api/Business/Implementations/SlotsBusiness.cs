@@ -79,10 +79,6 @@ namespace Business.Implementations
                 if (dto.SectorsId <= 0)
                     throw new ArgumentException("El campo SectorsId debe ser mayor a 0.");
 
-                // Obtener el sector correctamente usando un repositorio adecuado
-                // Suponiendo que _data solo maneja Slots, necesitas un repositorio de sectores.
-                // Aquí se asume que tienes acceso a un ISectorsData o similar.
-                // Si no lo tienes, deberías inyectarlo en el constructor.
                 var sector = await _data.GetById(dto.SectorsId);
                 if (sector == null)
                     throw new InvalidOperationException($"El sector con Id {dto.SectorsId} no existe.");

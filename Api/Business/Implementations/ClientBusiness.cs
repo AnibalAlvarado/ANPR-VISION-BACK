@@ -65,28 +65,22 @@ namespace Business.Implementations
                 if (dto.Id <= 0)
                     throw new ArgumentException("El campo Id debe ser mayor que 0.");
 
-                var clienteExistente = await _data.GetById(dto.Id);
+                Client clienteExistente = await _data.GetById(dto.Id);
                 if (clienteExistente == null)
-                    throw new InvalidOperationException($"No existe un cliente con Id {dto.Id}.");
-
-                if (!clienteExistente.Asset)
-                    throw new InvalidOperationException("No se puede actualizar un cliente deshabilitado.");
-
+                    throw new InvalidOperationException($"El cliente no existe.");
                 if (dto.PersonaId <= 0)
-                    throw new ArgumentException("El campo PersonaId debe ser mayor que 0.");
+                    throw new ArgumentException("El atributo persona es obligatorio.");
 
-                var persona = await _personRepository.GetById(dto.PersonaId);
+                Person persona = await _personRepository.GetById(dto.PersonaId);
                 if (persona == null)
-                    throw new InvalidOperationException($"No existe una persona con Id {dto.PersonaId}.");
+                    throw new InvalidOperationException($"No existe la persona que se ha seleccionado.");
 
-                var clientes = await _data.GetAll(null);
-                bool existeCliente = clientes.Any(x =>
-                    x.PersonId == dto.PersonaId &&
-                    x.Id != dto.Id &&
-                    x.Asset == true
-                );
-                if (existeCliente)
-                    throw new InvalidOperationException("Ya existe otro cliente activo para esta persona.");
+                if(dto.PersonaId != clienteExistente.PersonId)
+                {
+                    bool existclient = await _data.ExistsAsync(x => x.PersonId == dto.PersonaId);
+                    if (existclient)
+                        throw new InvalidOperationException("Ya existe otro cliente activo para esta persona.");
+                }
 
                 BaseModel entity = _mapper.Map<Client>(dto);
                 await _data.Update((Client)entity);
