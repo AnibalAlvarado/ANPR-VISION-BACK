@@ -9,7 +9,7 @@ namespace Entity.Dtos
 {
     public class SlotsDto:GenericDto
     {
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable { get; set; } = true;
         public int SectorsId { get; set; }
 
         public string? Sectors { get; set; }
