@@ -9,6 +9,5 @@ namespace Data.Interfaces
 {
     public interface ITypeVehicleData : IRepositoryData<TypeVehicle>
     {
-
     }
 }

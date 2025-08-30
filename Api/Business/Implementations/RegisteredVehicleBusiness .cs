@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
@@ -21,6 +23,7 @@ namespace Business.Implementations
         {
             _data = data;
         }
+
 
         public async Task<IEnumerable<RegisteredVehiclesDto>> GetAllJoinAsync()
         {
@@ -44,5 +47,81 @@ namespace Business.Implementations
             }
         }
 
+        //public override async Task<RatesDto> Save(RatesDto dto)
+        //{
+        //    try
+        //    {
+        //        Validations.ValidateDto(dto, "Type", "Name", "Amount", "Year", "ParkingId", "RatesTypeId", "TypeVehicleId");
+        //        if (dto.Name.Length > 50)
+        //            throw new ArgumentException("El nombre de la tarifa no puede contener mas de 70 caracteres.");
+        //        Validations.ValidateRangeDate(dto.StarHour, dto.EndHour);
+        //        ParkingDto existParking = await _parkingBusiness.GetById(dto.ParkingId)
+        //            ?? throw new InvalidOperationException("El parqueadero no existe.");
+
+        //        RatesTypeDto existRatesType = await _ratesTypeBusiness.GetById(dto.RatesTypeId)
+        //            ?? throw new InvalidOperationException("El tipo de tarifa no existe.");
+
+        //        TypeVehicleDto existTypeVehicle = await _typeVehicleBusiness.GetById(dto.TypeVehicleId)
+        //            ?? throw new InvalidOperationException("El tipo de vehículo no existe.");
+
+        //        dto.Asset = true;
+
+        //        BaseModel entity = _mapper.Map<Rates>(dto);
+        //        entity = await _data.Save((Rates)entity);
+
+        //        return _mapper.Map<RatesDto>(entity);
+        //    }
+        //    catch (InvalidOperationException invOe)
+        //    {
+        //        throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+        //    }
+        //    catch (ArgumentException argEx)
+        //    {
+        //        throw new ArgumentException($"Error: {argEx.Message}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new BusinessException("Error al crear el registro.", ex);
+        //    }
+        //}
+
+        //public override async Task Update(RatesDto dto)
+        //{
+        //    try
+        //    {
+        //        Validations.ValidateDto(dto, "Type", "Name", "Amount", "Year", "ParkingId", "RatesTypeId", "TypeVehicleId");
+        //        if (dto.Id <= 0)
+        //            throw new ArgumentException("No ha seleccioando ninguna tarifa.");
+        //        Rates RatesExistente = await _data.GetById(dto.Id) ?? throw new InvalidOperationException($"Seleccone una tarifa válida.");
+        //        if (dto.Name.Length > 50)
+        //            throw new ArgumentException("El nombre de la tarifa no puede contener mas de 70 caracteres.");
+
+        //        Validations.ValidateRangeDate(dto.StarHour, dto.EndHour);
+
+        //        ParkingDto existParking = await _parkingBusiness.GetById(dto.ParkingId)
+        //            ?? throw new InvalidOperationException("El parqueadero no existe.");
+
+        //        RatesTypeDto existRatesType = await _ratesTypeBusiness.GetById(dto.RatesTypeId)
+        //            ?? throw new InvalidOperationException("El tipo de tarifa no existe.");
+
+        //        TypeVehicleDto existTypeVehicle = await _typeVehicleBusiness.GetById(dto.TypeVehicleId)
+        //            ?? throw new InvalidOperationException("El tipo de vehículo no existe.");
+
+        //        BaseModel entity = _mapper.Map<Rates>(dto);
+        //        await _data.Update((Rates)entity);
+        //    }
+        //    catch (InvalidOperationException invOe)
+        //    {
+        //        throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+        //    }
+        //    catch (ArgumentException argEx)
+        //    {
+        //        throw new ArgumentException($"Error: {argEx.Message}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new BusinessException("Error al actualizar el registro.", ex);
+        //    }
+        //}
     }
 }

@@ -58,6 +58,11 @@ namespace Data.Implementations
             await _auditService.SaveAuditAsync(entry);
         }
 
+        public override async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _context.Set<T>().AnyAsync(predicate);
+        }
+
         public override async Task<IEnumerable<T>> GetAll(IDictionary<string, string?>? filters = null)
         {
             try
