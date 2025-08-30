@@ -64,7 +64,17 @@ namespace Business.Implementations
         {
             try
             {
+                if (await _data.ExistsAsync(x => x.Username == dto.Username))
+                {
+                    throw new InvalidOperationException("El nombre de usuario ya se encuentra registrado.");
+                }
                 // Aplicar valores predeterminados
+
+                if (await _data.ExistsAsync(x => x.Email == dto.Email && x.Id != dto.Id))
+                {
+                    throw new InvalidOperationException("El correo de usuario ya se encuentra registrado.");
+                }
+
                 dto.Asset = true;
 
                 // Hashear la contraseña antes de guardar
@@ -84,6 +94,14 @@ namespace Business.Implementations
 
                 // Mapear la entidad guardada de vuelta a DTO y devolverla
                 return savedDto;
+            }
+            catch (InvalidOperationException invOe)
+            {
+                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
             }
             catch (Exception ex)
             {
