@@ -12,6 +12,8 @@ namespace Data.Interfaces
     {
         Task<User?> GetUserByUsernameAsync(string username);
 
+        Task<User?> GetUserByEmailsync(string email);
+
         Task<List<string>> GetUserRoleAsync(int userId);
 
         Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);

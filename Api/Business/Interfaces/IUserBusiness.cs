@@ -17,6 +17,13 @@ namespace Business.Interfaces
         Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);
 
 
+        // === Métodos para recuperación de contraseña ===
+        Task RequestPasswordResetAsync(string email);
+        Task VerifyCodeAndResetPasswordAsync(string email, string code, string newPassword);
+
+        Task<bool> VerifyResetCodeAsync(string email, string code);
+
+
 
     }
 }

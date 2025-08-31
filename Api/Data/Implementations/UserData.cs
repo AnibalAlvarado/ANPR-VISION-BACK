@@ -88,30 +88,24 @@ namespace Data.Implementations
             }
         }
 
-        //public async Task<string> GetUserRoleAsync(int userId)
-        //{
-        //    try
-        //    {
-        //        // Obtener el rol a través de la tabla pivote RolUser
-        //        var userRole = await _context.Set<RolUser>()
-        //            .Where(ru => ru.UserId == userId)
-        //            .Join(
-        //                _context.Set<Rol>(),
-        //                ru => ru.RolId,
-        //                r => r.Id,
-        //                (ru, r) => new { RolName = r.Name }
-        //            )
-        //            .FirstOrDefaultAsync();
-        //        await AuditAsync("GetUserRoleAsync", userId);
+        public async Task<User?> GetUserByEmailsync(string email)
+        {
+            try
+            {
+                //await AuditAsync("GetUserByEmailAsync");
+                return await _context.Set<User>()
+                    .FirstOrDefaultAsync(u => u.Email == email && u.Asset);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener usuario por correo electrónico: {Email}", email);
+                throw;
+            }
+        }
 
-        //        return userRole?.RolName ?? "Guest";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error al obtener rol para el usuario con ID: {UserId}", userId);
-        //        throw;
-        //    }
-        //}
+
+
+
 
 
         public async Task<List<string>> GetUserRoleAsync(int userId)
@@ -171,6 +165,12 @@ namespace Data.Implementations
                 throw;
             }
         }
+
+
+
+
+
+
 
 
 

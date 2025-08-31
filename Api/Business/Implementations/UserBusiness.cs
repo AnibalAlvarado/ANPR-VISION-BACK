@@ -26,9 +26,10 @@ namespace Business.Implementations
         private readonly IRolUserBusiness _rolUserBusiness;
         private readonly IJwtAuthenticationService _jwtAuthenticatonService;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IPasswordReset _passwordReset;
 
         public UserBusiness(
-        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher) : base(data, mapper)
+        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher, IPasswordReset passwordReset) : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
@@ -38,6 +39,7 @@ namespace Business.Implementations
             _rolUserBusiness = rolUserBusiness;
             _jwtAuthenticatonService = jwtAuthenticatonService;
             _passwordHasher = passwordHasher;
+            _passwordReset = passwordReset;
         }
 
         // Obtener todos los usuarios con información de persona
@@ -302,6 +304,69 @@ namespace Business.Implementations
                 _logger.LogError(ex, "Error al obtener roles del usuario con ID: {UserId}", userId);
                 throw;
             }
+        }
+
+        //metodos para el reset
+
+        // === Paso 1: Solicitar recuperación ===
+        public async Task RequestPasswordResetAsync(string email)
+        {
+            var user = await _data.GetUserByEmailsync(email);
+            if (user == null)
+                throw new Exception("El usuario no existe con ese correo.");
+
+            string code = GenerateResetCode();
+
+            var reset = new PasswordReset
+            {
+                UsuarioId = user.Id,
+                Code = code,
+                ExpiryDate = DateTime.UtcNow.AddMinutes(10),
+                Used = false
+            };
+
+            await _passwordReset.Add(reset);
+
+            // Enviar correo
+            await _emailService.SendEmailAsync(user.Email, $"Tu código de recuperación es: {code}");
+        }
+        
+
+        // === Paso 2: Validar código y actualizar contraseña ===
+        public async Task VerifyCodeAndResetPasswordAsync(string email, string code, string newPassword)
+        {
+            var user = await _data.GetUserByEmailsync(email);
+            if (user == null)
+                throw new Exception("El usuario no existe.");
+
+            var reset = await _passwordReset.GetValidCode(user.Id, code);
+            if (reset == null)
+                throw new Exception("Código inválido o expirado.");
+
+            // Actualizar contraseña
+            user.Password = _passwordHasher.HashPassword(newPassword);
+            await _data.Update(user);
+
+            // Marcar el código como usado
+            await _passwordReset.MarkAsUsed(reset);
+        }
+
+        public async Task<bool> VerifyResetCodeAsync(string email, string code)
+        {
+            var user = await _data.GetUserByEmailsync(email);
+            if (user == null)
+                throw new Exception("El usuario no existe.");
+
+            var reset = await _passwordReset.GetValidCode(user.Id, code);
+            return reset != null;
+        }
+
+
+        // === Helpers ===
+        private string GenerateResetCode()
+        {
+            var random = new Random();
+            return random.Next(100000, 999999).ToString(); // 6 dígitos
         }
 
 

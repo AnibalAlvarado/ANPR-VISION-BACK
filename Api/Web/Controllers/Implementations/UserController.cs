@@ -119,5 +119,57 @@ namespace Web.Controllers.Implementations
                 return StatusCode(500, new { success = false, message = "Error interno del servidor" });
             }
         }
+
+        // ===============================
+        // 🔑 RECUPERACIÓN DE CONTRASEÑA
+        // ===============================
+
+        // Paso 1: solicitar recuperación (envía código al correo)
+        [HttpPost("request-password-reset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] ResetRequestDto request)
+        {
+            try
+            {
+                await _business.RequestPasswordResetAsync(request.Email);
+                return Ok(new ApiResponse<object>(null, true, "Se ha enviado un código de recuperación a tu correo.", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error solicitando recuperación de contraseña");
+                return BadRequest(new ApiResponse<object>(null, false, ex.Message, null));
+            }
+        }
+
+        // Paso 2: validar código
+        [HttpPost("verify-code")]
+        public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeDto request)
+        {
+            try
+            {
+                var isValid = await _business.VerifyResetCodeAsync(request.Email, request.Code);
+                return Ok(new ApiResponse<object>(new { valid = isValid }, true, isValid ? "Código válido." : "Código inválido.", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verificando código de recuperación");
+                return BadRequest(new ApiResponse<object>(null, false, ex.Message, null));
+            }
+        }
+
+        // Paso 3: resetear contraseña
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
+        {
+            try
+            {
+                await _business.VerifyCodeAndResetPasswordAsync(request.Email, request.Code, request.NewPassword);
+                return Ok(new ApiResponse<object>(null, true, "La contraseña ha sido restablecida correctamente.", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reseteando contraseña");
+                return BadRequest(new ApiResponse<object>(null, false, ex.Message, null));
+            }
+        }
     }
 }
