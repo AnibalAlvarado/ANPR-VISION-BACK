@@ -140,6 +140,21 @@ namespace Business.Implementations
             }
         }
 
+        public override async Task<bool> ExistsAsynca(string field, string value, int? currentId)
+        {
+            var tableName = typeof(T).Name;
+            var query = $"SELECT COUNT(1) FROM {tableName} WHERE {field} = @value";
+            if (currentId.HasValue)
+                query += " AND Id <> @currentId";
+
+            using var connection = _data.GetDbConnection(); // necesitas exponer conexión desde Data
+            if (connection.State == System.Data.ConnectionState.Closed)
+                await connection.OpenAsync();
+
+            var result = await connection.ExecuteScalarAsync<int>(query, new { value, currentId });
+            return result > 0;
+        }
+
 
     }
 }

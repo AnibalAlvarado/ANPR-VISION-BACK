@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
@@ -41,6 +42,46 @@ namespace Business.Implementations
                 throw new BusinessException("Error al verificar existencia del rol para el usuario", ex);
             }
         }
+        //public override async Task<RolUserDto> Save(RolUserDto dto)
+        //{
+        //    var entity = _mapper.Map<RolUser>(dto);
+        //    entity.Asset = true;
+        //    var saved = await _data.Save(entity);
+        //    return _mapper.Map<RolUserDto>(saved);
+        //}
+        public override async Task<RolUserDto> Save(RolUserDto dto)
+        {
+            try
+            {
+
+                bool exists = await _data.ExistsAsync(
+                      x => x.RolId == dto.RolId && x.UserId == dto.UserId
+                  );
+
+                if (exists)
+                    throw new InvalidOperationException(
+                        $"ya se encuentra Existente este registro."
+                    );
+
+                // 🔹 Guardar entidad
+                var entity = _mapper.Map<RolUser>(dto);
+                entity = await _data.Save(entity);
+
+                return _mapper.Map<RolUserDto>(entity);
+            }
+            catch (InvalidOperationException invOp)
+            {
+                throw new InvalidOperationException($"Error: {invOp.Message}", invOp);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al registrar el formulario.", ex);
+            }
+        }
         public async Task<IEnumerable<RolUserDto>> GetAllJoinAsync()
         {
             var entities = await _data.GetAllJoinAsync();
@@ -55,13 +96,7 @@ namespace Business.Implementations
             return _mapper.Map<RolUserDto>(entity);
         }
 
-        public override async Task<RolUserDto> Save(RolUserDto dto)
-        {
-            var entity = _mapper.Map<RolUser>(dto);
-            entity.Asset = true;
-            var saved = await _data.Save(entity);
-            return _mapper.Map<RolUserDto>(saved);
-        }
+     
 
         public override async Task Update(RolUserDto dto)
         {

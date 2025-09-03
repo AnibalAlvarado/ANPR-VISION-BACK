@@ -71,6 +71,7 @@ namespace Data.Interfaces
 
         Task<PagedResult<TDto>> GetAllPaginatedAsync<TDto>(QueryParameters query,Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IQueryable<T>>? include = null,CancellationToken cancellationToken = default);
+        Task<bool> ExistsAsynca(string field, string value, int? currentId);
 
     }
 }

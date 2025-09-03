@@ -28,7 +28,16 @@ namespace Business.Implementations
         {
             try
             {
-             
+
+                bool exists = await _data.ExistsAsync(
+                      x => x.MembershipTypeId == dto.MembershipTypeId && x.VehicleId == dto.VehicleId
+                  );
+
+                if (exists)
+                    throw new InvalidOperationException(
+                        $"ya se encuentra Existente este registro."
+                    );
+
                 Validations.ValidateDto(dto, "MembershipTypeId", "VehicleId", "StartDate", "EndDate", "PriceAtPurchase", "DurationDays");
 
                 if (dto.MembershipTypeId <= 0)

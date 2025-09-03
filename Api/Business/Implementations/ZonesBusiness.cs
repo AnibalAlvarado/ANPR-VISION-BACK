@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
@@ -45,7 +47,44 @@ namespace Business.Implementations
                 throw new Exception("Error al obtener las zonas .", ex);
         }
         }
+        public override async Task<ZonesDto> Save(ZonesDto dto)
+        {
+            try
+            {
+                if (await _data.ExistsAsync(x => x.Name == dto.Name))
+                {
+                    throw new InvalidOperationException("El nombre de la zona ya se encuentra registrado.");
+                }
+                Validations.ValidateDto(dto, "Name");
 
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El campo Nombre es obligatorio.");
+                if (dto.Name.Length < 3)
+                    throw new ArgumentException("El nombre debe tener al menos 3 caracteres.");
+                if (dto.Name.Length > 100)
+                    throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
+
+
+                dto.Asset = true;
+
+                BaseModel entity = _mapper.Map<Zones>(dto);
+                entity = await _data.Save((Zones)entity);
+
+                return _mapper.Map<ZonesDto>(entity);
+            }
+            catch (InvalidOperationException invOe)
+            {
+                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al registrar el tipo de vehículo.", ex);
+            }
+        }
         public async Task<IEnumerable<ZonesDto>> GetAllByParkingId(int parkingId)
         {
             try

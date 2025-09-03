@@ -74,6 +74,10 @@ namespace Business.Implementations
         {
             try
             {
+                if (await _data.ExistsAsync(x => x.Name == dto.Name))
+                {
+                    throw new InvalidOperationException("El nombre del zona ya se encuentra registrado.");
+                }
                 Validations.ValidateDto(dto, "IsAvailable", "SectorsId");
 
                 if (dto.SectorsId <= 0)

@@ -29,7 +29,15 @@ namespace Business.Implementations
         {
             try
             {
-                Validations.ValidateDto(dto, "Code","Name");
+                if (await _data.ExistsAsync(x => x.code == dto.code))
+                {
+                    throw new InvalidOperationException("El codigo del parquiadero ya se encuentra registrado.");
+                }
+                if (await _data.ExistsAsync(x => x.Name == dto.Name))
+                {
+                    throw new InvalidOperationException("El nombre del parquiadero ya se encuentra registrado.");
+                }
+                Validations.ValidateDto(dto,"Name");
                 if(dto.Name.Length > 50)
                     throw new ArgumentException("El nombre no puede contener mas de 50 caracteres.");
 

@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
@@ -105,7 +107,37 @@ namespace Business.Implementations
 
             return registeredVehicle;
         }
+        public override async Task<VehicleDto> Save(VehicleDto dto)
+        {
+            try
+            {
+                if (await _data.ExistsAsync(x => x.Plate == dto.Plate))
+                {
+                    throw new InvalidOperationException("La placa del  vehiculo ya se encuentra registrado.");
+                }
+ 
 
+
+                dto.Asset = true;
+
+                BaseModel entity = _mapper.Map<Vehicle>(dto);
+                entity = await _data.Save((Vehicle)entity);
+
+                return _mapper.Map<VehicleDto>(entity);
+            }
+            catch (InvalidOperationException invOe)
+            {
+                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al registrar el tipo de vehículo.", ex);
+            }
+        }
         public async Task<RegisteredVehiclesDto?> GetActiveVehicleBySlotAsync(int slotId)
         {
             var registeredVehicle = await _data.GetActiveRegisteredVehicleBySlotAsync(slotId);

@@ -28,7 +28,11 @@ namespace Business.Implementations
         {
             try
             {
-           
+                if (await _data.ExistsAsync(x => x.Url == dto.Url))
+                {
+                    throw new InvalidOperationException("La Url de la camara ya se encuentra registrada.");
+                }
+
                 Validations.ValidateDto(dto, "Resolution", "Url", "ParkingId");
 
           

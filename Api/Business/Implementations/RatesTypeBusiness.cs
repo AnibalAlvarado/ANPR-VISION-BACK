@@ -29,6 +29,10 @@ namespace Business.Implementations
         {
             try
             {
+                if (await _data.ExistsAsync(x => x.Name == dto.Name))
+                {
+                    throw new InvalidOperationException("El nombre ya se encuentra registrado.");
+                }
                 Validations.ValidateDto(dto,"Name");
                 if (dto.Name.Length > 50)
                     throw new ArgumentException("El nombre del tipo de tarifa no puede contener mas de 70 caracteres.");

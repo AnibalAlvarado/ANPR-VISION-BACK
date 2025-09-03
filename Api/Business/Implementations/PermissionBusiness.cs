@@ -8,16 +8,60 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
     public class PermissionBusiness : RepositoryBusiness<Permission, PermissionDto>, IPermissionBusiness
     {
         private readonly IPermissionData _data;
+        private readonly IMapper _mapper;
         public PermissionBusiness(IPermissionData data, IMapper mapper)
             : base(data, mapper)
         {
+            _mapper = mapper;
             _data = data;
+        }
+
+        public override async Task<PermissionDto> Save(PermissionDto dto)
+        {
+            try
+            {
+                // 🔹 Validar que no exista un formulario con el mismo nombre
+                if (await _data.ExistsAsync(x => x.Name == dto.Name))
+                {
+                    throw new InvalidOperationException("El nombre del Permiso ya se encuentra registrado.");
+                }
+
+                // 🔹 Validar campos obligatorios
+                Validations.ValidateDto(dto, "Name");
+
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El campo 'Nombre' es obligatorio.");
+                if (dto.Name.Length < 3)
+                    throw new ArgumentException("El nombre debe tener al menos 3 caracteres.");
+                if (dto.Name.Length > 100)
+                    throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
+
+                // 🔹 Guardar entidad
+                var entity = _mapper.Map<Permission>(dto);
+                entity = await _data.Save(entity);
+
+                return _mapper.Map<PermissionDto>(entity);
+            }
+            catch (InvalidOperationException invOp)
+            {
+                throw new InvalidOperationException($"Error: {invOp.Message}", invOp);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al registrar el formulario.", ex);
+            }
         }
     }
 }

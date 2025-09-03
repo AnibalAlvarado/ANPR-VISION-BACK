@@ -194,6 +194,45 @@ namespace Web.Controllers.Implementations
             }
         }
 
+        /// <summary>
+        /// Verifica si un valor ya existe en una columna de cualquier entidad
+        /// </summary>
+        /// <param name="field">Nombre del campo</param>
+        /// <param name="value">Valor a verificar</param>
+        /// <param name="currentId">Id actual (opcional, para excluirlo en edición)</param>
+        /// <returns></returns>
+        [HttpGet("check")]
+        public async Task<IActionResult> Check(
+            [FromQuery] string field,
+            [FromQuery] string value,
+            [FromQuery] int? currentId)
+        {
+            try
+            {
+                bool exists = await _business.ExistsAsynca(field, value, currentId);
+
+                var response = new ApiResponse<object>(
+                    new { exists },
+                    true,
+                    exists
+                        ? $"{field} '{value}' ya está registrado."
+                        : $"{field} disponible.",
+                    null
+                );
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<object>(
+                    null!,
+                    false,
+                    $"Error verificando duplicados: {ex.Message}",
+                    null
+                );
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
 
     }
 }

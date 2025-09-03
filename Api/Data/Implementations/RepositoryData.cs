@@ -312,7 +312,65 @@ namespace Data.Implementations
             };
         }
 
+        //public async Task<bool> ExistsAsync(string field, string value, int? currentId)
+        //{
+        //    var tableName = _context.Model.FindEntityType(typeof(T))!.GetTableName();
+        //    var query = $"SELECT COUNT(1) FROM {tableName} WHERE {field} = @value";
 
+        //    if (currentId.HasValue)
+        //        query += " AND Id <> @currentId";
+
+        //    using (var connection = _context.Database.GetDbConnection())
+        //    {
+        //        if (connection.State == System.Data.ConnectionState.Closed)
+        //            await connection.OpenAsync();
+
+        //        using (var command = connection.CreateCommand())
+        //        {
+        //            command.CommandText = query;
+
+        //            var paramValue = command.CreateParameter();
+        //            paramValue.ParameterName = "@value";
+        //            paramValue.Value = value;
+        //            command.Parameters.Add(paramValue);
+
+        //            var paramId = command.CreateParameter();
+        //            paramId.ParameterName = "@currentId";
+        //            paramId.Value = (object?)currentId ?? DBNull.Value;
+        //            command.Parameters.Add(paramId);
+
+        //            var result = await command.ExecuteScalarAsync();
+        //            return Convert.ToInt32(result) > 0;
+        //        }
+        //    }
+        //}
+
+        public override async Task<bool> ExistsAsynca(string field, string value, int? currentId)
+        {
+            var entityType = typeof(T);
+            var property = entityType.GetProperty(field);
+            if (property == null)
+                throw new ArgumentException($"El campo '{field}' no existe en la entidad '{entityType.Name}'.");
+
+            var query = _context.Set<T>().AsQueryable();
+
+            // Construir expresión dinámica: x => x.[field] == value
+            var parameter = Expression.Parameter(entityType, "x");
+            var propertyAccess = Expression.Property(parameter, property);
+            var constant = Expression.Constant(Convert.ChangeType(value, property.PropertyType));
+            var equalExpression = Expression.Equal(propertyAccess, constant);
+
+            if (currentId.HasValue)
+            {
+                var idProperty = Expression.Property(parameter, "Id");
+                var notCurrentId = Expression.NotEqual(idProperty, Expression.Constant(currentId.Value));
+                equalExpression = Expression.AndAlso(equalExpression, notCurrentId);
+            }
+
+            var lambda = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
+
+            return await _context.Set<T>().AnyAsync(lambda);
+        }
 
     }
 }

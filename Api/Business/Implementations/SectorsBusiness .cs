@@ -80,7 +80,19 @@ namespace Business.Implementations
         {
             try
             {
-            
+
+                bool exists = await _data.ExistsAsync(
+                      x => x.ZonesId == dto.ZonesId && x.TypeVehicleId == dto.TypeVehicleId
+                  );
+
+                if (exists)
+                    throw new InvalidOperationException(
+                        $"ya se encuentra Existente este registro."
+                    );
+                if (await _data.ExistsAsync(x => x.Name == dto.Name))
+                {
+                    throw new InvalidOperationException("El nombre del sector ya se encuentra registrado.");
+                }
                 Validations.ValidateDto(dto, "Capacity", "ZonesId", "TypeVehicleId");
 
            

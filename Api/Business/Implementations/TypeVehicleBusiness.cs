@@ -28,6 +28,10 @@ namespace Business.Implementations
         {
             try
             {
+                if (await _data.ExistsAsync(x => x.Name == dto.Name))
+                {
+                    throw new InvalidOperationException("El nombre del tipo de vehiculo ya se encuentra registrado.");
+                }
                 Validations.ValidateDto(dto, "Name");
 
                 if (string.IsNullOrWhiteSpace(dto.Name))

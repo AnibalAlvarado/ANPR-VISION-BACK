@@ -52,6 +52,15 @@ namespace Business.Implementations
         {
             try
             {
+
+                //bool exists = await _data.ExistsAsync(
+                //      x => x.ZonesId == dto.ZonesId && x.TypeVehicleId == dto.TypeVehicleId
+                //  );
+
+                //if (exists)
+                //    throw new InvalidOperationException(
+                //        $"ya se encuentra Existente este registro."
+                //    );
                 Validations.ValidateDto(dto, "ParkingCategoryId");
 
                 if (dto.ParkingCategoryId <= 0)
