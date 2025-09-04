@@ -45,6 +45,8 @@ namespace Business.Implementations
             catch (Exception ex)
             {
                 throw new Exception("Error al obtener las clientes .", ex);
+            }
+        }
 
 
         public override async Task<ClientDto> Save(ClientDto dto)

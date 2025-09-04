@@ -1,0 +1,23 @@
+version: "3.9"  
+
+networks:
+  backend-network:
+    external: true   # Usa la red que cree manualmente con `docker network create backend-network`
+
+services:
+  backend:
+    build:
+      context: ..            
+      dockerfile: Web/Dockerfile
+    container_name: backend_web
+    ports:
+      - "5000:8080"   # HTTP
+      - "5001:8081"   # HTTPS
+    networks:
+      - backend-network
+    environment:
+      DatabaseProvider: "PostgreSql"
+      ConnectionStrings__PostgreSql: "Host=postgres_db;Port=5432;Database=anprvision;Username=devuser;Password=DevPass123!"
+      ConnectionStrings__SqlServer: "Server=sqlserver_db,1433;Database=anprvision;User Id=sa;Password=Admin123!"
+      ConnectionStrings__MySql: "Server=mysql_db;Port=3306;Database=anprvision;User=devuser;Password=DevPass123!"
+
