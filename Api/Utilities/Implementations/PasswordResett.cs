@@ -62,7 +62,26 @@ namespace Utilities.Implementations
         }
 
 
-      
+        // conteo de solicitudes en la ventana
+        public Task<int> CountRequestsSinceAsync(int userId, DateTime sinceUtc)
+        {
+            return _context.PasswordResets
+                .Where(r => r.UsuarioId == userId && r.CreatedAt >= sinceUtc)
+                .CountAsync();
+        }
+
+        // la más antigua dentro de la ventana (para calcular cuándo libera cupo)
+        public Task<DateTime?> OldestRequestSinceAsync(int userId, DateTime sinceUtc)
+        {
+            return _context.PasswordResets
+                .Where(r => r.UsuarioId == userId && r.CreatedAt >= sinceUtc)
+                .OrderBy(r => r.CreatedAt)
+                .Select(r => (DateTime?)r.CreatedAt)
+                .FirstOrDefaultAsync();
+        }
+
+
+
 
 
 

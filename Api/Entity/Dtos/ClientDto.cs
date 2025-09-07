@@ -10,7 +10,7 @@ namespace Entity.Dtos
 {
     public class ClientDto: GenericDto
     {
-        public int PersonaId { get; set; }
+        public int PersonId { get; set; }
         // Navigation
         public string? Person { get; set; }
     }

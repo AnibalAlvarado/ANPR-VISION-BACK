@@ -1,0 +1,51 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: anpr-sql
+    environment:
+      SA_PASSWORD: "Admin123!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1436:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P $$SA_PASSWORD -Q 'SELECT 1' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks:
+      - backend-network
+
+  api:
+    build: .
+    container_name: anpr-api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ConnectionStrings__SqlServer: "Server=sqlserver,1433;Database=anprvisionServer;User Id=sa;Password=Admin123!;TrustServerCertificate=True;"
+    ports:
+      - "5002:8080"   # Asegúrate que tu API escuche 8080 dentro del contenedor
+    networks:
+      - backend-network
+
+  frontend:
+    build:
+      context: ../../../REPO-FRONT/ANPR-VISION-FRONT/angular   # <-- tu Angular real
+      dockerfile: Dockerfile
+    container_name: anpr-frontend
+    depends_on:
+      - api
+    ports:
+      - "4200:80"
+    networks:
+      - backend-network
+
+volumes:
+  sqlserver_data:
+
+networks:
+  backend-network:
+    driver: bridge

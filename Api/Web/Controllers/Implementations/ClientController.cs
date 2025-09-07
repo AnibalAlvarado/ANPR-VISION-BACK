@@ -8,12 +8,13 @@ namespace Web.Controllers.Implementations
     public class ClientController : RepositoryController<Client, ClientDto>
     {
         private readonly IClientBusiness _business;
+        private readonly ILogger<ClientController> _logger;
 
-        public ClientController(IClientBusiness business)
+        public ClientController(IClientBusiness business, ILogger<ClientController> logger)
            : base(business)
         {
             _business = business;
-
+            _logger = logger;
         }
 
         [HttpGet("join")]

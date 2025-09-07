@@ -16,6 +16,10 @@ namespace Utilities.Interfaces
         Task MarkAsUsed(PasswordReset reset); 
         Task CleanOldResets(int days = 30);
 
+        // ✅ Nuevos para limitar 5/h
+        Task<int> CountRequestsSinceAsync(int userId, DateTime sinceUtc);
+        Task<DateTime?> OldestRequestSinceAsync(int userId, DateTime sinceUtc);
+
 
     }
 }

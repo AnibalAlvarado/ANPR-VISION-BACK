@@ -55,13 +55,25 @@ namespace Utilities.Implementations
 
             CreateMap<User, UserDto>()
                  .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.FirstName));
+
+            //CreateMap<Client, ClientDto>()
+            //    .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person.FirstName));
             //CreateMap<UserDto, User>()
             //.ForPath(dest => dest.Person.Firstname, opt => opt.MapFrom(src => src.PersonName));
+
+            CreateMap<ClientDto, Client>()
+            .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
+            .ForMember(dest => dest.Person, opt => opt.Ignore());
+
+            CreateMap<Client, ClientDto>()
+            .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
+            .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person.FirstName));
+
 
             CreateMap<UserDto, User>();
             CreateMap<User, UserResponseDto>().ReverseMap();
             CreateMap<BlackList, BlackListDto>().ReverseMap();
-            CreateMap<Client, ClientDto>().ReverseMap();
+            //CreateMap<Client, ClientDto>().ReverseMap();
             CreateMap<Memberships, MembershipsDto>().ReverseMap();
             CreateMap<MemberShipType, MemberShipTypeDto>().ReverseMap();
             CreateMap<Parking, ParkingDto>().ReverseMap();
@@ -74,7 +86,7 @@ namespace Utilities.Implementations
             CreateMap<TypeVehicle, TypeVehicleDto>().ReverseMap();
             CreateMap<Vehicle, VehicleDto>().ReverseMap();
             CreateMap<Zones, ZonesDto>().ReverseMap();
-            CreateMap<Client, ClientDto>().ReverseMap();
+            //CreateMap<ClientDto, Client>().ReverseMap();
 
         }
     }

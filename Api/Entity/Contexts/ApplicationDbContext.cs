@@ -80,6 +80,13 @@ namespace Entity.Contexts
         {
             base.OnModelCreating(modelBuilder);
 
+            //modelBuilder.Entity<PasswordReset>(e =>
+            //{
+            //    e.Property(x => x.CreatedAt)
+            //     .HasDefaultValueSql("GETUTCDATE()"); // SQL Server (si usas PG sería now() at time zone 'utc')
+            //});
+
+
             // Llamada al seeding de datos iniciales
             DataInitial.Data(modelBuilder);
         }

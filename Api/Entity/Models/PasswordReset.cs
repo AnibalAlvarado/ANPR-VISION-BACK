@@ -14,6 +14,8 @@ namespace Entity.Models
         public DateTime ExpiryDate { get; set; }
         public bool Used { get; set; } = false;
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         // Relación
         public User Usuario { get; set; } = null!;
     }

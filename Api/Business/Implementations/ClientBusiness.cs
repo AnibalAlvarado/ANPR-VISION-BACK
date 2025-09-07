@@ -55,15 +55,31 @@ namespace Business.Implementations
             {
                 Validations.ValidateDto(dto, "PersonaId");
 
-                if (dto.PersonaId <= 0)
+                if (dto.PersonId <= 0)
                     throw new ArgumentException("El campo PersonaId debe ser mayor que 0.");
 
-                var persona = await _personRepository.GetById(dto.PersonaId);
+                var persona = await _personRepository.GetById(dto.PersonId);
                 if (persona == null)
-                    throw new InvalidOperationException($"No existe una persona con Id {dto.PersonaId}.");
+                {
+                    throw new InvalidOperationException($"No existe una persona con Id {dto.PersonId}.");
+                }
 
-                // Aquí puedes agregar la lógica de guardado real usando _data y _mapper
-                return await base.Save(dto);
+                // 🚨 Validar que la persona no esté ya asociada a otro cliente
+                bool existeCliente = await _data.ExistsAsync(x => x.PersonId == dto.PersonId);
+                if (existeCliente)
+                {
+                    throw new InvalidOperationException("Ya existe un cliente asociado a esta persona.");
+                }
+
+                Client entity = _mapper.Map<Client>(dto);
+
+                entity.Asset = true;
+
+                entity = await _data.Save(entity);
+
+                var savedDto = _mapper.Map<ClientDto>(entity);
+
+                return savedDto;
             }
             catch (InvalidOperationException invOe)
             {
@@ -91,16 +107,16 @@ namespace Business.Implementations
                 Client clienteExistente = await _data.GetById(dto.Id);
                 if (clienteExistente == null)
                     throw new InvalidOperationException($"El cliente no existe.");
-                if (dto.PersonaId <= 0)
+                if (dto.PersonId <= 0)
                     throw new ArgumentException("El atributo persona es obligatorio.");
 
-                Person persona = await _personRepository.GetById(dto.PersonaId);
+                Person persona = await _personRepository.GetById(dto.PersonId);
                 if (persona == null)
                     throw new InvalidOperationException($"No existe la persona que se ha seleccionado.");
 
-                if(dto.PersonaId != clienteExistente.PersonId)
+                if(dto.PersonId != clienteExistente.PersonId)
                 {
-                    bool existclient = await _data.ExistsAsync(x => x.PersonId == dto.PersonaId);
+                    bool existclient = await _data.ExistsAsync(x => x.PersonId == dto.PersonId);
                     if (existclient)
                         throw new InvalidOperationException("Ya existe otro cliente activo para esta persona.");
                 }

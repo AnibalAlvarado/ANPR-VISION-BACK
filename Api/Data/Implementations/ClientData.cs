@@ -44,7 +44,7 @@ namespace Data.Implementations
                     Name = p.Name,                   // string en GenericDto
 
                     // --- ZonesDto ---
-                    PersonaId = p.PersonId,
+                    PersonId = p.PersonId,
                     Person = p.Person != null
                         ? p.Person.FirstName
                         : null

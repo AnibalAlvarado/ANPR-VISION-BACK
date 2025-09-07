@@ -77,6 +77,18 @@ namespace Business.Implementations
                     throw new InvalidOperationException("El correo de usuario ya se encuentra registrado.");
                 }
 
+                // 🚨 Validar que la persona no esté asociada a otro usuario
+                if (dto.PersonId <= 0)
+                    throw new ArgumentException("El campo PersonaId es obligatorio.");
+
+                bool existeUsuarioParaPersona = await _data.ExistsAsync(x => x.PersonId == dto.PersonId);
+                if (existeUsuarioParaPersona)
+                {
+                    throw new InvalidOperationException("Ya existe un usuario asociado a esta persona.");
+                }
+
+
+
                 dto.Asset = true;
 
                 // Hashear la contraseña antes de guardar
@@ -112,49 +124,7 @@ namespace Business.Implementations
             }
         }
 
-        //public async Task<UserResponseDto?> ValidateUserAsync(string username, string password)
-        //{
-        //    try
-        //    {
-        //        // Validaciones iniciales
-        //        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-        //        {
-        //            _logger.LogWarning("Intento de validación con username o password vacíos");
-        //            return null;
-        //        }
-
-        //        // Obtener usuario por nombre de usuario
-        //        var user = await _data.GetUserByUsernameAsync(username);
-
-        //        // Si el usuario no existe o la contraseña no coincide, retorna null
-        //        if (user == null)
-        //        {
-        //            _logger.LogWarning("Usuario no encontrado durante validación: {Username}", username);
-        //            return null;
-        //        }
-
-        //        if (!VerifyPassword(password, user.Password))
-        //        {
-        //            _logger.LogWarning("Contraseña incorrecta para el usuario: {Username}", username);
-        //            return null;
-        //        }
-
-        //        // Obtener el rol del usuario a través de la tabla pivote
-        //        var roleName = await _data.GetUserRoleAsync(user.Id);
-
-        //        // Usar AutoMapper para crear el DTO de respuesta
-        //        var userResponseDto = _mapper.Map<UserResponseDto>(user);
-        //        userResponseDto.Role = roleName;
-        //        userResponseDto.UserId = user.Id;
-
-        //        return userResponseDto;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error durante la validación del usuario: {Username}", username);
-        //        throw;
-        //    }
-        //}
+       
 
         public async Task<UserResponseDto?> ValidateUserAsync(string username, string password)
         {
@@ -309,28 +279,67 @@ namespace Business.Implementations
         //metodos para el reset
 
         // === Paso 1: Solicitar recuperación ===
+        //public async Task RequestPasswordResetAsync(string email)
+        //{
+        //    var user = await _data.GetUserByEmailsync(email);
+        //    if (user == null)
+        //        throw new Exception("El usuario no existe con ese correo.");
+
+        //    string code = GenerateResetCode();
+
+        //    var reset = new PasswordReset
+        //    {
+        //        UsuarioId = user.Id,
+        //        Code = code,
+        //        ExpiryDate = DateTime.UtcNow.AddMinutes(10),
+        //        Used = false
+        //    };
+
+        //    await _passwordReset.Add(reset);
+
+        //    // Enviar correo
+        //    await _emailService.SendEmailAsync(user.Email, $"Tu código de recuperación es: {code}");
+        //}
+
         public async Task RequestPasswordResetAsync(string email)
         {
             var user = await _data.GetUserByEmailsync(email);
             if (user == null)
                 throw new Exception("El usuario no existe con ese correo.");
 
-            string code = GenerateResetCode();
+            var nowUtc = DateTime.UtcNow;
+            var windowStart = nowUtc.AddHours(-1);
 
+            // ✅ Límite: 5 por hora
+            int count = await _passwordReset.CountRequestsSinceAsync(user.Id, windowStart);
+            if (count >= 5)
+            {
+                var oldest = await _passwordReset.OldestRequestSinceAsync(user.Id, windowStart);
+                var nextUtc = (oldest ?? nowUtc).AddHours(1);
+
+                throw new BusinessException(
+                    $"Has alcanzado el límite de 5 códigos por hora. " +
+                    $"Podrás solicitar uno nuevo despues de una hora");
+            }
+
+            // Generar y registrar el código
+            string code = GenerateResetCode();
             var reset = new PasswordReset
             {
                 UsuarioId = user.Id,
                 Code = code,
-                ExpiryDate = DateTime.UtcNow.AddMinutes(10),
-                Used = false
+                ExpiryDate = nowUtc.AddMinutes(10),
+                Used = false,
+                CreatedAt = nowUtc
+                // RequestIp = ip (si decides capturarla en el controller y pasarla)
             };
 
             await _passwordReset.Add(reset);
 
-            // Enviar correo
             await _emailService.SendEmailAsync(user.Email, $"Tu código de recuperación es: {code}");
         }
-        
+
+
 
         // === Paso 2: Validar código y actualizar contraseña ===
         public async Task VerifyCodeAndResetPasswordAsync(string email, string code, string newPassword)
