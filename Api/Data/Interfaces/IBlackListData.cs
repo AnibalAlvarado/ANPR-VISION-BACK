@@ -1,4 +1,5 @@
-﻿using Entity.Models;
+﻿using Entity.Dtos;
+using Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,7 @@ namespace Data.Interfaces
 {
     public interface IBlackListData : IRepositoryData<BlackList>
     {
+        Task<IEnumerable<BlackListDto>> GetAllJoinAsync();
+
     }
 }

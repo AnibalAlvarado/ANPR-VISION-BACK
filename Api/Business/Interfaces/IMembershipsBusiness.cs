@@ -11,6 +11,7 @@ namespace Business.Interfaces
 {
     public interface IMembershipsBusiness : IRepositoryBusiness<Memberships, MembershipsDto>
     {
+        Task<IEnumerable<MembershipsDto>> GetAllJoinAsync();
 
     }
 }

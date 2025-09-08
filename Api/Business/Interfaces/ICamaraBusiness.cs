@@ -11,6 +11,7 @@ namespace Business.Interfaces
    
     public interface ICamaraBusiness : IRepositoryBusiness<Camera, CameraDto>
     {
+        Task<IEnumerable<CameraDto>> GetAllJoinAsync();
 
     }
 }

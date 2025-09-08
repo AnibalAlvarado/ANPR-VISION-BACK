@@ -9,6 +9,7 @@ namespace Business.Interfaces
 {
     public interface IBlackListBusiness : IRepositoryBusiness<BlackList, BlackListDto>
     {
+        Task<IEnumerable<BlackListDto>> GetAllJoinAsync();
 
     }
 }

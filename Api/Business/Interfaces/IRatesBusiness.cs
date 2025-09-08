@@ -10,6 +10,7 @@ namespace Business.Interfaces
 {
     public interface IRatesBusiness : IRepositoryBusiness<Rates, RatesDto>
     {
+        Task<IEnumerable<RatesDto>> GetAllJoinAsync();
 
     }
 }

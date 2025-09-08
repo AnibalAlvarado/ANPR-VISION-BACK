@@ -1,4 +1,5 @@
-﻿using Entity.Models;
+﻿using Entity.Dtos;
+using Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,9 @@ namespace Data.Interfaces
 {
     public interface IMembershipsData : IRepositoryData<Memberships>
     {
+        Task<IEnumerable<MembershipsDto>> GetAllJoinAsync();
+
         Task<bool> ExistsAsync<T>(Func<object, bool> value);
+
     }
 }

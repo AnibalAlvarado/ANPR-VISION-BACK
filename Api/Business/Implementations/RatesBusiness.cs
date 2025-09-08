@@ -30,7 +30,27 @@ namespace Business.Implementations
             _ratesTypeBusiness = ratesTypeBusiness;
             _typeVehicleBusiness = typeVehicleBusiness;
         }
-
+        public async Task<IEnumerable<RatesDto>> GetAllJoinAsync()
+        {
+            try
+            {
+                IEnumerable<RatesDto> entities = await _data.GetAllJoinAsync();
+                if (!entities.Any()) throw new InvalidOperationException("No se encontraron tarifas.");
+                return entities;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException("error: ", invEx);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException("error: ", argEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las tarifas.", ex);
+            }
+        }
         public override async Task<RatesDto> Save(RatesDto dto)
         {
             try

@@ -26,6 +26,27 @@ namespace Business.Implementations
             _vehicleBusiness = vehicleBusiness;
         }
 
+        public async Task<IEnumerable<BlackListDto>> GetAllJoinAsync()
+        {
+            try
+            {
+                IEnumerable<BlackListDto> entities = await _data.GetAllJoinAsync();
+                if (!entities.Any()) throw new InvalidOperationException("No se encontraron vehiculos en la lista negra.");
+                return entities;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException("error: ", invEx);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException("error: ", argEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener vehiculos en la lista negra .", ex);
+            }
+        }
         public override async Task<BlackListDto> Save(BlackListDto dto)
         {
             try
@@ -103,6 +124,7 @@ namespace Business.Implementations
                 throw new BusinessException("Error al actualizar la entidad.", ex);
             }
         }
+
 
 
     }

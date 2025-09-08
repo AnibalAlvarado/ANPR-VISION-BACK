@@ -68,6 +68,8 @@ namespace Entity.Contexts
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Zones> Zones { get; set; }
 
+        public DbSet<Camera> Cameras { get; set; }
+
         public DbSet<PasswordReset> PasswordResets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

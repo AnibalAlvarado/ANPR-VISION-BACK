@@ -62,5 +62,8 @@ namespace Data.Implementations
                 .FirstOrDefaultAsync(rv => rv.SlotsId == slotId && rv.ExitDate == null);
         }
 
+
+
+
     }
 }

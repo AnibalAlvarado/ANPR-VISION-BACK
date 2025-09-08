@@ -24,6 +24,28 @@ namespace Business.Implementations
             _data = data;
             _mapper = mapper;
         }
+        public async Task<IEnumerable<CameraDto>> GetAllJoinAsync()
+        {
+            try
+            {
+                IEnumerable<CameraDto> entities = await _data.GetAllJoinAsync();
+                if (!entities.Any()) throw new InvalidOperationException("No se encontraron camaras.");
+                return entities;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException("error: ", invEx);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException("error: ", argEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las camaras .", ex);
+            }
+        }
+
         public override async Task<CameraDto> Save(CameraDto dto)
         {
             try
@@ -78,11 +100,13 @@ namespace Business.Implementations
         {
             try
             {
+                // Validaciones básicas del DTO
                 Validations.ValidateDto(dto, "Id", "Resolution", "Url", "ParkingId");
 
                 if (dto.Id <= 0)
                     throw new ArgumentException("El Id de la cámara no es válido.");
 
+                // Traer la entidad existente (TRACKED)
                 var camaraExistente = await _data.GetById(dto.Id);
                 if (camaraExistente == null)
                     throw new InvalidOperationException($"No existe una cámara con Id {dto.Id}.");
@@ -90,6 +114,7 @@ namespace Business.Implementations
                 if (!camaraExistente.Asset)
                     throw new InvalidOperationException("No se puede actualizar una cámara deshabilitada.");
 
+                // Validaciones de campos
                 if (string.IsNullOrWhiteSpace(dto.Resolution))
                     throw new ArgumentException("El campo 'Resolution' es obligatorio.");
                 if (dto.Resolution.Length < 3)
@@ -107,21 +132,16 @@ namespace Business.Implementations
                 if (dto.ParkingId <= 0)
                     throw new ArgumentException("Debe seleccionar un estacionamiento válido.");
 
-                // 🔹 Verificar duplicados correctamente
-                var camaras = await _data.GetAll(null);
-                var existeCamara = camaras.Any(
-                    x => x.Resolution.Trim().ToLower() == dto.Resolution.Trim().ToLower() &&
-                         x.Url.Trim().ToLower() == dto.Url.Trim().ToLower() &&
-                         x.ParkingId == dto.ParkingId &&
-                         x.Id != dto.Id &&
-                         x.Asset == true
-                );
-
+                // Validar duplicados SIN tracking (usa el método nuevo en Data)
+                var existeCamara = await _data.ExistsDuplicateAsync(dto);
                 if (existeCamara)
                     throw new InvalidOperationException("Ya existe otra cámara con esta resolución y URL en el mismo estacionamiento.");
 
-                BaseModel entity = _mapper.Map<Camera>(dto);
-                await _data.Update((Camera)entity);
+                // Mapear SOBRE la entidad trackeada (clave para evitar doble tracking)
+                _mapper.Map(dto, camaraExistente);
+
+                // Guardar la misma instancia
+                await _data.Update(camaraExistente);
             }
             catch (InvalidOperationException invOe)
             {
@@ -136,6 +156,8 @@ namespace Business.Implementations
                 throw new BusinessException("Error al actualizar la cámara.", ex);
             }
         }
+
+
 
 
     }
