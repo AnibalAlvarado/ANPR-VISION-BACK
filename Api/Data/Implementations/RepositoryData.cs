@@ -313,6 +313,33 @@ namespace Data.Implementations
         }
 
 
+        public override async Task<bool> ExistsAsynca(string field, string value, int? currentId)
+        {
+            var entityType = typeof(T);
+            var property = entityType.GetProperty(field);
+            if (property == null)
+                throw new ArgumentException($"El campo '{field}' no existe en la entidad '{entityType.Name}'.");
+
+            var query = _context.Set<T>().AsQueryable();
+
+            // Construir expresión dinámica: x => x.[field] == value
+            var parameter = Expression.Parameter(entityType, "x");
+            var propertyAccess = Expression.Property(parameter, property);
+            var constant = Expression.Constant(Convert.ChangeType(value, property.PropertyType));
+            var equalExpression = Expression.Equal(propertyAccess, constant);
+
+            if (currentId.HasValue)
+            {
+                var idProperty = Expression.Property(parameter, "Id");
+                var notCurrentId = Expression.NotEqual(idProperty, Expression.Constant(currentId.Value));
+                equalExpression = Expression.AndAlso(equalExpression, notCurrentId);
+            }
+
+            var lambda = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
+
+            return await _context.Set<T>().AnyAsync(lambda);
+        }
+
 
     }
 }
