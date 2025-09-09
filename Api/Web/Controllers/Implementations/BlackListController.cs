@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.Implementations;
+using Business.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,24 +18,14 @@ namespace Web.Controllers.Implementations
         }
 
         [HttpGet("join")]
-        public async Task<ActionResult<IEnumerable<BlackListDto>>> GetAllJoin()
+    
+        public async Task<IActionResult> GetAllJoin()
         {
-            try
-            {
-                var data = await _business.GetAllJoinAsync();
-                if (data == null || !data.Any())
-                {
-                    var responseNull = new ApiResponse<IEnumerable<BlackListDto>>(null, false, "Registro no encontrado", null);
-                    return NotFound(responseNull);
-                }
-                var response = new ApiResponse<IEnumerable<BlackListDto>>(data, true, "Ok", null);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                var response = new ApiResponse<IEnumerable<BlackListDto>>(null, false, ex.Message.ToString(), null);
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
+            var result = await _business.GetAllJoinAsync();
+            var message = result.Any() ? "Consulta exitosa" : "No hay registros disponibles";
+
+            return Ok(new ApiResponse<IEnumerable<BlackListDto>>(result, true, message, null));
         }
+
     }
 }

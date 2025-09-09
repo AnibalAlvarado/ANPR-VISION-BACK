@@ -12,5 +12,6 @@ namespace Data.Interfaces
     {
         Task<IEnumerable<BlackListDto>> GetAllJoinAsync();
 
+
     }
 }
