@@ -80,6 +80,10 @@ namespace Business.Implementations
                 if (dto.VehicleId <= 0)
                     throw new ArgumentException("no se selecciono ningun vehiculo.");
 
+                // ✅ Obligatorio
+                if (string.IsNullOrWhiteSpace(dto.Reason))
+                    throw new ArgumentException("La razón es obligatoria.");
+
                 if (!string.IsNullOrWhiteSpace(dto.Reason) && dto.Reason.Length > 250)
                     throw new ArgumentException("La razón no puede tener más de 250 caracteres.");
 

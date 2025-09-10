@@ -2,6 +2,7 @@
 using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,13 @@ namespace Business.Implementations
     {
         private readonly ISlotsData _data;
         private readonly IMapper _mapper;
-        public SlotsBusiness(ISlotsData data, IMapper mapper)
+        private readonly IRepositoryData<Sectors> _sectors;
+        public SlotsBusiness(ISlotsData data, IMapper mapper, IRepositoryData<Sectors> sectors)
             : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
+            _sectors = sectors;
         }
 
 
@@ -75,43 +78,39 @@ namespace Business.Implementations
             try
             {
                 Validations.ValidateDto(dto, "IsAvailable", "SectorsId");
-
                 if (dto.SectorsId <= 0)
                     throw new ArgumentException("El campo SectorsId debe ser mayor a 0.");
 
-                var sector = await _data.GetById(dto.SectorsId);
+                // ✅ Validar existencia en la tabla Sectors
+                var sector = await _sectors.GetById(dto.SectorsId);
                 if (sector == null)
                     throw new InvalidOperationException($"El sector con Id {dto.SectorsId} no existe.");
 
-                var slotDuplicado = await _data.ExistsAsync<Slots>(
-                    x => ((Slots)x).SectorsId == dto.SectorsId &&
-                         ((Slots)x).Id == dto.Id &&
-                         ((Slots)x).Asset == true
+                // ✅ Dedupe razonable (ver notas abajo)
+                var existeDuplicado = await _data.AnyAsync(
+                    s => s.SectorsId == dto.SectorsId
+                         && s.Name == dto.Name    // o la clave única que definas
+                         && s.Asset == true
+                         && s.IsDeleted == false
+                         && (dto.Id == 0 || s.Id != dto.Id) // excluye el propio al editar
                 );
-                if (slotDuplicado)
-                    throw new InvalidOperationException(
-                        "Ya existe un slot activo en el mismo sector con el mismo Id."
-                    );
+                if (existeDuplicado)
+                    throw new InvalidOperationException("Ya existe un slot activo con ese nombre en el mismo sector.");
 
                 dto.Asset = true;
-
-                BaseModel entity = _mapper.Map<Slots>(dto);
-                entity = await _data.Save((Slots)entity);
-
+                var entity = _mapper.Map<Slots>(dto);
+                entity = await _data.Save(entity);
                 return _mapper.Map<SlotsDto>(entity);
             }
-            catch (InvalidOperationException invOe)
-            {
-                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
-            }
-            catch (ArgumentException argEx)
-            {
-                throw new ArgumentException($"Error: {argEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                throw new BusinessException("Error al crear el registro del slot.", ex);
-            }
+            catch (InvalidOperationException invOe) { throw new InvalidOperationException($"Error: {invOe.Message}", invOe); }
+            catch (ArgumentException argEx) { throw new ArgumentException($"Error: {argEx.Message}"); }
+            catch (Exception ex) { throw new BusinessException("Error al crear el registro del slot.", ex); }
+        }
+        public async Task<List<SlotsAvailabilityByTypeDto>> GetAvailabilityByParkingGroupedByTypeAsync(int parkingId)
+        {
+            if (parkingId < 1) throw new ArgumentException("El id del parqueadero es inválido.");
+            var data = await _data.GetAvailabilityByParkingGroupedByTypeAsync(parkingId);
+            return data;
         }
 
     }

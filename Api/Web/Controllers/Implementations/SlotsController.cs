@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,5 +59,29 @@ namespace Web.Controllers.Implementations
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+        // 👇 NUEVO: disponibilidad por sector (ideal para widget de un panel por sector)
+        [HttpGet("availability/by-type/parking/{parkingId:int}")]
+        public async Task<ActionResult<ApiResponse<List<SlotsAvailabilityByTypeDto>>>> GetAvailabilityByTypeInParking([FromRoute] int parkingId)
+        {
+            try
+            {
+                var data = await _business.GetAvailabilityByParkingGroupedByTypeAsync(parkingId);
+                var response = new ApiResponse<List<SlotsAvailabilityByTypeDto>>(data, true, "Ok", null);
+                return Ok(response);
+            }
+            catch (ArgumentException ex)
+            {
+                var response = new ApiResponse<List<SlotsAvailabilityByTypeDto>>(null, false, ex.Message, null);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<List<SlotsAvailabilityByTypeDto>>(null, false, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+
     }
 }

@@ -117,6 +117,14 @@ namespace Utilities.Implementations
              .ForMember(dest => dest.MembershipType, opt => opt.MapFrom(src => src.MembershipType.Name))
              .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(src => src.Vehicle.Plate));
 
+            CreateMap<Slots,SlotsDto>()
+                 .ForMember(dest => dest.SectorsId, opt => opt.MapFrom(src => src.SectorsId))
+               .ForMember(dest => dest.Sectors, opt => opt.MapFrom(src => src.Sectors.Name));
+
+            CreateMap<SlotsDto, Slots>()
+               .ForMember(dest => dest.SectorsId, opt => opt.MapFrom(src => src.SectorsId))
+               .ForMember(dest => dest.Sectors, opt => opt.Ignore());
+
 
             CreateMap<UserDto, User>();
             CreateMap<User, UserResponseDto>().ReverseMap();
@@ -130,7 +138,7 @@ namespace Utilities.Implementations
             CreateMap<RatesType, RatesTypeDto>().ReverseMap();
             CreateMap<RegisteredVehicles, RegisteredVehiclesDto>().ReverseMap();
             CreateMap<Sectors, SectorsDto>().ReverseMap();
-            CreateMap<Slots, SlotsDto>().ReverseMap();
+            //CreateMap<Slots, SlotsDto>().ReverseMap();
             CreateMap<TypeVehicle, TypeVehicleDto>().ReverseMap();
             CreateMap<Vehicle, VehicleDto>().ReverseMap();
             CreateMap<Zones, ZonesDto>().ReverseMap();
