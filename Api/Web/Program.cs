@@ -46,6 +46,22 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 
 var app = builder.Build();
+
+// 👇 Migraciones automáticas al iniciar
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.Migrate();
+        Console.WriteLine("✅ Migraciones aplicadas correctamente.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️ Error aplicando migraciones: {ex.Message}");
+    }
+}
+
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
