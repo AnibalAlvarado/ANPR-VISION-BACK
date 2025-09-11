@@ -13,5 +13,8 @@ namespace Business.Interfaces
     {
         Task<IEnumerable<RegisteredVehiclesDto>> GetAllJoinAsync();
 
+        Task<int> GetTotalCurrentlyParkedByParkingAsync(int parkingId);
+
+
     }
 }

@@ -18,11 +18,14 @@ namespace Business.Implementations
     {
         private readonly ISlotsData _data;
         private readonly IMapper _mapper;
-        public SlotsBusiness(ISlotsData data, IMapper mapper)
+        private readonly IRepositoryData<Sectors> _sectors;
+
+        public SlotsBusiness(ISlotsData data, IMapper mapper, IRepositoryData<Sectors> sectors)
             : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
+            _sectors = sectors;
         }
 
 
@@ -75,44 +78,121 @@ namespace Business.Implementations
             try
             {
                 Validations.ValidateDto(dto, "IsAvailable", "SectorsId");
-
                 if (dto.SectorsId <= 0)
                     throw new ArgumentException("El campo SectorsId debe ser mayor a 0.");
 
-                var sector = await _data.GetById(dto.SectorsId);
+                // 1) Sector debe existir y NO estar eliminado
+                var sector = await _sectors.GetById(dto.SectorsId);
                 if (sector == null)
                     throw new InvalidOperationException($"El sector con Id {dto.SectorsId} no existe.");
 
-                var slotDuplicado = await _data.ExistsAsync<Slots>(
-                    x => ((Slots)x).SectorsId == dto.SectorsId &&
-                         ((Slots)x).Id == dto.Id &&
-                         ((Slots)x).Asset == true
-                );
-                if (slotDuplicado)
+                if (sector.IsDeleted == true)
                     throw new InvalidOperationException(
-                        "Ya existe un slot activo en el mismo sector con el mismo Id."
+                        $"El sector '{sector.Name}' está eliminado lógicamente. No puedes crear slots asociados a un sector eliminado."
                     );
 
-                dto.Asset = true;
+                // Defaults para evitar tri-estado
+                if (dto.Asset is null) dto.Asset = true;
+                if (dto.IsDeleted is null) dto.IsDeleted = false;
 
-                BaseModel entity = _mapper.Map<Slots>(dto);
-                entity = await _data.Save((Slots)entity);
+                // 2) Dedupe por nombre (solo NO eliminados; Asset NO importa) — null-safe
+                var existeDuplicado = await _data.AnyAsync(
+                    s => s.SectorsId == dto.SectorsId
+                         && s.Name == dto.Name
+                         && s.IsDeleted != true    // cuenta null como "no eliminado"
+                );
+                if (existeDuplicado)
+                    throw new InvalidOperationException("Ya existe un slot con ese nombre en el mismo sector.");
 
+                // 3) Capacidad: cuentan TODOS los NO eliminados — null-safe
+                bool nuevoCuenta = dto.IsDeleted != true; // null => cuenta
+                if (nuevoCuenta)
+                {
+                    var existentes = await _data.CountExistingBySectorAsync(dto.SectorsId);
+                    int capacidad = sector.Capacity;
+                    if (existentes >= capacidad)
+                        throw new InvalidOperationException(
+                            $"Capacidad del sector ({capacidad}) excedida. No puedes crear más slots en el sector {sector.Name}."
+                        );
+                }
+
+                // 4) Guardado
+                var entity = _mapper.Map<Slots>(dto);
+                entity = await _data.Save(entity);
                 return _mapper.Map<SlotsDto>(entity);
             }
-            catch (InvalidOperationException invOe)
-            {
-                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
-            }
-            catch (ArgumentException argEx)
-            {
-                throw new ArgumentException($"Error: {argEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                throw new BusinessException("Error al crear el registro del slot.", ex);
-            }
+            catch (InvalidOperationException invOe) { throw new InvalidOperationException($"Error: {invOe.Message}", invOe); }
+            catch (ArgumentException argEx) { throw new ArgumentException($"Error: {argEx.Message}"); }
+            catch (Exception ex) { throw new BusinessException("Error al crear el registro del slot.", ex); }
         }
+
+
+
+        public override async Task<SlotsDto> Update(SlotsDto dto)
+        {
+            try
+            {
+                Validations.ValidateDto(dto, "Id", "IsAvailable", "SectorsId");
+                if (dto.SectorsId <= 0)
+                    throw new ArgumentException("El campo SectorsId debe ser mayor a 0.");
+
+                var actual = await _data.GetById(dto.Id);
+                if (actual == null)
+                    throw new InvalidOperationException($"El slot con Id {dto.Id} no existe.");
+
+                var sectorDestino = await _sectors.GetById(dto.SectorsId);
+                if (sectorDestino == null)
+                    throw new InvalidOperationException($"El sector con Id {dto.SectorsId} no existe.");
+
+                // ❗ No permitir slot NO eliminado en un sector eliminado (null-safe)
+                if ((dto.IsDeleted != true) && (sectorDestino.IsDeleted == true))
+                    throw new InvalidOperationException(
+                        $"El sector '{sectorDestino.Name}' está eliminado lógicamente. No puedes asociar un slot no eliminado a un sector eliminado."
+                    );
+
+                if (dto.Asset is null) dto.Asset = true;
+                if (dto.IsDeleted is null) dto.IsDeleted = false;
+
+                // Dedupe por nombre (no eliminados) excluyendo el propio Id — null-safe
+                var existeDuplicado = await _data.AnyAsync(
+                    s => s.Id != dto.Id
+                         && s.SectorsId == dto.SectorsId
+                         && s.Name == dto.Name
+                         && s.IsDeleted != true
+                );
+                if (existeDuplicado)
+                    throw new InvalidOperationException("Ya existe un slot con ese nombre en el mismo sector .");
+
+                // Capacidad: cuentan NO eliminados — null-safe
+                bool antesContaba = actual.IsDeleted != true;
+                bool ahoraCuenta = dto.IsDeleted != true;
+                bool cambiaSector = actual.SectorsId != dto.SectorsId;
+
+                if (ahoraCuenta && (cambiaSector || !antesContaba))
+                {
+                    var existentesEnDestino = await _data.CountExistingBySectorAsync(dto.SectorsId);
+                    int capacidad = sectorDestino.Capacity;
+
+                    if (existentesEnDestino >= capacidad)
+                        throw new InvalidOperationException(
+                            $"Capacidad del sector ({capacidad}) excedida. No puedes asignar más slots al sector {sectorDestino.Name}."
+                        );
+                }
+
+                var entity = _mapper.Map(dto, actual);
+                await _data.Update(entity); // tu repo probablemente devuelve Task/void
+                var persisted = await _data.GetById(dto.Id);
+                return _mapper.Map<SlotsDto>(persisted);
+            }
+            catch (InvalidOperationException invOe) { throw new InvalidOperationException($"Error: {invOe.Message}", invOe); }
+            catch (ArgumentException argEx) { throw new ArgumentException($"Error: {argEx.Message}"); }
+            catch (Exception ex) { throw new BusinessException("Error al actualizar el registro del slot.", ex); }
+        }
+
+
+
+
+
 
     }
 }

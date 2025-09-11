@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos;
@@ -22,9 +23,10 @@ namespace Data.Implementations
 
         }
 
-        public Task<bool> ExistsAsync<T>(Func<object, bool> value)
+        public Task<bool> ExistsAsync(Expression<Func<Parking, bool>> predicate)
         {
-            throw new NotImplementedException();
+            // Traducible a SQL por EF Core
+            return _context.Parkings.AsNoTracking().AnyAsync(predicate);
         }
 
         public async Task<IEnumerable<ParkingDto>> GetAllJoinAsync()

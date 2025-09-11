@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Audit.Services;
@@ -64,5 +65,17 @@ namespace Data.Implementations
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> AnyAsync(Expression<Func<Slots, bool>> predicate)
+       => _context.Slots.AsNoTracking().AnyAsync(predicate);
+
+      
+        public Task<int> CountExistingBySectorAsync(int sectorId)
+        {
+            return _context.Slots
+                .Where(s => s.SectorsId == sectorId && s.IsDeleted != true)
+                .CountAsync();
+        }
+
     }
 }

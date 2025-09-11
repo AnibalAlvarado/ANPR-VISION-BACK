@@ -35,5 +35,22 @@ namespace Web.Controllers.Implementations
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+        // ---------- NUEVOS ENDPOINTS ----------
+        // GET api/registeredvehicles/current/total?parkingId=1
+        [HttpGet("current/total")]
+        public async Task<IActionResult> GetTotalCurrentlyParked([FromQuery] int parkingId)
+        {
+            try
+            {
+                var total = await _business.GetTotalCurrentlyParkedByParkingAsync(parkingId);
+                return Ok(new ApiResponse<object>(new { total }, true, "Ok", null));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new ApiResponse<object>(null!, false, ex.Message, null));
+            }
+        }
     }
 }

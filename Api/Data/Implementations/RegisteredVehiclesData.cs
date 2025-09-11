@@ -62,5 +62,18 @@ namespace Data.Implementations
                 })
                 .ToListAsync();
         }
+
+        // ---------- NUEVOS MÉTODOS ----------
+        public async Task<int> GetTotalCurrentlyParkedByParkingAsync(int parkingId)
+        {
+            // Nota: se excluyen RV sin SlotsId porque no es posible inferir el parking con tu modelo actual.
+            return await _context.RegisteredVehicles
+                .AsNoTracking()
+                .Where(rv => rv.ExitDate == null
+                             && rv.SlotsId != null
+                             && rv.Slots.Sectors.Zones.ParkingId == parkingId
+                             /* && !rv.IsDeleted */)
+                .CountAsync();
+        }
     }
 }
