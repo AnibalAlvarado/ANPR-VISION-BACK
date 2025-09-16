@@ -8,7 +8,7 @@ using Web.Controllers.Interfaces;
 
 namespace Web.Controllers.Implementations
 {
-    
+
     [ApiController]
     [Route("api/[controller]")]
     public class RepositoryController<T, D> : ARepositoryController<T, D>, IRepositoryController<T, D> where T : BaseModel where D : BaseDto
@@ -100,7 +100,7 @@ namespace Web.Controllers.Implementations
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPut]
-        public override  async Task<ActionResult<D>> Update(D dto)
+        public override async Task<ActionResult<D>> Update(D dto)
         {
             try
             {
@@ -194,6 +194,40 @@ namespace Web.Controllers.Implementations
             }
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public override async Task<bool> ExistsAsynca(string field, string value, int? currentId)
+        {
+            return await _business.ExistsAsynca(field, value, currentId);
+        }
+        [HttpGet("check")]
+        public  async Task<IActionResult> Check(
+        [FromQuery] string field,
+        [FromQuery] string value,
+        [FromQuery] int? currentId)
+        {
+            try
+            {
+                bool exists = await ExistsAsynca(field, value, currentId);
+
+                var response = new ApiResponse<object>(
+                    new { exists },
+                    true,
+                    exists ? $"{field} '{value}' ya está registrado." : $"{field} disponible.",
+                    null
+                );
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<object>(
+                    null!,
+                    false,
+                    $"Error verificando duplicados: {ex.Message}",
+                    null
+                );
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
 
     }
 }
