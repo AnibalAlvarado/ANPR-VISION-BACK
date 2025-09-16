@@ -2,6 +2,7 @@
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -75,6 +76,31 @@ namespace Data.Implementations
             return _context.Slots
                 .Where(s => s.SectorsId == sectorId && s.IsDeleted != true)
                 .CountAsync();
+        }
+
+        public async Task<OccupancyDto> GetOccupancyGlobalAsync()
+        {
+            // Total de slots NO eliminados (null = no eliminado)
+            var total = await _context.Slots
+                .AsNoTracking()
+                .CountAsync(s => s.IsDeleted != true);
+
+            if (total == 0) return new OccupancyDto { Occupied = 0, Total = 0, Percentage = 0 };
+
+            // Ocupados = slots que tienen un RV abierto (ExitDate null) con SlotsId asignado
+            var occupied = await _context.RegisteredVehicles
+                .AsNoTracking()
+                .Where(rv => rv.ExitDate == null && rv.SlotsId != null)
+                .Select(rv => rv.SlotsId!.Value)
+                .Distinct()
+                .CountAsync();
+
+            return new OccupancyDto
+            {
+                Occupied = occupied,
+                Total = total,
+                Percentage = Math.Round((double)occupied / total * 100, 2)
+            };
         }
 
     }

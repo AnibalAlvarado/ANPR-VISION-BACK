@@ -2,6 +2,7 @@
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -75,5 +76,110 @@ namespace Data.Implementations
                              /* && !rv.IsDeleted */)
                 .CountAsync();
         }
+
+        public Task<int> GetTotalCurrentlyParkedAsync()
+        {
+            // TOTAL GLOBAL (sin filtrar por parking)
+            // Nota: aquí NO filtramos por SlotsId para incluir también los que aún no tienen plaza asignada.
+            return _context.RegisteredVehicles
+                .AsNoTracking()
+                .Where(rv => rv.ExitDate == null
+                             /* && !rv.IsDeleted */)
+                .CountAsync();
+        }
+
+        public async Task<VehicleTypeDistributionDto> GetVehicleTypeDistributionGlobalAsync(bool includeZeros = true)
+        {
+            // Vehículos actualmente adentro (ExitDate NULL). No filtramos por Slots en global.
+            var open = _context.RegisteredVehicles
+                .AsNoTracking()
+                .Where(rv => rv.ExitDate == null);
+
+            // Contamos vehículos distintos por tipo (evita duplicados abiertos)
+            var counts = await open
+                .Select(rv => new { rv.VehicleId, rv.Vehicle.TypeVehicleId, rv.Vehicle.TypeVehicle.Name })
+                .Distinct() // por VehicleId/Type
+                .GroupBy(x => new { x.TypeVehicleId, x.Name })
+                .Select(g => new { g.Key.TypeVehicleId, g.Key.Name, Count = g.Count() })
+                .ToListAsync();
+
+            var total = counts.Sum(x => x.Count);
+
+            // Traemos catálogo de tipos para leyenda estable e incluir ceros si se pide
+            var types = await _context.Set<TypeVehicle>()
+                .AsNoTracking()
+                .Where(tv => tv.IsDeleted != true)
+                .Select(tv => new { tv.Id, tv.Name })
+                .ToListAsync();
+
+            var byId = counts.ToDictionary(c => c.TypeVehicleId, c => c.Count);
+            var slices = new List<VehicleTypeSliceDto>();
+
+            foreach (var t in types)
+            {
+                var c = byId.TryGetValue(t.Id, out var v) ? v : 0;
+                if (!includeZeros && c == 0) continue;
+                var pct = total == 0 ? 0 : Math.Round((double)c / Math.Max(1, total) * 100, 2);
+                slices.Add(new VehicleTypeSliceDto { TypeVehicleId = t.Id, Name = t.Name, Count = c, Percentage = pct });
+            }
+
+            // Orden sugerido: Carro, Moto, Camión, luego alfabético
+            var order = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { ["Carro"] = 1, ["Moto"] = 2, ["Camión"] = 3, ["Camion"] = 3 };
+            slices = slices.OrderBy(s => order.TryGetValue(s.Name, out var o) ? o : 100)
+                           .ThenBy(s => s.Name).ToList();
+
+            return new VehicleTypeDistributionDto
+            {
+                Total = total,
+                Labels = slices.Select(s => s.Name).ToList(),
+                Series = slices.Select(s => s.Count).ToList(),
+                Slices = slices
+            };
+        }
+
+        public async Task<List<OccupancyItemDto>> GetSectorOccupancyByZoneAsync(int zoneId)
+        {
+            if (zoneId <= 0) throw new ArgumentException("zoneId inválido.");
+
+            // 1) Totales de slots por SECTOR (NO eliminados) dentro de la zona
+            var totalsBySector = await _context.Slots
+                .AsNoTracking()
+                .Where(s => s.IsDeleted != true && s.Sectors.Zones.Id == zoneId)
+                .GroupBy(s => new { SectorId = s.SectorsId, SectorName = s.Sectors.Name })
+                .Select(g => new { g.Key.SectorId, g.Key.SectorName, Total = g.Count() })
+                .ToListAsync();
+
+            // 2) Slots OCUPADOS por SECTOR en esa zona (distinct SlotsId)
+            var occupiedBySector = await _context.RegisteredVehicles
+                .AsNoTracking()
+                .Where(rv => rv.ExitDate == null
+                          && rv.SlotsId != null
+                          && rv.Slots.IsDeleted != true
+                          && rv.Slots.Sectors.Zones.Id == zoneId)
+                .Select(rv => new { rv.SlotsId, SectorId = rv.Slots.SectorsId, SectorName = rv.Slots.Sectors.Name })
+                .Distinct()
+                .GroupBy(x => new { x.SectorId, x.SectorName })
+                .Select(g => new { g.Key.SectorId, g.Key.SectorName, Occupied = g.Count() })
+                .ToListAsync();
+
+            var occDict = occupiedBySector.ToDictionary(x => x.SectorId, x => x.Occupied);
+            var result = new List<OccupancyItemDto>();
+
+            foreach (var t in totalsBySector)
+            {
+                var occ = occDict.TryGetValue(t.SectorId, out var v) ? v : 0;
+                result.Add(new OccupancyItemDto
+                {
+                    Id = t.SectorId,
+                    Name = t.SectorName,
+                    Total = t.Total,
+                    Occupied = occ,
+                    Percentage = t.Total == 0 ? 0 : Math.Round((double)occ / t.Total * 100, 2)
+                });
+            }
+
+            return result.OrderBy(x => x.Name).ToList();
+        }
+
     }
 }

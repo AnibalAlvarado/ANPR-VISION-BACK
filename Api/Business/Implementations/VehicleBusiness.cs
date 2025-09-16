@@ -97,7 +97,8 @@ namespace Business.Implementations
             {
                 VehicleId = vehicle.Id,
                 SlotsId = assignedSlot.Id,
-                EntryDate = DateTime.UtcNow
+                EntryDate = DateTime.UtcNow,
+                Asset = true
             };
 
             await _registeredVehicleData.Save(registeredVehicle);

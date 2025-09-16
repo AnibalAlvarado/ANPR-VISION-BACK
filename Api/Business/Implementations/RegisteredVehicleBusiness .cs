@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Implementations;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,24 @@ namespace Business.Implementations
                 throw new Exception("Error al obtener el total de vehículos estacionados por parking.", ex);
             }
         }
+
+        public async Task<int> GetTotalCurrentlyParkedAsync()
+        {
+            try
+            {
+                return await _data.GetTotalCurrentlyParkedAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el total de vehículos estacionados (global).", ex);
+            }
+        }
+
+        public Task<VehicleTypeDistributionDto> GetVehicleTypeDistributionGlobalAsync(bool includeZeros = true)
+        => _data.GetVehicleTypeDistributionGlobalAsync(includeZeros);
+
+        public Task<List<OccupancyItemDto>> GetSectorOccupancyByZoneAsync(int zoneId)
+        => _data.GetSectorOccupancyByZoneAsync(zoneId);
 
 
     }

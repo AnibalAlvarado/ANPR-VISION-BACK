@@ -1,4 +1,5 @@
 ﻿using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,6 @@ namespace Data.Interfaces
 
         Task<bool> AnyAsync(Expression<Func<Slots, bool>> predicate); // 👈
         Task<int> CountExistingBySectorAsync(int sectorId);
+        Task<OccupancyDto> GetOccupancyGlobalAsync();
     }
 }

@@ -2,6 +2,7 @@
 using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -188,6 +189,9 @@ namespace Business.Implementations
             catch (ArgumentException argEx) { throw new ArgumentException($"Error: {argEx.Message}"); }
             catch (Exception ex) { throw new BusinessException("Error al actualizar el registro del slot.", ex); }
         }
+
+        public Task<OccupancyDto> GetOccupancyGlobalAsync()
+       => _data.GetOccupancyGlobalAsync();
 
 
 
