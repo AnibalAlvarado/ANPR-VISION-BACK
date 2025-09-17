@@ -2,12 +2,14 @@
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Audit.Services;
@@ -64,5 +66,42 @@ namespace Data.Implementations
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> AnyAsync(Expression<Func<Slots, bool>> predicate)
+       => _context.Slots.AsNoTracking().AnyAsync(predicate);
+
+      
+        public Task<int> CountExistingBySectorAsync(int sectorId)
+        {
+            return _context.Slots
+                .Where(s => s.SectorsId == sectorId && s.IsDeleted != true)
+                .CountAsync();
+        }
+
+        public async Task<OccupancyDto> GetOccupancyGlobalAsync()
+        {
+            // Total de slots NO eliminados (null = no eliminado)
+            var total = await _context.Slots
+                .AsNoTracking()
+                .CountAsync(s => s.IsDeleted != true);
+
+            if (total == 0) return new OccupancyDto { Occupied = 0, Total = 0, Percentage = 0 };
+
+            // Ocupados = slots que tienen un RV abierto (ExitDate null) con SlotsId asignado
+            var occupied = await _context.RegisteredVehicles
+                .AsNoTracking()
+                .Where(rv => rv.ExitDate == null && rv.SlotsId != null)
+                .Select(rv => rv.SlotsId!.Value)
+                .Distinct()
+                .CountAsync();
+
+            return new OccupancyDto
+            {
+                Occupied = occupied,
+                Total = total,
+                Percentage = Math.Round((double)occupied / total * 100, 2)
+            };
+        }
+
     }
 }

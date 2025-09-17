@@ -1,7 +1,11 @@
 ﻿using Business.Implementations;
+using Business.Implementations.Dashboard;
 using Business.Interfaces;
+using Business.Interfaces.Dashboard;
 using Data.Implementations;
+using Data.Implementations.Dashboard;
 using Data.Interfaces;
+using Data.Interfaces.Dashboard;
 using Entity.Context;
 using Entity.Dtos;
 using Entity.Models;
@@ -111,7 +115,12 @@ namespace Web.Extensions
             services.AddScoped<IZonesBusiness, ZonesBusiness>();
             services.AddScoped<IZonesData, ZonesData>();
 
-          
+            // Program.cs o Startup.cs (ConfigureServices)
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IDashboardBusiness, DashboardBusiness>();
+
+
+
 
 
             services.AddTransient<Validations>();

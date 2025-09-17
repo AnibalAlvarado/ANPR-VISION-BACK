@@ -3,6 +3,7 @@ using Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,7 +11,9 @@ namespace Data.Interfaces
 {
     public interface IParkingData : IRepositoryData<Parking>
     {
-        Task<bool> ExistsAsync<T>(Func<object, bool> value);
+
+        Task<bool> ExistsAsync(Expression<Func<Parking, bool>> predicate);
+        //Task<bool> ExistsAsync<T>(Func<object, bool> value);
         Task<IEnumerable<ParkingDto>> GetAllJoinAsync();
     }
 }

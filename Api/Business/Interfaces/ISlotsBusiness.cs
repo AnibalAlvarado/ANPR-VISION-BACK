@@ -1,4 +1,5 @@
 ﻿using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,8 @@ namespace Business.Interfaces
     {
         Task<IEnumerable<SlotsDto>> GetAllJoinAsync();
         Task<IEnumerable<SlotsDto>> GetAllBySectorId(int sectorId);
+        Task<OccupancyDto> GetOccupancyGlobalAsync();
+
+
     }
 }

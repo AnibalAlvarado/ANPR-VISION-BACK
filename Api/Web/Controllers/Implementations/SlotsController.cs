@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,5 +59,21 @@ namespace Web.Controllers.Implementations
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+        [HttpGet("occupancy/global")]
+        public async Task<ActionResult<ApiResponse<OccupancyDto>>> GetOccupancyGlobal()
+        {
+            try
+            {
+                var data = await _business.GetOccupancyGlobalAsync();
+                return Ok(new ApiResponse<OccupancyDto>(data, true, "Ok", null));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new ApiResponse<OccupancyDto>(null!, false, ex.Message, null));
+            }
+        }
+
     }
 }
