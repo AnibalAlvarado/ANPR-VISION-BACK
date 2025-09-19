@@ -1,28 +1,32 @@
-# Base (runtime)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-WORKDIR /app
-EXPOSE 8080
-# Si quieres que escuche en 5000 en lugar de 8080, descomenta la siguiente línea y cambia también el compose:
-# ENV ASPNETCORE_URLS=http://+:5000
-# EXPOSE 5000
-
-# Build
+# ---- Build .NET 9 ----
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Web/Web.csproj", "Web/"]
-RUN dotnet restore "./Web/Web.csproj"
-COPY . .
-WORKDIR "/src/Web"
-RUN dotnet build "./Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Publish
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Copia .csproj por proyecto
+COPY ./Entity/Entity.csproj ./Entity/
+COPY ./Data/Data.csproj ./Data/
+COPY ./Business/Business.csproj ./Business/
+COPY ./Utilities/Utilities.csproj ./Utilities/
+COPY ./Diagram/Diagram.csproj ./Diagram/
+COPY ./Web/Web.csproj ./Web/
 
-# Final
-FROM base AS final
+RUN dotnet restore ./Web/Web.csproj
+
+# Copia el resto del código
+COPY ./Entity ./Entity
+COPY ./Data ./Data
+COPY ./Business ./Business
+COPY ./Utilities ./Utilities
+COPY ./Diagram ./Diagram
+COPY ./Web ./Web
+
+RUN dotnet publish ./Web/Web.csproj -c Release -o /out
+
+# ---- Runtime .NET 9 ----
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /out/ ./
+ENV ASPNETCORE_URLS=http://0.0.0.0:5000
+ENV ASPNETCORE_ENVIRONMENT=Production
+EXPOSE 5000
 ENTRYPOINT ["dotnet", "Web.dll"]

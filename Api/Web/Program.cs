@@ -47,13 +47,23 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 app.UseSwagger();
+//app.UseSwaggerUI(options =>
+//{
+//    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Security API v1");
+//    options.DocumentTitle = "Security API Docs";
+//    options.DefaultModelsExpandDepth(-1); // Ocultar esquema de modelos por defecto
+//});
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Security API v1");
-    options.DocumentTitle = "Security API Docs";
-    options.DefaultModelsExpandDepth(-1); // Ocultar esquema de modelos por defecto
-});
+    // Acceso directo (si expones 5000)
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Security API v1 (directo)");
 
+    // Vía Nginx (http://localhost:8082)
+    options.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Security API v1 (Nginx)");
+
+    options.DocumentTitle = "Security API Docs";
+    options.DefaultModelsExpandDepth(-1);
+});
 
 
 
@@ -61,7 +71,14 @@ app.UseSwaggerUI(options =>
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    //app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Security API v1 (directo)");
+        options.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Security API v1 (Nginx)");
+        options.DocumentTitle = "Security API Docs";
+        options.DefaultModelsExpandDepth(-1);
+    });
     app.UseDeveloperExceptionPage();
     app.MapOpenApi();
 }

@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
@@ -106,6 +108,87 @@ namespace Business.Implementations
 
             return registeredVehicle;
         }
+        public override async Task<VehicleDto> Save(VehicleDto dto)
+        {
+            try
+            {
+                // 🔹 Limpieza de strings
+                dto.Plate = dto.Plate?.Trim().ToUpper() ?? "";
+                dto.Color = dto.Color?.Trim();
+
+                // 🔹 Validación de campos obligatorios
+                Validations.ValidateDto(dto, "Plate", "TypeVehicleId", "ClientId");
+
+                if (string.IsNullOrWhiteSpace(dto.Plate))
+                    throw new ArgumentException("El campo 'Plate' es obligatorio.");
+
+                // 🔹 Validación de placa (Colombia)
+                var regexColombia = @"^([A-Z]{3}-\d{3}|[A-Z]{2}-\d{3}[A-Z])$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(dto.Plate, regexColombia))
+                    throw new ArgumentException("La placa no tiene un formato válido según la normativa colombiana.");
+
+                // 🔹 Validación Color (opcional)
+                if (!string.IsNullOrWhiteSpace(dto.Color) && dto.Color.Length > 30)
+                    throw new ArgumentException("El color no puede superar los 30 caracteres.");
+
+                // 🔹 Validación TypeVehicleId
+                if (dto.TypeVehicleId <= 0)
+                    throw new ArgumentException("Debe seleccionar un tipo de vehículo válido.");
+
+                // 🔹 Validación ClientId
+                if (dto.ClientId <= 0)
+                    throw new ArgumentException("Debe seleccionar un cliente válido.");
+
+                // 🔹 Guardar entidad
+                dto.Asset = true;
+
+                // 🔹 Mapear solo propiedades simples y IDs
+                var config = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<VehicleDto, Vehicle>()
+                        .ForMember(dest => dest.Plate, opt => opt.MapFrom(src => src.Plate))
+                        .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color))
+                        .ForMember(dest => dest.TypeVehicleId, opt => opt.MapFrom(src => src.TypeVehicleId))
+                        .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.ClientId))
+                        .ForMember(dest => dest.Client, opt => opt.Ignore())
+                        .ForMember(dest => dest.TypeVehicle, opt => opt.Ignore())
+                        .ForMember(dest => dest.RegisteredVehicles, opt => opt.Ignore())
+                        .ForMember(dest => dest.Memberships, opt => opt.Ignore());
+                });
+                var mapper = config.CreateMapper();
+                Vehicle entity = mapper.Map<Vehicle>(dto);
+
+                // 🔹 Guardar en la base de datos
+                entity = await _data.Save(entity);
+
+                // 🔹 Devolver DTO con solo IDs
+                return new VehicleDto
+                {
+                    Id = entity.Id,
+                    Plate = entity.Plate,
+                    Color = entity.Color,
+                    TypeVehicleId = entity.TypeVehicleId,
+                    ClientId = entity.ClientId,
+                    Asset = entity.Asset,
+                    IsDeleted = entity.IsDeleted
+                };
+            }
+            catch (InvalidOperationException invOe)
+            {
+                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al registrar el vehículo.", ex);
+            }
+        }
+
+
+
 
         public async Task<RegisteredVehiclesDto?> GetActiveVehicleBySlotAsync(int slotId)
         {
