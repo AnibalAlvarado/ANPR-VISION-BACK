@@ -1,4 +1,5 @@
 ﻿using Entity.Dtos;
+using Entity.Dtos.Access;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace Data.Interfaces
         Task<List<string>> GetUserRoleAsync(int userId);
 
         Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);
+
+        Task<UserAccessDto> GetUserAccessAsync(int userId);
 
     }
 }

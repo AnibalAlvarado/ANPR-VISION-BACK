@@ -171,5 +171,15 @@ namespace Web.Controllers.Implementations
                 return BadRequest(new ApiResponse<object>(null, false, ex.Message, null));
             }
         }
+        [HttpGet("{userId}/access")]
+        public async Task<IActionResult> GetUserAccess(
+            int userId,
+            [FromQuery] bool includePermissions = true,
+            [FromQuery] bool includeForms = true)
+                {
+                    var result = await _business.GetUserAccessAsync(userId, includePermissions, includeForms);
+                    return Ok(result);
+        }
+
     }
 }

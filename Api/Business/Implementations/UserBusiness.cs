@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Implementations;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Access;
 using Entity.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -378,6 +379,34 @@ namespace Business.Implementations
             return random.Next(100000, 999999).ToString(); // 6 dígitos
         }
 
+        public async Task<UserAccessDto> GetUserAccessAsync(int userId, bool includePermissions = true, bool includeForms = true)
+        {
+            try
+            {
+                var access = await _data.GetUserAccessAsync(userId);
+
+                if (!includePermissions)
+                {
+                    foreach (var role in access.Roles)
+                        foreach (var module in role.Modules)
+                            foreach (var form in module.Forms)
+                                form.Permissions.Clear();
+                }
+
+                if (!includeForms)
+                {
+                    foreach (var role in access.Roles)
+                        role.Modules.Clear();
+                }
+
+                return access;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener accesos del usuario con ID: {UserId}", userId);
+                throw;
+            }
+        }
 
 
 

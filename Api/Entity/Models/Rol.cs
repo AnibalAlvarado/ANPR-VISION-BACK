@@ -10,6 +10,8 @@ namespace Entity.Models
     public class Rol : GenericModel
     {
         public string Description { get; set; }
+        public virtual ICollection<RolFormPermission> RolFormPermission { get; set; } = new List<RolFormPermission>();
+
 
     }
 }

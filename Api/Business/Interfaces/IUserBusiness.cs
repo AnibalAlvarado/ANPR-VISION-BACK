@@ -1,4 +1,5 @@
 ﻿using Entity.Dtos;
+using Entity.Dtos.Access;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace Business.Interfaces
         Task VerifyCodeAndResetPasswordAsync(string email, string code, string newPassword);
 
         Task<bool> VerifyResetCodeAsync(string email, string code);
+        Task<UserAccessDto> GetUserAccessAsync(int userId, bool includePermissions = true, bool includeForms = true);
 
 
 
