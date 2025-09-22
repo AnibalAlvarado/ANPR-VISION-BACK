@@ -9,31 +9,34 @@ using Web.Extensions;
 using Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
-///To run a Migration in this project
-///Add-Migration InitMainDb -StartupProject Web -Project Entity -Context ApplicationDbContext
-///Update-Database -StartupProject Web -Project Entity -Context ApplicationDbContext
-///// 👇 Esto asegura que se lean los secrets en dev
+
+/// To run a Migration in this project
+/// Add-Migration InitMainDb -StartupProject Web -Project Entity -Context ApplicationDbContext
+/// Update-Database -StartupProject Web -Project Entity -Context ApplicationDbContext
+
+// 👇 Esto asegura que se lean los secrets en dev
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
+
 // Controllers
 builder.Services.AddControllers();
 builder.Services.AddSignalR(); // habilitar signalR
 
-//swager
+// Swagger
 builder.Services.AddCustomSwagger();
-
 
 // JWT Authentication
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddScoped<IJwtAuthenticationService, JwtAuthenticatonService>();
 
 builder.Services.AddHttpContextAccessor();
+
 // CORS
 builder.Services.AddCustomCors(builder.Configuration);
 
-// extensión para la base de datos
+// Extensión para la base de datos
 builder.Services.AddDatabase(builder.Configuration);
 
 // Repositorios y servicios
@@ -43,16 +46,9 @@ builder.Services.AddAppServices();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 //builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-
-
 var app = builder.Build();
+
 app.UseSwagger();
-//app.UseSwaggerUI(options =>
-//{
-//    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Security API v1");
-//    options.DocumentTitle = "Security API Docs";
-//    options.DefaultModelsExpandDepth(-1); // Ocultar esquema de modelos por defecto
-//});
 app.UseSwaggerUI(options =>
 {
     // Acceso directo (si expones 5000)
@@ -65,13 +61,10 @@ app.UseSwaggerUI(options =>
     options.DefaultModelsExpandDepth(-1);
 });
 
-
-
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    //app.UseSwaggerUI();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "Security API v1 (directo)");
@@ -87,7 +80,22 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
-app.MapHub<parkingHub>("/parkingHub"); 
-app.Run();
 
+app.MapControllers();
+app.MapHub<parkingHub>("/parkingHub");
+
+// 🔹 Redirigir "/" → "/swagger"
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/swagger");
+    return Task.CompletedTask;
+});
+
+// 🔹 Endpoint simple para healthcheck
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "ok",
+    time = DateTime.UtcNow
+}));
+
+app.Run();

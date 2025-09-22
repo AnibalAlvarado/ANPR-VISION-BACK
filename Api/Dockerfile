@@ -26,7 +26,14 @@ RUN dotnet publish ./Web/Web.csproj -c Release -o /out
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /out/ ./
+
+# Copiar el entrypoint (espera DB) y hacerlo ejecutable
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 ENV ASPNETCORE_URLS=http://0.0.0.0:5000
 ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 5000
-ENTRYPOINT ["dotnet", "Web.dll"]
+
+# Use el entrypoint en lugar de lanzar dotnet directamente
+ENTRYPOINT ["/entrypoint.sh"]
