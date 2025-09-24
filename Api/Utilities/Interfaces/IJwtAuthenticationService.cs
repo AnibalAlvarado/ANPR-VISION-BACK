@@ -10,5 +10,6 @@ namespace Utilities.Interfaces
     public interface IJwtAuthenticationService
     {
         string GenerarToken(User usuario, List<string> roles);
+        string GenerarToken(User usuario, List<string> roles, IDictionary<string, string>? extraClaims); // NUEVO
     }
 }

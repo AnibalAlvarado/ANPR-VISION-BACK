@@ -52,5 +52,21 @@ namespace Data.Implementations
                 .ToListAsync();
         }
 
+        public async Task<Client?> GetClientWithVehiclesByPersonIdAsync(int personId)
+        {
+            try
+            {
+                return await _context.Set<Client>()
+                    .Include(c => c.Person)
+                    .Include(c => c.Vehicles)
+                    .FirstOrDefaultAsync(c => c.PersonId == personId && c.Asset);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error obteniendo Client+Vehicles por PersonId {PersonId}", personId);
+                throw;
+            }
+        }
+
     }
 }

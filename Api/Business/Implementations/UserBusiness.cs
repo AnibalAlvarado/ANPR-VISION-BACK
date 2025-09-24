@@ -4,6 +4,7 @@ using Data.Implementations;
 using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Dtos.Access;
+using Entity.Dtos.Login;
 using Entity.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,9 +29,10 @@ namespace Business.Implementations
         private readonly IJwtAuthenticationService _jwtAuthenticatonService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IPasswordReset _passwordReset;
+        private readonly IClientData _clientData;
 
         public UserBusiness(
-        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher, IPasswordReset passwordReset) : base(data, mapper)
+        IUserData data, IMapper mapper, IClientData clientData, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher, IPasswordReset passwordReset) : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
@@ -41,6 +43,7 @@ namespace Business.Implementations
             _jwtAuthenticatonService = jwtAuthenticatonService;
             _passwordHasher = passwordHasher;
             _passwordReset = passwordReset;
+             _clientData = clientData;
         }
 
         // Obtener todos los usuarios con información de persona
@@ -125,7 +128,66 @@ namespace Business.Implementations
             }
         }
 
-       
+
+
+        //public async Task<UserResponseDto?> ValidateUserAsync(string username, string password)
+        //{
+        //    try
+        //    {
+        //        // Validaciones iniciales
+        //        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        //        {
+        //            _logger.LogWarning("Intento de validación con username o password vacíos");
+        //            return null;
+        //        }
+
+        //        // Obtener usuario por nombre de usuario
+        //        var user = await _data.GetUserByUsernameAsync(username);
+
+        //        // Si el usuario no existe
+        //        if (user == null)
+        //        {
+        //            _logger.LogWarning("Usuario no encontrado durante validación: {Username}", username);
+        //            return null;
+        //        }
+
+        //        // Validar que el hash tenga el formato correcto antes de verificar
+        //        if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2"))
+        //        {
+        //            _logger.LogWarning("Formato de hash inválido para el usuario: {Username}. Hash recibido: {Hash}", username, user.Password);
+        //            return null;
+        //        }
+
+        //        // Verificar la contraseña
+        //        if (!VerifyPassword(password, user.Password))
+        //        {
+        //            _logger.LogWarning("Contraseña incorrecta para el usuario: {Username}", username);
+        //            return null;
+        //        }
+
+        //        // Obtener el rol del usuario a través de la tabla pivote
+        //        var roleNames = await _data.GetUserRoleAsync(user.Id);
+
+        //        // Usar AutoMapper para crear el DTO de respuesta
+        //        // Usar AutoMapper para crear el DTO de respuesta
+        //        var userResponseDto = _mapper.Map<UserResponseDto>(user);
+        //        userResponseDto.Roles = roleNames;
+        //        userResponseDto.UserId = user.Id;
+
+        //        // ✅ Generar el token aquí mismo
+        //        userResponseDto.Token = _jwtAuthenticatonService.GenerarToken(user, roleNames);
+
+
+        //        return userResponseDto;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error durante la validación del usuario: {Username}", username);
+        //        throw;
+        //    }
+        //}
+
+
 
         public async Task<UserResponseDto?> ValidateUserAsync(string username, string password)
         {
@@ -148,7 +210,7 @@ namespace Business.Implementations
                     return null;
                 }
 
-                // Validar que el hash tenga el formato correcto antes de verificar
+                // Validar hash
                 if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2"))
                 {
                     _logger.LogWarning("Formato de hash inválido para el usuario: {Username}. Hash recibido: {Hash}", username, user.Password);
@@ -162,18 +224,59 @@ namespace Business.Implementations
                     return null;
                 }
 
-                // Obtener el rol del usuario a través de la tabla pivote
+                // Roles
                 var roleNames = await _data.GetUserRoleAsync(user.Id);
 
-                // Usar AutoMapper para crear el DTO de respuesta
-                // Usar AutoMapper para crear el DTO de respuesta
+                // Map base de la respuesta
                 var userResponseDto = _mapper.Map<UserResponseDto>(user);
                 userResponseDto.Roles = roleNames;
                 userResponseDto.UserId = user.Id;
 
-                // ✅ Generar el token aquí mismo
+                // ✅ Generar el token (sin cambiar firma del servicio)
                 userResponseDto.Token = _jwtAuthenticatonService.GenerarToken(user, roleNames);
 
+                // ==============================
+                // ➕ BLOQUE NUEVO: contexto app
+                // ==============================
+                // Person info (si incluiste Include en GetUserByUsernameAsync, tendrás nombres)
+                userResponseDto.PersonId = user.PersonId;
+                userResponseDto.FirstName = user.Person?.FirstName;
+                userResponseDto.LastName = user.Person?.LastName;
+
+                // Cargar Client + Vehicles por PersonId
+                if (user.PersonId > 0)
+                {
+                    // usa IClientData (inyéctalo en el constructor del Business)
+                    var client = await _clientData.GetClientWithVehiclesByPersonIdAsync(user.PersonId);
+                    if (client != null)
+                    {
+                        // Defensa: coherencia de identidad
+                        if (client.PersonId == user.PersonId)
+                        {
+                            userResponseDto.Client = new ClientLiteDto
+                            {
+                                Id = client.Id,
+                                PersonId = client.PersonId
+                            };
+
+                            //userResponseDto.Vehicles = client.Vehicles
+                            //    .Select(v => new VehicleLiteDto
+                            //    {
+                            //        Id = v.Id,
+                            //        Plate = v.Plate,
+                            //        Color = v.Color,
+                            //        TypeVehicleId = v.TypeVehicleId
+                            //    })
+                            //    .ToList();
+                        }
+                        else
+                        {
+                            // Si hay mismatch, no detiene el login; sólo no adjunta client/vehicles.
+                            _logger.LogWarning("Mismatch PersonId User({U}:{UP}) vs Client({C}:{CP})",
+                                user.Id, user.PersonId, client.Id, client.PersonId);
+                        }
+                    }
+                }
 
                 return userResponseDto;
             }
@@ -183,6 +286,7 @@ namespace Business.Implementations
                 throw;
             }
         }
+
 
         public string HashPassword(string password)
         {

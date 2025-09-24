@@ -74,12 +74,28 @@ namespace Data.Implementations
         }
 
 
+        //public async Task<User?> GetUserByUsernameAsync(string username)
+        //{
+        //    try
+        //    {
+        //        //await AuditAsync("GetUserByUsernameAsync");
+        //        return await _context.Set<User>()
+        //            .FirstOrDefaultAsync(u => u.Username == username && u.Asset);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error al obtener usuario por nombre de usuario: {Username}", username);
+        //        throw;
+        //    }
+        //}
+
+
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             try
             {
-                //await AuditAsync("GetUserByUsernameAsync");
                 return await _context.Set<User>()
+                    .Include(u => u.Person)                  // <- añade esto
                     .FirstOrDefaultAsync(u => u.Username == username && u.Asset);
             }
             catch (Exception ex)
@@ -88,6 +104,7 @@ namespace Data.Implementations
                 throw;
             }
         }
+
 
         public async Task<User?> GetUserByEmailsync(string email)
         {

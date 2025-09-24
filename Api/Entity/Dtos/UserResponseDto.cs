@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Entity.Dtos.Login;
 
 namespace Entity.Dtos
 {
@@ -10,11 +11,16 @@ namespace Entity.Dtos
     {
         public int UserId { get; set; }
         public string Username { get; set; } = null!;
+        public List<string> Roles { get; set; } = new();
+        public string Token { get; set; } = null!;
 
-        public List<string> Roles { get; set; } = new List<string>();
+        
+        public int PersonId { get; set; }
+        public string? FirstName { get; set; }  
+        public string? LastName { get; set; }   
 
-        public string Token { get; set; }
+        public ClientLiteDto? Client { get; set; }
+        //public List<VehicleLiteDto> Vehicles { get; set; } = new();
 
-        //public string Role { get; set; } = null!;
     }
 }

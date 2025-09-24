@@ -12,6 +12,7 @@ namespace Data.Interfaces
     {
 
         Task<IEnumerable<ClientDto>> GetAllJoinAsync();
+        Task<Client?> GetClientWithVehiclesByPersonIdAsync(int personId);
 
     }
 }
