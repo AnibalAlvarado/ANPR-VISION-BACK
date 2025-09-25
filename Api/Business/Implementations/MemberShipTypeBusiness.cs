@@ -30,10 +30,15 @@ namespace Business.Implementations
             {
                 Validations.ValidateDto(dto, "Description", "PriceBase", "DurationDaysBase");
 
+                dto.Description = dto.Description?.Trim();
+
                 if (string.IsNullOrWhiteSpace(dto.Description))
                     throw new ArgumentException("El campo Descripción es obligatorio.");
                 if (dto.Description.Length < 3)
                     throw new ArgumentException("La descripción debe tener al menos 3 caracteres.");
+                // (Opcional) límite superior:
+                // if (dto.Description.Length > 100)
+                //     throw new ArgumentException("La descripción no puede superar los 100 caracteres.");
 
                 if (dto.PriceBase <= 0)
                     throw new ArgumentException("El campo PrecioBase debe ser mayor que 0.");
@@ -41,13 +46,12 @@ namespace Business.Implementations
                 if (dto.DurationDaysBase <= 0)
                     throw new ArgumentException("El campo DurationDaysBase debe ser mayor que 0.");
 
-                var tipos = await _data.GetAll(null);
-                var existeTipo = tipos.Any(
-                    x => x.Description != null &&
-                         x.Description.Trim().ToLower() == dto.Description!.Trim().ToLower() &&
-                         x.Asset == true
+                // 🔍 Duplicado por descripción (case-insensitive) en registros activos
+                var exists = await _data.ExistsAsync(x =>
+                    x.Description.ToLower() == dto.Description!.ToLower() &&
+                    x.Asset
                 );
-                if (existeTipo)
+                if (exists)
                     throw new InvalidOperationException("Ya existe un tipo de membresía activo con la misma descripción.");
 
                 dto.Asset = true;
@@ -70,6 +74,7 @@ namespace Business.Implementations
                 throw new BusinessException("Error al registrar el tipo de membresía.", ex);
             }
         }
+
         // Pseudocódigo detallado para solucionar el error:
         // 1. Reemplazar la llamada a _data.GetByIdAsync<MemberShipType>(dto.Id) por _data.GetById(dto.Id), ya que GetById está definido en IRepositoryData<T>.
         // 2. Reemplazar la llamada a _data.ExistsAsync<MemberShipType>(...) por una consulta manual usando _data.GetAll() y LINQ, ya que ExistsAsync no está definido.
@@ -91,10 +96,15 @@ namespace Business.Implementations
                 if (!tipoExistente.Asset)
                     throw new InvalidOperationException("No se puede actualizar un tipo de membresía deshabilitado.");
 
+                dto.Description = dto.Description?.Trim();
+
                 if (string.IsNullOrWhiteSpace(dto.Description))
                     throw new ArgumentException("El campo Descripción es obligatorio.");
                 if (dto.Description.Length < 3)
                     throw new ArgumentException("La descripción debe tener al menos 3 caracteres.");
+                // (Opcional) límite superior:
+                // if (dto.Description.Length > 100)
+                //     throw new ArgumentException("La descripción no puede superar los 100 caracteres.");
 
                 if (dto.PriceBase <= 0)
                     throw new ArgumentException("El campo PrecioBase debe ser mayor que 0.");
@@ -102,14 +112,13 @@ namespace Business.Implementations
                 if (dto.DurationDaysBase <= 0)
                     throw new ArgumentException("El campo DurationDaysBase debe ser mayor que 0.");
 
-                var tipos = await _data.GetAll(null);
-                var existeTipo = tipos.Any(
-                    x => x.Description != null &&
-                         x.Description.Trim().ToLower() == dto.Description!.Trim().ToLower() &&
-                         x.Id != dto.Id &&
-                         x.Asset == true
+                //  Duplicado por descripción en otros registros activos (excluye el propio Id)
+                var existsOther = await _data.ExistsAsync(x =>
+                    x.Description.ToLower() == dto.Description!.ToLower() &&
+                    x.Id != dto.Id &&
+                    x.Asset
                 );
-                if (existeTipo)
+                if (existsOther)
                     throw new InvalidOperationException("Ya existe otro tipo de membresía activo con la misma descripción.");
 
                 BaseModel entity = _mapper.Map<MemberShipType>(dto);

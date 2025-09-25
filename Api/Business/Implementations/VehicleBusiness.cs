@@ -139,6 +139,11 @@ namespace Business.Implementations
                 if (dto.ClientId <= 0)
                     throw new ArgumentException("Debe seleccionar un cliente válido.");
 
+                // 🔹 Validar que la placa no exista ya en la BD
+                var exists = await _data.ExistsAsync(v => v.Plate.ToUpper() == dto.Plate.ToUpper());
+                if (exists)
+                    throw new ArgumentException($"Ya existe un vehículo registrado con la placa '{dto.Plate}'.");
+
                 // 🔹 Guardar entidad
                 dto.Asset = true;
 
@@ -186,6 +191,7 @@ namespace Business.Implementations
                 throw new BusinessException("Error al registrar el vehículo.", ex);
             }
         }
+
 
 
 

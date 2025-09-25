@@ -29,14 +29,26 @@ namespace Business.Implementations
         {
             try
             {
-                Validations.ValidateDto(dto,"Name");
+                Validations.ValidateDto(dto, "Name");
+
+                dto.Name = dto.Name?.Trim();
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El nombre del tipo de tarifa es obligatorio.");
                 if (dto.Name.Length > 50)
-                    throw new ArgumentException("El nombre del tipo de tarifa no puede contener mas de 70 caracteres.");
+                    throw new ArgumentException("El nombre del tipo de tarifa no puede superar los 50 caracteres.");
+
+                // 🔍 Validar duplicado por nombre (case-insensitive)
+                var exists = await _data.ExistsAsync(rt =>
+                    rt.Name.ToLower() == dto.Name.ToLower() &&
+                    rt.Asset // si manejas habilitado/soft-delete
+                );
+                if (exists)
+                    throw new ArgumentException($"Ya existe un tipo de tarifa con el nombre '{dto.Name}'.");
 
                 dto.Asset = true;
 
-                BaseModel entity = _mapper.Map<RatesType>(dto);
-                entity = await _data.Save((RatesType)entity);
+                var entity = _mapper.Map<RatesType>(dto);
+                entity = await _data.Save(entity);
 
                 return _mapper.Map<RatesTypeDto>(entity);
             }
@@ -54,19 +66,37 @@ namespace Business.Implementations
             }
         }
 
+
         public override async Task Update(RatesTypeDto dto)
         {
             try
             {
-                Validations.ValidateDto(dto, "Name");
-                if (dto.Id <= 0)
-                    throw new ArgumentException("No ha seleccioando ningun tipo de tarifa.");
-                RatesType ratesTypeExistente = await _data.GetById(dto.Id) ?? throw new InvalidOperationException($"Seleccone un tipo de tarifa válida.");
-                if (dto.Name.Length > 50)
-                    throw new ArgumentException("El nombre del tipo de tarifa no puede contener mas de 70 caracteres.");
+                // Incluye Id en la validación de dto si tu helper lo requiere
+                Validations.ValidateDto(dto, "Id", "Name");
 
-                BaseModel entity = _mapper.Map<RatesType>(dto);
-                await _data.Update((RatesType)entity);
+                if (dto.Id <= 0)
+                    throw new ArgumentException("Debe seleccionar un tipo de tarifa válido.");
+
+                var current = await _data.GetById(dto.Id)
+                             ?? throw new InvalidOperationException("El tipo de tarifa seleccionado no existe.");
+
+                dto.Name = dto.Name?.Trim();
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El nombre del tipo de tarifa es obligatorio.");
+                if (dto.Name.Length > 50)
+                    throw new ArgumentException("El nombre del tipo de tarifa no puede superar los 50 caracteres.");
+
+                // 🔍 Duplicado por nombre en otros registros (case-insensitive)
+                var existsOther = await _data.ExistsAsync(rt =>
+                    rt.Name.ToLower() == dto.Name.ToLower() &&
+                    rt.Id != dto.Id &&
+                    rt.Asset
+                );
+                if (existsOther)
+                    throw new ArgumentException($"Ya existe otro tipo de tarifa con el nombre '{dto.Name}'.");
+
+                var entity = _mapper.Map<RatesType>(dto);
+                await _data.Update(entity);
             }
             catch (InvalidOperationException invOe)
             {

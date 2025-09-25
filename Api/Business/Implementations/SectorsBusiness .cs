@@ -80,19 +80,34 @@ namespace Business.Implementations
         {
             try
             {
-            
-                Validations.ValidateDto(dto, "Capacity", "ZonesId", "TypeVehicleId");
+                Validations.ValidateDto(dto, "Name", "Capacity", "ZonesId");
 
-           
+                dto.Name = dto.Name?.Trim();
+
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El campo Name es obligatorio.");
+                if (dto.Name.Length < 2)
+                    throw new ArgumentException("El nombre debe tener al menos 2 caracteres.");
+                if (dto.Name.Length > 100)
+                    throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
+
                 if (dto.Capacity <= 0)
                     throw new ArgumentException("El campo Capacity debe ser mayor a 0.");
-                if (dto.Capacity > 100000)
+                if (dto.Capacity > 5000)
                     throw new ArgumentException("El campo Capacity no puede superar los 5000 espacios.");
+
                 if (dto.ZonesId <= 0)
                     throw new ArgumentException("El campo ZonesId debe ser mayor a 0.");
-                if (dto.TypeVehicleId <= 0)
-                    throw new ArgumentException("El campo TypeVehicleId debe ser mayor a 0.");
 
+                // 🔍 Duplicado por NOMBRE en la misma zona (ignora mayúsculas)
+                var sectoresMismaZona = await _data.GetAllByZoneId(dto.ZonesId);
+                var nombreDuplicado = sectoresMismaZona.Any(s =>
+                    s.Name != null &&
+                    s.Name.Trim().ToLower() == dto.Name!.ToLower() &&
+                    s.Asset // si usas soft delete / habilitado
+                );
+                if (nombreDuplicado)
+                    throw new ArgumentException($"Ya existe un sector con el nombre '{dto.Name}' en esta zona.");
 
                 dto.Asset = true;
 
@@ -115,18 +130,28 @@ namespace Business.Implementations
             }
         }
 
+        //  UPDATE con validación de duplicado (excluye el propio Id)
         public override async Task Update(SectorsDto dto)
         {
             try
             {
-                Validations.ValidateDto(dto, "Id", "Capacity", "ZonesId", "TypeVehicleId");
+                Validations.ValidateDto(dto, "Id", "Name", "Capacity", "ZonesId");
 
                 if (dto.Id <= 0)
                     throw new ArgumentException("El campo Id debe ser mayor a 0.");
 
+                dto.Name = dto.Name?.Trim();
+
                 Sectors sectorExistente = await _data.GetById(dto.Id);
                 if (sectorExistente == null)
                     throw new InvalidOperationException($"No existe un sector con Id {dto.Id}.");
+
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El campo Name es obligatorio.");
+                if (dto.Name.Length < 2)
+                    throw new ArgumentException("El nombre debe tener al menos 2 caracteres.");
+                if (dto.Name.Length > 100)
+                    throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
                 if (dto.Capacity <= 0)
                     throw new ArgumentException("El campo Capacity debe ser mayor a 0.");
@@ -136,8 +161,19 @@ namespace Business.Implementations
                 if (dto.ZonesId <= 0)
                     throw new ArgumentException("El campo ZonesId debe ser mayor a 0.");
 
-                if (dto.TypeVehicleId <= 0)
-                    throw new ArgumentException("El campo TypeVehicleId debe ser mayor a 0.");
+                if (!sectorExistente.Asset)
+                    throw new InvalidOperationException("No se puede actualizar un sector deshabilitado.");
+
+                //  Duplicado por NOMBRE en la misma zona, excluyendo este mismo Id
+                var sectoresMismaZona = await _data.GetAllByZoneId(dto.ZonesId);
+                var nombreDuplicadoOtro = sectoresMismaZona.Any(s =>
+                    s.Name != null &&
+                    s.Name.Trim().ToLower() == dto.Name!.ToLower() &&
+                    s.Id != dto.Id &&
+                    s.Asset
+                );
+                if (nombreDuplicadoOtro)
+                    throw new ArgumentException($"Ya existe otro sector con el nombre '{dto.Name}' en esta zona.");
 
                 BaseModel entity = _mapper.Map<Sectors>(dto);
                 await _data.Update((Sectors)entity);

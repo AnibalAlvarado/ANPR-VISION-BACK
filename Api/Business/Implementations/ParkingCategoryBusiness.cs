@@ -29,9 +29,34 @@ namespace Business.Implementations
         {
             try
             {
-                Validations.ValidateDto(dto, "Code","Name");
-                if(dto.Name.Length > 50)
-                    throw new ArgumentException("El nombre no puede contener mas de 50 caracteres.");
+                Validations.ValidateDto(dto, "Code", "Name");
+
+                dto.Name = dto.Name?.Trim();
+                dto.Code = dto.Code?.Trim().ToUpper();
+
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El nombre es obligatorio.");
+                if (dto.Name.Length > 50)
+                    throw new ArgumentException("El nombre no puede contener más de 50 caracteres.");
+
+                if (string.IsNullOrWhiteSpace(dto.Code))
+                    throw new ArgumentException("El código es obligatorio.");
+
+                //  Duplicado por NOMBRE (case-insensitive)
+                var nameExists = await _data.ExistsAsync(pc =>
+                    pc.Name.ToLower() == dto.Name.ToLower() &&
+                    pc.Asset
+                );
+                if (nameExists)
+                    throw new ArgumentException($"Ya existe una categoría de parqueadero con el nombre '{dto.Name}'.");
+
+                // (Opcional)  Duplicado por CÓDIGO (case-insensitive)
+                var codeExists = await _data.ExistsAsync(pc =>
+                    pc.code.ToUpper() == dto.Code &&
+                    pc.Asset
+                );
+                if (codeExists)
+                    throw new ArgumentException($"Ya existe una categoría de parqueadero con el código '{dto.Code}'.");
 
                 dto.Asset = true;
 
@@ -54,20 +79,51 @@ namespace Business.Implementations
             }
         }
 
+
         public override async Task Update(ParkingCategoryDto dto)
         {
             try
             {
-                Validations.ValidateDto(dto, "Id","Code", "Name");
+                Validations.ValidateDto(dto, "Id", "Code", "Name");
 
                 if (dto.Id <= 0)
-                    throw new ArgumentException("No ha seleccioando ninguna categoría.");
+                    throw new ArgumentException("No ha seleccionado ninguna categoría.");
 
-                var parkingCategoryExistente = await _data.GetById(dto.Id);
-                if (parkingCategoryExistente == null)
-                    throw new InvalidOperationException($"Seleccone una categoria de parqueadero valida.");
+                var current = await _data.GetById(dto.Id);
+                if (current == null)
+                    throw new InvalidOperationException("Seleccione una categoría de parqueadero válida.");
+                if (!current.Asset)
+                    throw new InvalidOperationException("No se puede actualizar una categoría deshabilitada.");
 
-                // 🔹 Actualizar entidad
+                dto.Name = dto.Name?.Trim();
+                dto.Code = dto.Code?.Trim().ToUpper();
+
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El nombre es obligatorio.");
+                if (dto.Name.Length > 50)
+                    throw new ArgumentException("El nombre no puede contener más de 50 caracteres.");
+
+                if (string.IsNullOrWhiteSpace(dto.Code))
+                    throw new ArgumentException("El código es obligatorio.");
+
+                //  Duplicado por NOMBRE en otros (case-insensitive)
+                var nameExistsOther = await _data.ExistsAsync(pc =>
+                    pc.Name.ToLower() == dto.Name.ToLower() &&
+                    pc.Id != dto.Id &&
+                    pc.Asset
+                );
+                if (nameExistsOther)
+                    throw new ArgumentException($"Ya existe otra categoría de parqueadero con el nombre '{dto.Name}'.");
+
+                // (Opcional)  Duplicado por CÓDIGO en otros (case-insensitive)
+                var codeExistsOther = await _data.ExistsAsync(pc =>
+                    pc.code.ToUpper() == dto.Code &&
+                    pc.Id != dto.Id &&
+                    pc.Asset
+                );
+                if (codeExistsOther)
+                    throw new ArgumentException($"Ya existe otra categoría de parqueadero con el código '{dto.Code}'.");
+
                 BaseModel entity = _mapper.Map<ParkingCategory>(dto);
                 await _data.Update((ParkingCategory)entity);
             }
