@@ -80,6 +80,7 @@ namespace Business.Implementations
         {
             try
             {
+                // Validaciones básicas (lanza ArgumentException si falta algún campo)
                 Validations.ValidateDto(dto, "Name", "Capacity", "ZonesId");
 
                 dto.Name = dto.Name?.Trim();
@@ -99,22 +100,48 @@ namespace Business.Implementations
                 if (dto.ZonesId <= 0)
                     throw new ArgumentException("El campo ZonesId debe ser mayor a 0.");
 
-                // 🔍 Duplicado por NOMBRE en la misma zona (ignora mayúsculas)
-                var sectoresMismaZona = await _data.GetAllByZoneId(dto.ZonesId);
+                // 🔍 Duplicado por NOMBRE en la misma zona (ignora mayúsculas, null-safe)
+                var sectoresMismaZona = await _data.GetAllByZoneId(dto.ZonesId) ?? Enumerable.Empty<Sectors>();
                 var nombreDuplicado = sectoresMismaZona.Any(s =>
-                    s.Name != null &&
-                    s.Name.Trim().ToLower() == dto.Name!.ToLower() &&
-                    s.Asset // si usas soft delete / habilitado
+                    !string.IsNullOrWhiteSpace(s.Name) &&
+                    string.Equals(s.Name.Trim(), dto.Name, StringComparison.OrdinalIgnoreCase) &&
+                    !(s.IsDeleted ?? false)   // cuenta solo los NO eliminados
                 );
                 if (nombreDuplicado)
                     throw new ArgumentException($"Ya existe un sector con el nombre '{dto.Name}' en esta zona.");
 
-                dto.Asset = true;
+                // asignaciones por defecto para evitar tri-estado
+                if (dto.Asset == null) dto.Asset = true;
+                if (dto.IsDeleted == null) dto.IsDeleted = false;
 
-                BaseModel entity = _mapper.Map<Sectors>(dto);
-                entity = await _data.Save((Sectors)entity);
+                // Mapear manualmente para evitar problemas con relaciones
+                var entity = new Sectors
+                {
+                    Name = dto.Name,
+                    Capacity = dto.Capacity,
+                    ZonesId = dto.ZonesId,
+                    TypeVehicleId = dto.TypeVehicleId,
+                    Asset = dto.Asset.GetValueOrDefault(true),
+                    IsDeleted = dto.IsDeleted.GetValueOrDefault(false)
+                    // agrega aquí otras propiedades simples si las necesitas
+                };
 
-                return _mapper.Map<SectorsDto>(entity);
+                // Guardar
+                entity = await _data.Save(entity); // si tu Save devuelve BaseModel, ajusta el cast
+
+                // Devolver DTO con los valores persistidos
+                return new SectorsDto
+                {
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    Capacity = entity.Capacity,
+                    ZonesId = entity.ZonesId,
+                    TypeVehicleId = entity.TypeVehicleId,
+                    Zones = null,
+                    TypeVehicle = null,
+                    Asset = entity.Asset,
+                    IsDeleted = entity.IsDeleted
+                };
             }
             catch (InvalidOperationException invOe)
             {
@@ -126,11 +153,12 @@ namespace Business.Implementations
             }
             catch (Exception ex)
             {
+                // opcional: Console.WriteLine(ex.ToString()); para debugging local
                 throw new BusinessException("Error al crear el registro del sector.", ex);
             }
         }
 
-        //  UPDATE con validación de duplicado (excluye el propio Id)
+        // UPDATE (excluye propio Id al validar duplicado)
         public override async Task Update(SectorsDto dto)
         {
             try
@@ -142,7 +170,7 @@ namespace Business.Implementations
 
                 dto.Name = dto.Name?.Trim();
 
-                Sectors sectorExistente = await _data.GetById(dto.Id);
+                var sectorExistente = await _data.GetById(dto.Id);
                 if (sectorExistente == null)
                     throw new InvalidOperationException($"No existe un sector con Id {dto.Id}.");
 
@@ -164,19 +192,30 @@ namespace Business.Implementations
                 if (!sectorExistente.Asset)
                     throw new InvalidOperationException("No se puede actualizar un sector deshabilitado.");
 
-                //  Duplicado por NOMBRE en la misma zona, excluyendo este mismo Id
-                var sectoresMismaZona = await _data.GetAllByZoneId(dto.ZonesId);
+                // Duplicado por NOMBRE en la misma zona, excluyendo este mismo Id (null-safe)
+                var sectoresMismaZona = await _data.GetAllByZoneId(dto.ZonesId) ?? Enumerable.Empty<Sectors>();
                 var nombreDuplicadoOtro = sectoresMismaZona.Any(s =>
-                    s.Name != null &&
-                    s.Name.Trim().ToLower() == dto.Name!.ToLower() &&
                     s.Id != dto.Id &&
-                    s.Asset
+                    !string.IsNullOrWhiteSpace(s.Name) &&
+                    string.Equals(s.Name.Trim(), dto.Name, StringComparison.OrdinalIgnoreCase) &&
+                    !(s.IsDeleted ?? false)
                 );
                 if (nombreDuplicadoOtro)
                     throw new ArgumentException($"Ya existe otro sector con el nombre '{dto.Name}' en esta zona.");
 
-                BaseModel entity = _mapper.Map<Sectors>(dto);
-                await _data.Update((Sectors)entity);
+                // Defaults null-safe
+                if (dto.Asset == null) dto.Asset = true;
+                if (dto.IsDeleted == null) dto.IsDeleted = false;
+
+                // Mapear sobre la entidad actual (mantener lo que no quieres cambiar)
+                sectorExistente.Name = dto.Name;
+                sectorExistente.Capacity = dto.Capacity;
+                sectorExistente.ZonesId = dto.ZonesId;
+                sectorExistente.TypeVehicleId = dto.TypeVehicleId;
+                sectorExistente.Asset = dto.Asset.GetValueOrDefault(true);
+                // conservar IsDeleted según lo que venga en dto (o mantener current.IsDeleted según tu lógica)
+
+                await _data.Update(sectorExistente);
             }
             catch (InvalidOperationException invOe)
             {
@@ -188,9 +227,11 @@ namespace Business.Implementations
             }
             catch (Exception ex)
             {
+                // opcional: Console.WriteLine(ex.ToString());
                 throw new BusinessException("Error al actualizar el registro del sector.", ex);
             }
         }
+
 
 
     }

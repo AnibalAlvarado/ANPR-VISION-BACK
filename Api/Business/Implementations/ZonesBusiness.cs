@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -25,13 +26,13 @@ namespace Business.Implementations
             _mapper = mapper;
         }
 
+
         public override async Task<ZonesDto> Save(ZonesDto dto)
         {
             try
             {
                 // Normalización
                 dto.Name = dto.Name?.Trim();
-                // dto.Code = dto.Code?.Trim(); // si tienes código
 
                 // Reglas básicas
                 if (string.IsNullOrWhiteSpace(dto.Name))
@@ -43,30 +44,58 @@ namespace Business.Implementations
                 if (dto.Name.Length > 100)
                     throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-                // Duplicado: misma zona (Name) en el mismo parqueadero (ParkingId)
+                // Duplicado: misma zona (Name) en el mismo parqueadero (excluir IsDeleted)
                 var exists = await _data.ExistsAsync(z =>
                     z.ParkingId == dto.ParkingId &&
+                    z.Name != null &&
                     z.Name.ToLower() == dto.Name.ToLower()
                 );
                 if (exists)
                     throw new ArgumentException($"Ya existe una zona con el nombre '{dto.Name}' en este parqueadero.");
 
-                dto.Asset = true;
+                // Preparar entidad manualmente (evitamos AutoMapper en este método)
+                var entity = new Zones
+                {
+                    Name = dto.Name!,
+                    ParkingId = dto.ParkingId,
 
-                var entity = _mapper.Map<Zones>(dto);
+                };
+
+                // Guardar en la BD
                 entity = await _data.Save(entity);
 
-                return _mapper.Map<ZonesDto>(entity);
+                // Devolver DTO con datos guardados
+                return new ZonesDto
+                {
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    ParkingId = entity.ParkingId,
+                    Parking = null,
+                    Asset = entity.Asset,
+                    IsDeleted = entity.IsDeleted
+                };
             }
             catch (ArgumentException) { throw; }
+            catch (DbUpdateException dbEx)
+            {
+                // Muestra traza completa temporalmente para diagnosticar
+                Console.WriteLine("----- DbUpdateException en ZonesBusiness.Save -----");
+                Console.WriteLine(dbEx.ToString());
+                Console.WriteLine("----- end -----");
+
+                throw new BusinessException("Error de BD al registrar la zona.", dbEx);
+            }
             catch (Exception ex)
             {
-                // Usa tu excepción de negocio si la tienes
+                // Muestra traza completa temporalmente para diagnosticar
+                Console.WriteLine("----- Exception en ZonesBusiness.Save -----");
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine("----- end -----");
+
                 throw new BusinessException("Error al registrar la zona.", ex);
             }
         }
 
-        // ✅ UPDATE con validación de duplicado (excluye el propio Id)
         public override async Task Update(ZonesDto dto)
         {
             try
@@ -75,7 +104,6 @@ namespace Business.Implementations
                     throw new ArgumentException("El Id debe ser mayor que 0.");
 
                 dto.Name = dto.Name?.Trim();
-                // dto.Code = dto.Code?.Trim(); // si aplica
 
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El campo 'Name' es obligatorio.");
@@ -86,7 +114,7 @@ namespace Business.Implementations
                 if (dto.Name.Length > 100)
                     throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-                // Verificar que exista
+                // Recuperar la entidad actual
                 var current = await _data.GetById(dto.Id);
                 if (current == null)
                     throw new InvalidOperationException($"No existe una zona con Id {dto.Id}.");
@@ -94,22 +122,39 @@ namespace Business.Implementations
                 if (!current.Asset)
                     throw new InvalidOperationException("No se puede actualizar una zona deshabilitada.");
 
-                // Duplicado en otros registros del mismo parking
+                // Duplicado en otros registros del mismo parking (excluir propio Id y eliminados)
                 var existsOther = await _data.ExistsAsync(z =>
                     z.ParkingId == dto.ParkingId &&
-                    z.Name.ToLower() == dto.Name.ToLower() &&
-                    z.Id != dto.Id
+                    z.Id != dto.Id &&
+                    z.Name != null &&
+                    z.Name.ToLower() == dto.Name.ToLower()
                 );
                 if (existsOther)
                     throw new ArgumentException($"Ya existe otra zona con el nombre '{dto.Name}' en este parqueadero.");
 
-                var entity = _mapper.Map<Zones>(dto);
-                await _data.Update(entity);
+                // Actualizar la entidad existente (mantenemos IsDeleted del registro actual)
+                current.Name = dto.Name!;
+                current.ParkingId = dto.ParkingId;
+                // current.IsDeleted = current.IsDeleted; // mantener igual
+
+                await _data.Update(current);
             }
             catch (ArgumentException) { throw; }
             catch (InvalidOperationException) { throw; }
+            catch (DbUpdateException dbEx)
+            {
+                Console.WriteLine("----- DbUpdateException en ZonesBusiness.Update -----");
+                Console.WriteLine(dbEx.ToString());
+                Console.WriteLine("----- end -----");
+
+                throw new BusinessException("Error de BD al actualizar la zona.", dbEx);
+            }
             catch (Exception ex)
             {
+                Console.WriteLine("----- Exception en ZonesBusiness.Update -----");
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine("----- end -----");
+
                 throw new BusinessException("Error al actualizar la zona.", ex);
             }
         }
