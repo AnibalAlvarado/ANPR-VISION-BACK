@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Exceptions;
+using Utilities.Helpers.Validators;
 
 namespace Business.Implementations
 {
@@ -26,11 +27,10 @@ namespace Business.Implementations
         {
             try
             {
-                // (Opcional) helper de validaciones si lo usas en tu proyecto
-                // Validations.ValidateDto(dto, "Name");
+                // Validación básica del DTO (lanza ArgumentException si falta Name)
+                Validations.ValidateDto(dto, "Name");
 
                 dto.Name = dto.Name?.Trim();
-
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El campo 'Name' es obligatorio.");
                 if (dto.Name.Length < 2)
@@ -38,22 +38,32 @@ namespace Business.Implementations
                 if (dto.Name.Length > 100)
                     throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-                //  Duplicado por nombre (case-insensitive)
+                // Defaults tri-estado
+                if (dto.Asset == null) dto.Asset = true;
+                if (dto.IsDeleted == null) dto.IsDeleted = false;
+
+                // Duplicado (case-insensitive) usando ExistsAsync
                 var exists = await _data.ExistsAsync(p =>
                     p.Name.ToLower() == dto.Name.ToLower() &&
-                    p.Asset // si manejas habilitado/soft-delete
+                    (p.IsDeleted == null || p.IsDeleted == false)
                 );
                 if (exists)
                     throw new ArgumentException($"Ya existe un permiso con el nombre '{dto.Name}'.");
 
-                dto.Asset = true;
-
+                // Mapear y guardar
                 var entity = _mapper.Map<Permission>(dto);
                 entity = await _data.Save(entity);
 
                 return _mapper.Map<PermissionDto>(entity);
             }
-            catch (ArgumentException) { throw; }
+            catch (InvalidOperationException invOe)
+            {
+                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
             catch (Exception ex)
             {
                 throw new BusinessException("Error al crear el permiso.", ex);
@@ -64,17 +74,13 @@ namespace Business.Implementations
         {
             try
             {
-                // Validations.ValidateDto(dto, "Id", "Name");
+                // Validar que venga Id y Name
+                Validations.ValidateDto(dto, "Id", "Name");
 
                 if (dto.Id <= 0)
                     throw new ArgumentException("El Id debe ser mayor que 0.");
 
                 dto.Name = dto.Name?.Trim();
-
-                var current = await _data.GetById(dto.Id);
-                if (current == null)
-                    throw new InvalidOperationException($"No existe un permiso con Id {dto.Id}.");
-
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El campo 'Name' es obligatorio.");
                 if (dto.Name.Length < 2)
@@ -82,20 +88,36 @@ namespace Business.Implementations
                 if (dto.Name.Length > 100)
                     throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-                if (!current.Asset)
+                // Obtener la entidad trackeada
+                var current = await _data.GetById(dto.Id)
+                              ?? throw new InvalidOperationException($"No existe un permiso con Id {dto.Id}.");
+
+                if (current.Asset == false)
                     throw new InvalidOperationException("No se puede actualizar un permiso deshabilitado.");
 
-                //  Duplicado en otros (case-insensitive)
+                // Duplicado en otros registros (case-insensitive)
                 var existsOther = await _data.ExistsAsync(p =>
                     p.Name.ToLower() == dto.Name.ToLower() &&
                     p.Id != dto.Id &&
-                    p.Asset
+                    (p.IsDeleted == null || p.IsDeleted == false)
                 );
                 if (existsOther)
                     throw new ArgumentException($"Ya existe otro permiso con el nombre '{dto.Name}'.");
 
-                var entity = _mapper.Map<Permission>(dto);
-                await _data.Update(entity);
+                // Defaults null-safe: conservar valores actuales si dto no los trae
+                if (dto.Asset == null) dto.Asset = current.Asset;
+                if (dto.IsDeleted == null) dto.IsDeleted = current.IsDeleted;
+
+                // MAPEAR sobre la entidad trackeada (evita error de EF Core por duplicado en ChangeTracker)
+                _mapper.Map(dto, current);
+
+                // Si prefieres no usar AutoMapper, asigna manualmente:
+                // current.Name = dto.Name;
+                // current.Description = dto.Description;
+                // if (dto.Asset != null) current.Asset = dto.Asset.Value;
+                // if (dto.IsDeleted != null) current.IsDeleted = dto.IsDeleted.Value;
+
+                await _data.Update(current);
             }
             catch (ArgumentException) { throw; }
             catch (InvalidOperationException) { throw; }

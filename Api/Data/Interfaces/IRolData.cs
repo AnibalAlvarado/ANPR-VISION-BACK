@@ -10,6 +10,6 @@ namespace Data.Interfaces
 {
     public interface IRolData : IRepositoryData<Rol>
     {
-        Task<Rol> GetByNameAsync(string name);
+        Task<Rol?> GetByNameAsync(string name);
     }
 }

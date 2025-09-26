@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
 using Entity.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +19,16 @@ namespace Business.Implementations
     {
         private readonly IParkingCategoryData _data;
         private readonly IMapper _mapper;
-        public ParkingCategoryBusiness(IParkingCategoryData data, IMapper mapper)
+        private readonly ILogger<ParkingCategoryBusiness> _logger;
+        public ParkingCategoryBusiness(IParkingCategoryData data, IMapper mapper, ILogger<ParkingCategoryBusiness> logger)
             : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
+            _logger = logger;
         }
 
+        // ParkingCategoryBusiness.cs (Save)
         public override async Task<ParkingCategoryDto> Save(ParkingCategoryDto dto)
         {
             try
@@ -32,54 +36,69 @@ namespace Business.Implementations
                 Validations.ValidateDto(dto, "Code", "Name");
 
                 dto.Name = dto.Name?.Trim();
-                dto.Code = dto.Code?.Trim().ToUpper();
+                dto.Code = dto.Code?.Trim().ToUpperInvariant();
 
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El nombre es obligatorio.");
                 if (dto.Name.Length > 50)
                     throw new ArgumentException("El nombre no puede contener más de 50 caracteres.");
-
                 if (string.IsNullOrWhiteSpace(dto.Code))
                     throw new ArgumentException("El código es obligatorio.");
 
-                //  Duplicado por NOMBRE (case-insensitive)
-                var nameExists = await _data.ExistsAsync(pc =>
-                    pc.Name.ToLower() == dto.Name.ToLower() &&
-                    pc.Asset
-                );
-                if (nameExists)
-                    throw new ArgumentException($"Ya existe una categoría de parqueadero con el nombre '{dto.Name}'.");
+                // Defaults
+                dto.Asset ??= true;
+                dto.IsDeleted ??= false;
 
-                // (Opcional)  Duplicado por CÓDIGO (case-insensitive)
-                var codeExists = await _data.ExistsAsync(pc =>
-                    pc.code.ToUpper() == dto.Code &&
-                    pc.Asset
+                // FIABLE: comprobar en memoria (determinístico)
+                var all = await _data.GetAll() ?? Enumerable.Empty<ParkingCategory>();
+
+                var nameDup = all.Any(pc =>
+                    !string.IsNullOrWhiteSpace(pc.Name) &&
+                    string.Equals(pc.Name.Trim(), dto.Name, StringComparison.OrdinalIgnoreCase) &&
+                    !(pc.IsDeleted ?? false)
                 );
-                if (codeExists)
+
+                var codeDup = all.Any(pc =>
+                    !string.IsNullOrWhiteSpace(pc.Code) &&
+                    string.Equals(pc.Code.Trim(), dto.Code, StringComparison.OrdinalIgnoreCase) &&
+                    !(pc.IsDeleted ?? false)
+                );
+
+                _logger?.LogDebug("Save checks: nameDup={NameDup}, codeDup={CodeDup}", nameDup, codeDup);
+
+                if (nameDup)
+                    throw new ArgumentException($"Ya existe una categoría de parqueadero con el nombre '{dto.Name}'.");
+                if (codeDup)
                     throw new ArgumentException($"Ya existe una categoría de parqueadero con el código '{dto.Code}'.");
 
-                dto.Asset = true;
+                var entity = _mapper.Map<ParkingCategory>(dto);
+                entity.Id = 0;
+                entity.Asset = dto.Asset.GetValueOrDefault(true);
+                entity.IsDeleted = dto.IsDeleted.GetValueOrDefault(false);
 
-                BaseModel entity = _mapper.Map<ParkingCategory>(dto);
-                entity = await _data.Save((ParkingCategory)entity);
+                try
+                {
+                    entity = await _data.Save(entity);
+                }
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException dbEx)
+                {
+                    // Capturar violación de índice único en BD si existe
+                    _logger?.LogError(dbEx, "DbUpdateException en Save ParkingCategory");
+                    throw new ArgumentException("No fue posible crear la categoría porque ya existe un registro con el mismo nombre o código.");
+                }
 
                 return _mapper.Map<ParkingCategoryDto>(entity);
             }
-            catch (InvalidOperationException invOe)
-            {
-                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
-            }
-            catch (ArgumentException argEx)
-            {
-                throw new ArgumentException($"Error: {argEx.Message}");
-            }
+            catch (ArgumentException) { throw; }
             catch (Exception ex)
             {
+                _logger?.LogError(ex, "Error al crear ParkingCategory");
                 throw new BusinessException("Error al crear el registro.", ex);
             }
         }
 
 
+        // ParkingCategoryBusiness.cs (Update)
         public override async Task Update(ParkingCategoryDto dto)
         {
             try
@@ -96,50 +115,66 @@ namespace Business.Implementations
                     throw new InvalidOperationException("No se puede actualizar una categoría deshabilitada.");
 
                 dto.Name = dto.Name?.Trim();
-                dto.Code = dto.Code?.Trim().ToUpper();
+                dto.Code = dto.Code?.Trim().ToUpperInvariant();
 
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El nombre es obligatorio.");
                 if (dto.Name.Length > 50)
                     throw new ArgumentException("El nombre no puede contener más de 50 caracteres.");
-
                 if (string.IsNullOrWhiteSpace(dto.Code))
                     throw new ArgumentException("El código es obligatorio.");
 
-                //  Duplicado por NOMBRE en otros (case-insensitive)
-                var nameExistsOther = await _data.ExistsAsync(pc =>
-                    pc.Name.ToLower() == dto.Name.ToLower() &&
+                // Comprobación FIABLE en memoria
+                var all = await _data.GetAll() ?? Enumerable.Empty<ParkingCategory>();
+
+                var nameExistsOther = all.Any(pc =>
                     pc.Id != dto.Id &&
-                    pc.Asset
+                    !string.IsNullOrWhiteSpace(pc.Name) &&
+                    string.Equals(pc.Name.Trim(), dto.Name, StringComparison.OrdinalIgnoreCase) &&
+                    !(pc.IsDeleted ?? false)
                 );
+
+                var codeExistsOther = all.Any(pc =>
+                    pc.Id != dto.Id &&
+                    !string.IsNullOrWhiteSpace(pc.Code) &&
+                    string.Equals(pc.Code.Trim(), dto.Code, StringComparison.OrdinalIgnoreCase) &&
+                    !(pc.IsDeleted ?? false)
+                );
+
+                _logger?.LogDebug("Update checks: nameExistsOther={NameExists}, codeExistsOther={CodeExists}", nameExistsOther, codeExistsOther);
+
                 if (nameExistsOther)
                     throw new ArgumentException($"Ya existe otra categoría de parqueadero con el nombre '{dto.Name}'.");
-
-                // (Opcional)  Duplicado por CÓDIGO en otros (case-insensitive)
-                var codeExistsOther = await _data.ExistsAsync(pc =>
-                    pc.code.ToUpper() == dto.Code &&
-                    pc.Id != dto.Id &&
-                    pc.Asset
-                );
                 if (codeExistsOther)
                     throw new ArgumentException($"Ya existe otra categoría de parqueadero con el código '{dto.Code}'.");
 
-                BaseModel entity = _mapper.Map<ParkingCategory>(dto);
-                await _data.Update((ParkingCategory)entity);
+                dto.Asset ??= current.Asset;
+                dto.IsDeleted ??= current.IsDeleted;
+
+                _mapper.Map(dto, current);
+
+                try
+                {
+                    await _data.Update(current);
+                }
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException dbEx)
+                {
+                    _logger?.LogError(dbEx, "DbUpdateException en Update ParkingCategory");
+                    throw new ArgumentException("No fue posible actualizar la categoría porque existe otra con el mismo nombre o código.");
+                }
             }
-            catch (InvalidOperationException invOe)
-            {
-                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
-            }
-            catch (ArgumentException argEx)
-            {
-                throw new ArgumentException($"Error: {argEx.Message}");
-            }
+            catch (ArgumentException) { throw; }
+            catch (InvalidOperationException) { throw; }
             catch (Exception ex)
             {
+                _logger?.LogError(ex, "Error al actualizar ParkingCategory");
                 throw new BusinessException("Error al actualizar el registro.", ex);
             }
         }
+
+
+
+
 
     }
 }
