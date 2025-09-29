@@ -2,6 +2,7 @@
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos;
+using Entity.Dtos.Access;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -73,12 +74,28 @@ namespace Data.Implementations
         }
 
 
+        //public async Task<User?> GetUserByUsernameAsync(string username)
+        //{
+        //    try
+        //    {
+        //        //await AuditAsync("GetUserByUsernameAsync");
+        //        return await _context.Set<User>()
+        //            .FirstOrDefaultAsync(u => u.Username == username && u.Asset);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error al obtener usuario por nombre de usuario: {Username}", username);
+        //        throw;
+        //    }
+        //}
+
+
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             try
             {
-                //await AuditAsync("GetUserByUsernameAsync");
                 return await _context.Set<User>()
+                    .Include(u => u.Person)                  // <- añade esto
                     .FirstOrDefaultAsync(u => u.Username == username && u.Asset);
             }
             catch (Exception ex)
@@ -87,6 +104,7 @@ namespace Data.Implementations
                 throw;
             }
         }
+
 
         public async Task<User?> GetUserByEmailsync(string email)
         {
@@ -165,6 +183,57 @@ namespace Data.Implementations
                 throw;
             }
         }
+
+        public async Task<UserAccessDto> GetUserAccessAsync(int userId)
+        {
+            try
+            {
+                var roles = await _context.Set<RolUser>()
+                .Where(ru => ru.UserId == userId)
+                .Include(ru => ru.Rol)
+                    .ThenInclude(r => r.RolFormPermission)
+                        .ThenInclude(rfp => rfp.Form)
+                            .ThenInclude(f => f.FormModules)
+                                .ThenInclude(fm => fm.Module)
+                .Include(ru => ru.Rol)
+                    .ThenInclude(r => r.RolFormPermission)
+                        .ThenInclude(rfp => rfp.Permission)
+                .Select(ru => ru.Rol) // <-- el select debe ser lo último
+                .ToListAsync();
+
+
+                var roleDtos = roles.Select(r => new RoleAccessDto
+                {
+                    RoleId = r.Id,
+                    RoleName = r.Name,
+                    Modules = r.RolFormPermission
+                        .GroupBy(rfp => rfp.Form.FormModules.First().Module)
+                        .Select(m => new ModuleAccessDto
+                        {
+                            ModuleId = m.Key.Id,
+                            ModuleName = m.Key.Name,
+                            Forms = m.GroupBy(f => f.Form).Select(fg => new FormAccessDto
+                            {
+                                FormId = fg.Key.Id,
+                                FormName = fg.Key.Name,
+                                Permissions = fg.Select(p => p.Permission.Name).Distinct().ToList()
+                            }).ToList()
+                        }).ToList()
+                }).ToList();
+
+                return new UserAccessDto
+                {
+                    UserId = userId,
+                    Roles = roleDtos
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener accesos para el usuario {UserId}", userId);
+                throw;
+            }
+        }
+
 
 
 

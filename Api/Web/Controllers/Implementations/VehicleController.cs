@@ -2,6 +2,7 @@
 using Business.Interfaces;
 using Data.Implementations;
 using Entity.Dtos;
+using Entity.Dtos.vehicle;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -91,6 +92,26 @@ namespace Web.Controllers.Implementations
             return Ok(result);
         }
 
+        [HttpGet("byClient/{clientId:int}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<VehicleClientListDto>>>> GetByClient(int clientId)
+        {
+            try
+            {
+                var data = await _business.GetByClientIdWithPresenceAsync(clientId);
+                var response = new ApiResponse<IEnumerable<VehicleClientListDto>>(data, true, "Ok", null);
+                return Ok(response);
+            }
+            catch (ArgumentException aex)
+            {
+                var bad = new ApiResponse<IEnumerable<VehicleClientListDto>>(null, false, aex.Message, null);
+                return BadRequest(bad);
+            }
+            catch (Exception ex)
+            {
+                var error = new ApiResponse<IEnumerable<VehicleClientListDto>>(null, false, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, error);
+            }
+        }
 
     }
 }

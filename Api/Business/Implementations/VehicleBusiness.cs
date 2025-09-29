@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Data.Implementations;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.vehicle;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -210,6 +211,19 @@ namespace Business.Implementations
                 VehicleId = registeredVehicle.Vehicle.Id,
                 EntryDate = registeredVehicle.EntryDate
             };
+        }
+        public async Task<IEnumerable<VehicleClientListDto>> GetByClientIdWithPresenceAsync(int clientId)
+        {
+            if (clientId <= 0) throw new ArgumentException("El clientId es inválido.");
+            try
+            {
+                var list = await _data.GetByClientIdWithPresenceAsync(clientId);
+                return list; // lista vacía es válida
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los vehículos del cliente (con estado).", ex);
+            }
         }
 
     }
