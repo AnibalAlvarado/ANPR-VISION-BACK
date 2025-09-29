@@ -9,7 +9,7 @@ namespace Entity.Models
      public class ParkingCategory : GenericModel
     {
        
-        public string code { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
         public string? Description { get; set; }
 
         // Navigation

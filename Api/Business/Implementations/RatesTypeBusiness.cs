@@ -29,14 +29,31 @@ namespace Business.Implementations
         {
             try
             {
-                Validations.ValidateDto(dto,"Name");
+                Validations.ValidateDto(dto, "Name");
+
+                dto.Name = dto.Name?.Trim();
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El nombre del tipo de tarifa es obligatorio.");
                 if (dto.Name.Length > 50)
-                    throw new ArgumentException("El nombre del tipo de tarifa no puede contener mas de 70 caracteres.");
+                    throw new ArgumentException("El nombre del tipo de tarifa no puede superar los 50 caracteres.");
+                if (dto.Name.Length < 2)
+                    throw new ArgumentException("El nombre del tipo de tarifa debe tener al menos 2 caracteres.");
 
-                dto.Asset = true;
+                // Defaults tri-estado
+                if (dto.Asset == null) dto.Asset = true;
+                if (dto.IsDeleted == null) dto.IsDeleted = false;
 
-                BaseModel entity = _mapper.Map<RatesType>(dto);
-                entity = await _data.Save((RatesType)entity);
+                // Duplicado (case-insensitive) usando ExistsAsync
+                var exists = await _data.ExistsAsync(rt =>
+                    rt.Name.ToLower() == dto.Name.ToLower() &&
+                    (rt.IsDeleted == null || rt.IsDeleted == false)
+                );
+                if (exists)
+                    throw new ArgumentException($"Ya existe un tipo de tarifa con el nombre '{dto.Name}'.");
+
+                // Mapear y guardar (puedes usar AutoMapper como haces actualmente)
+                var entity = _mapper.Map<RatesType>(dto);
+                entity = await _data.Save(entity);
 
                 return _mapper.Map<RatesTypeDto>(entity);
             }
@@ -54,19 +71,56 @@ namespace Business.Implementations
             }
         }
 
+
+
         public override async Task Update(RatesTypeDto dto)
         {
             try
             {
-                Validations.ValidateDto(dto, "Name");
-                if (dto.Id <= 0)
-                    throw new ArgumentException("No ha seleccioando ningun tipo de tarifa.");
-                RatesType ratesTypeExistente = await _data.GetById(dto.Id) ?? throw new InvalidOperationException($"Seleccone un tipo de tarifa válida.");
-                if (dto.Name.Length > 50)
-                    throw new ArgumentException("El nombre del tipo de tarifa no puede contener mas de 70 caracteres.");
+                Validations.ValidateDto(dto, "Id", "Name");
 
-                BaseModel entity = _mapper.Map<RatesType>(dto);
-                await _data.Update((RatesType)entity);
+                if (dto.Id <= 0)
+                    throw new ArgumentException("Debe seleccionar un tipo de tarifa válido.");
+
+                dto.Name = dto.Name?.Trim();
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El nombre del tipo de tarifa es obligatorio.");
+                if (dto.Name.Length > 50)
+                    throw new ArgumentException("El nombre del tipo de tarifa no puede superar los 50 caracteres.");
+                if (dto.Name.Length < 2)
+                    throw new ArgumentException("El nombre del tipo de tarifa debe tener al menos 2 caracteres.");
+
+                // Obtener la entidad trackeada
+                var current = await _data.GetById(dto.Id)
+                             ?? throw new InvalidOperationException("El tipo de tarifa seleccionado no existe.");
+
+                if (current.Asset == false)
+                    throw new InvalidOperationException("No se puede actualizar un tipo de tarifa deshabilitado.");
+
+                // Duplicado en otros registros (case-insensitive)
+                var existsOther = await _data.ExistsAsync(rt =>
+                    rt.Name.ToLower() == dto.Name.ToLower() &&
+                    rt.Id != dto.Id &&
+                    (rt.IsDeleted == null || rt.IsDeleted == false)
+                );
+                if (existsOther)
+                    throw new ArgumentException($"Ya existe otro tipo de tarifa con el nombre '{dto.Name}'.");
+
+                // Defaults null-safe (mantener valores actuales si dto no los trae)
+                if (dto.Asset == null) dto.Asset = current.Asset;
+                if (dto.IsDeleted == null) dto.IsDeleted = current.IsDeleted;
+
+                // MAPEAR SOBRE LA INSTANCIA EXISTENTE (evita conflictos de tracking)
+                // Requiere AutoMapper configurado para Map<RatesTypeDto, RatesType>
+                _mapper.Map(dto, current);
+
+                // Si no quieres AutoMapper usa asignación manual (descomenta y adapta):
+                // current.Name = dto.Name;
+                // current.Description = dto.Description;
+                // if (dto.Asset != null) current.Asset = dto.Asset.Value;
+                // if (dto.IsDeleted != null) current.IsDeleted = dto.IsDeleted.Value;
+
+                await _data.Update(current);
             }
             catch (InvalidOperationException invOe)
             {

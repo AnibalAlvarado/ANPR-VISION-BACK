@@ -2,6 +2,7 @@
 using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,24 @@ namespace Data.Implementations
 
         }
 
+        public override async Task Update(ParkingCategory entity)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
 
+            var local = _context.Set<ParkingCategory>().Local.FirstOrDefault(e => e.Id == entity.Id);
+
+            if (local != null)
+            {
+                if (!ReferenceEquals(local, entity))
+                    _context.Entry(local).CurrentValues.SetValues(entity);
+            }
+            else
+            {
+                _context.Set<ParkingCategory>().Attach(entity);
+                _context.Entry(entity).State = EntityState.Modified;
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -50,112 +50,184 @@ namespace Business.Implementations
         {
             try
             {
-           
-                Validations.ValidateDto(dto, "Resolution", "Url", "ParkingId");
+                Validations.ValidateDto(dto, "Resolution", "Url", "ParkingId", "Name");
 
-          
-                if (string.IsNullOrWhiteSpace(dto.Resolution))
-                    throw new ArgumentException("El campo 'Resolution' es obligatorio.");
-                if (dto.Resolution.Length < 3)
-                    throw new ArgumentException("La resolución debe tener al menos 3 caracteres.");
-                if (dto.Resolution.Length > 50)
-                    throw new ArgumentException("La resolución no puede superar los 50 caracteres.");
+                dto.Resolution = dto.Resolution?.Trim();
+                dto.Url = dto.Url?.Trim();
+                dto.Name = dto.Name?.Trim();
 
-    
-                if (string.IsNullOrWhiteSpace(dto.Url))
-                    throw new ArgumentException("El campo 'Url' es obligatorio.");
-                if (dto.Url.Length > 250)
-                    throw new ArgumentException("La URL no puede superar los 250 caracteres.");
-                if (!Uri.IsWellFormedUriString(dto.Url, UriKind.Absolute))
-                    throw new ArgumentException("La URL proporcionada no es válida.");
+                if (string.IsNullOrWhiteSpace(dto.Name))
+                    throw new ArgumentException("El campo 'Name' es obligatorio.");
+                if (dto.Name.Length < 2) throw new ArgumentException("El nombre debe tener al menos 2 caracteres.");
+                if (dto.Name.Length > 100) throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-       
-                if (dto.ParkingId <= 0)
-                    throw new ArgumentException("Debe seleccionar un estacionamiento válido.");
+                if (string.IsNullOrWhiteSpace(dto.Resolution)) throw new ArgumentException("El campo 'Resolution' es obligatorio.");
+                if (dto.Resolution.Length < 3) throw new ArgumentException("La resolución debe tener al menos 3 caracteres.");
+                if (dto.Resolution.Length > 50) throw new ArgumentException("La resolución no puede superar los 50 caracteres.");
 
-             
-                // 🔹 Guardar entidad
+                if (string.IsNullOrWhiteSpace(dto.Url)) throw new ArgumentException("El campo 'Url' es obligatorio.");
+                if (dto.Url.Length > 250) throw new ArgumentException("La URL no puede superar los 250 caracteres.");
+                if (!Uri.IsWellFormedUriString(dto.Url, UriKind.Absolute)) throw new ArgumentException("La URL proporcionada no es válida.");
+
+                if (dto.ParkingId <= 0) throw new ArgumentException("Debe seleccionar un estacionamiento válido.");
+
+                // Normalizar para comparación (por parking si quieres unicidad por estacionamiento)
+                var nameNorm = dto.Name.ToUpperInvariant();
+                var urlNorm = dto.Url.ToUpperInvariant();
+                var parkingId = dto.ParkingId;
+
+                bool existsName = false;
+                bool existsUrl = false;
+
+                try
+                {
+                    existsName = await _data.ExistsAsync(c =>
+                        c.Name != null &&
+                        c.Name.ToUpper() == nameNorm &&
+                        c.ParkingId == parkingId &&
+                        (c.IsDeleted == null || c.IsDeleted == false)
+                    );
+
+                    existsUrl = await _data.ExistsAsync(c =>
+                        c.Url != null &&
+                        c.Url.ToUpper() == urlNorm &&
+                        c.ParkingId == parkingId &&
+                        (c.IsDeleted == null || c.IsDeleted == false)
+                    );
+                }
+                catch
+                {
+                    var all = await _data.GetAll() ?? Enumerable.Empty<Camera>();
+                    existsName = all.Any(c =>
+                        !string.IsNullOrWhiteSpace(c.Name) &&
+                        c.ParkingId == parkingId &&
+                        string.Equals(c.Name.Trim(), dto.Name, StringComparison.OrdinalIgnoreCase) &&
+                        !(c.IsDeleted ?? false)
+                    );
+                    existsUrl = all.Any(c =>
+                        !string.IsNullOrWhiteSpace(c.Url) &&
+                        c.ParkingId == parkingId &&
+                        string.Equals(c.Url.Trim(), dto.Url, StringComparison.OrdinalIgnoreCase) &&
+                        !(c.IsDeleted ?? false)
+                    );
+                }
+
+                if (existsName) throw new InvalidOperationException($"Ya existe una cámara con el nombre '{dto.Name}' en ese estacionamiento.");
+                if (existsUrl) throw new InvalidOperationException($"Ya existe una cámara con la URL '{dto.Url}' en ese estacionamiento.");
+
+                // Mapear y garantizar inserción (evitar que venga Id desde cliente)
                 dto.Asset = true;
-                BaseModel entity = _mapper.Map<Camera>(dto);
-                entity = await _data.Save((Camera)entity);
+                dto.IsDeleted = dto.IsDeleted.GetValueOrDefault(false);
+                var entity = _mapper.Map<Camera>(dto);
+
+                // Fuerza nuevo insert
+                entity.Id = 0;
+                entity.Parking = null; // evitar problemas con el mapeo de la relación
+
+                entity = await _data.Save(entity);
 
                 return _mapper.Map<CameraDto>(entity);
             }
-            catch (InvalidOperationException invOe)
-            {
-                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
-            }
-            catch (ArgumentException argEx)
-            {
-                throw new ArgumentException($"Error: {argEx.Message}");
-            }
+            catch (InvalidOperationException) { throw; }
+            catch (ArgumentException) { throw; }
             catch (Exception ex)
             {
                 throw new BusinessException("Error al registrar la cámara.", ex);
             }
         }
 
-
         public override async Task Update(CameraDto dto)
         {
             try
             {
-                // Validaciones básicas del DTO
-                Validations.ValidateDto(dto, "Id", "Resolution", "Url", "ParkingId");
+                Validations.ValidateDto(dto, "Id", "Resolution", "Url", "ParkingId", "Name");
 
-                if (dto.Id <= 0)
-                    throw new ArgumentException("El Id de la cámara no es válido.");
+                if (dto.Id <= 0) throw new ArgumentException("El Id de la cámara no es válido.");
 
-                // Traer la entidad existente (TRACKED)
                 var camaraExistente = await _data.GetById(dto.Id);
-                if (camaraExistente == null)
-                    throw new InvalidOperationException($"No existe una cámara con Id {dto.Id}.");
+                if (camaraExistente == null) throw new InvalidOperationException($"No existe una cámara con Id {dto.Id}.");
+                if (!camaraExistente.Asset) throw new InvalidOperationException("No se puede actualizar una cámara deshabilitada.");
 
-                if (!camaraExistente.Asset)
-                    throw new InvalidOperationException("No se puede actualizar una cámara deshabilitada.");
+                // Normalizar
+                dto.Name = dto.Name?.Trim();
+                dto.Resolution = dto.Resolution?.Trim();
+                dto.Url = dto.Url?.Trim();
 
-                // Validaciones de campos
-                if (string.IsNullOrWhiteSpace(dto.Resolution))
-                    throw new ArgumentException("El campo 'Resolution' es obligatorio.");
-                if (dto.Resolution.Length < 3)
-                    throw new ArgumentException("La resolución debe tener al menos 3 caracteres.");
-                if (dto.Resolution.Length > 50)
-                    throw new ArgumentException("La resolución no puede superar los 50 caracteres.");
+                if (string.IsNullOrWhiteSpace(dto.Name)) throw new ArgumentException("El campo 'Name' es obligatorio.");
+                if (dto.Name.Length < 2) throw new ArgumentException("El nombre debe tener al menos 2 caracteres.");
+                if (dto.Name.Length > 100) throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-                if (string.IsNullOrWhiteSpace(dto.Url))
-                    throw new ArgumentException("El campo 'Url' es obligatorio.");
-                if (dto.Url.Length > 250)
-                    throw new ArgumentException("La URL no puede superar los 250 caracteres.");
-                if (!Uri.IsWellFormedUriString(dto.Url, UriKind.Absolute))
-                    throw new ArgumentException("La URL proporcionada no es válida.");
+                if (string.IsNullOrWhiteSpace(dto.Resolution)) throw new ArgumentException("El campo 'Resolution' es obligatorio.");
+                if (dto.Resolution.Length < 3) throw new ArgumentException("La resolución debe tener al menos 3 caracteres.");
+                if (dto.Resolution.Length > 50) throw new ArgumentException("La resolución no puede superar los 50 caracteres.");
 
-                if (dto.ParkingId <= 0)
-                    throw new ArgumentException("Debe seleccionar un estacionamiento válido.");
+                if (string.IsNullOrWhiteSpace(dto.Url)) throw new ArgumentException("El campo 'Url' es obligatorio.");
+                if (dto.Url.Length > 250) throw new ArgumentException("La URL no puede superar los 250 caracteres.");
+                if (!Uri.IsWellFormedUriString(dto.Url, UriKind.Absolute)) throw new ArgumentException("La URL proporcionada no es válida.");
 
-                // Validar duplicados SIN tracking (usa el método nuevo en Data)
-                var existeCamara = await _data.ExistsDuplicateAsync(dto);
-                if (existeCamara)
-                    throw new InvalidOperationException("Ya existe otra cámara con esta resolución y URL en el mismo estacionamiento.");
+                if (dto.ParkingId <= 0) throw new ArgumentException("Debe seleccionar un estacionamiento válido.");
 
-                // Mapear SOBRE la entidad trackeada (clave para evitar doble tracking)
+                var nameNorm = dto.Name.ToUpperInvariant();
+                var urlNorm = dto.Url.ToUpperInvariant();
+                var parkingId = dto.ParkingId;
+
+                bool existsOtherName = false;
+                bool existsOtherUrl = false;
+
+                try
+                {
+                    existsOtherName = await _data.ExistsAsync(c =>
+                        c.Name != null &&
+                        c.Name.ToUpper() == nameNorm &&
+                        c.ParkingId == parkingId &&
+                        c.Id != dto.Id &&
+                        (c.IsDeleted == null || c.IsDeleted == false)
+                    );
+
+                    existsOtherUrl = await _data.ExistsAsync(c =>
+                        c.Url != null &&
+                        c.Url.ToUpper() == urlNorm &&
+                        c.ParkingId == parkingId &&
+                        c.Id != dto.Id &&
+                        (c.IsDeleted == null || c.IsDeleted == false)
+                    );
+                }
+                catch
+                {
+                    var all = await _data.GetAll() ?? Enumerable.Empty<Camera>();
+                    existsOtherName = all.Any(c =>
+                        c.Id != dto.Id &&
+                        c.ParkingId == parkingId &&
+                        !string.IsNullOrWhiteSpace(c.Name) &&
+                        string.Equals(c.Name.Trim(), dto.Name, StringComparison.OrdinalIgnoreCase) &&
+                        !(c.IsDeleted ?? false)
+                    );
+                    existsOtherUrl = all.Any(c =>
+                        c.Id != dto.Id &&
+                        c.ParkingId == parkingId &&
+                        !string.IsNullOrWhiteSpace(c.Url) &&
+                        string.Equals(c.Url.Trim(), dto.Url, StringComparison.OrdinalIgnoreCase) &&
+                        !(c.IsDeleted ?? false)
+                    );
+                }
+
+                if (existsOtherName) throw new InvalidOperationException($"Ya existe otra cámara con el nombre '{dto.Name}' en ese estacionamiento.");
+                if (existsOtherUrl) throw new InvalidOperationException($"Ya existe otra cámara con la URL '{dto.Url}' en ese estacionamiento.");
+
+                // Mapear sobre la instancia trackeada
                 _mapper.Map(dto, camaraExistente);
 
-                // Guardar la misma instancia
                 await _data.Update(camaraExistente);
             }
-            catch (InvalidOperationException invOe)
-            {
-                throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
-            }
-            catch (ArgumentException argEx)
-            {
-                throw new ArgumentException($"Error: {argEx.Message}");
-            }
+            catch (InvalidOperationException) { throw; }
+            catch (ArgumentException) { throw; }
             catch (Exception ex)
             {
                 throw new BusinessException("Error al actualizar la cámara.", ex);
             }
         }
+
+
 
 
 

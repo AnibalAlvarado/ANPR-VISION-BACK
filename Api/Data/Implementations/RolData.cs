@@ -22,19 +22,53 @@ namespace Data.Implementations
         {
 
         }
-
-        public async Task<Rol> GetByNameAsync(string name)
+        public async Task<Rol?> GetByNameAsync(string name)
         {
-
             try
             {
+                if (string.IsNullOrWhiteSpace(name)) return null;
+                var normalized = name.Trim().ToUpperInvariant();
+
                 return await _context.Set<Rol>()
-                        .FirstOrDefaultAsync(r => r.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(r =>
+                        r.Name != null &&
+                        r.Name.ToUpper() == normalized &&
+                        !(r.IsDeleted ?? false)
+                    );
             }
             catch (Exception ex)
             {
                 throw new DataException("Error al obtener el rol por nombre", ex);
             }
         }
+
+        // Si RepositoryData tiene 'virtual Task Update(T entity)' puedes sobreescribir:
+        public override async Task Update(Rol entity)
+        {
+            var dbEntity = await _context.Set<Rol>().FindAsync(entity.Id);
+            if (dbEntity == null)
+                throw new InvalidOperationException($"No existe el rol con Id {entity.Id}.");
+
+            if (!ReferenceEquals(dbEntity, entity))
+            {
+                _context.Entry(dbEntity).CurrentValues.SetValues(entity);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        //public async Task<Rol> GetByNameAsync(string name)
+        //{
+
+        //    try
+        //    {
+        //        return await _context.Set<Rol>()
+        //                .FirstOrDefaultAsync(r => r.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new DataException("Error al obtener el rol por nombre", ex);
+        //    }
+        //}
     }
 }

@@ -30,6 +30,8 @@ namespace Business.Implementations
             {
                 Validations.ValidateDto(dto, "Name");
 
+                dto.Name = dto.Name?.Trim();
+
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El campo Nombre es obligatorio.");
                 if (dto.Name.Length < 3)
@@ -37,11 +39,15 @@ namespace Business.Implementations
                 if (dto.Name.Length > 100)
                     throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-              
+                // ✅ Duplicado (case-insensitive)
+                var exists = await _data.ExistsAsync(tv => tv.Name.ToLower() == dto.Name.ToLower());
+                if (exists)
+                    throw new ArgumentException($"Ya existe un tipo de vehículo con el nombre '{dto.Name}'.");
+
                 dto.Asset = true;
 
-                BaseModel entity = _mapper.Map<TypeVehicle>(dto);
-                entity = await _data.Save((TypeVehicle)entity);
+                var entity = _mapper.Map<TypeVehicle>(dto);
+                entity = await _data.Save(entity);
 
                 return _mapper.Map<TypeVehicleDto>(entity);
             }
@@ -58,27 +64,25 @@ namespace Business.Implementations
                 throw new BusinessException("Error al registrar el tipo de vehículo.", ex);
             }
         }
+
         public override async Task Update(TypeVehicleDto dto)
         {
             try
             {
-                // 🔹 Validar campos obligatorios
                 Validations.ValidateDto(dto, "Id", "Name");
 
-                // 🔹 Validar Id
                 if (dto.Id <= 0)
                     throw new ArgumentException("El campo Id debe ser mayor que 0.");
 
-                // 🔹 Verificar que el tipo de vehículo exista
+                dto.Name = dto.Name?.Trim();
+
                 var tipoExistente = await _data.GetById(dto.Id);
                 if (tipoExistente == null)
                     throw new InvalidOperationException($"No existe un tipo de vehículo con Id {dto.Id}.");
 
-                // 🔹 No permitir actualizar registros deshabilitados
                 if (!tipoExistente.Asset)
                     throw new InvalidOperationException("No se puede actualizar un tipo de vehículo deshabilitado.");
 
-                // 🔹 Validar nombre
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El campo Nombre es obligatorio.");
                 if (dto.Name.Length < 3)
@@ -86,10 +90,15 @@ namespace Business.Implementations
                 if (dto.Name.Length > 100)
                     throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-              
-            
-                BaseModel entity = _mapper.Map<TypeVehicle>(dto);
-                await _data.Update((TypeVehicle)entity);
+                // ✅ Duplicado contra otros (excluyendo el propio Id)
+                var existsOther = await _data.ExistsAsync(tv =>
+                    tv.Name.ToLower() == dto.Name.ToLower() && tv.Id != dto.Id
+                );
+                if (existsOther)
+                    throw new ArgumentException($"Ya existe un tipo de vehículo con el nombre '{dto.Name}'.");
+
+                var entity = _mapper.Map<TypeVehicle>(dto);
+                await _data.Update(entity);
             }
             catch (InvalidOperationException invOe)
             {
@@ -104,6 +113,7 @@ namespace Business.Implementations
                 throw new BusinessException("Error al actualizar el tipo de vehículo.", ex);
             }
         }
+
 
     }
 }

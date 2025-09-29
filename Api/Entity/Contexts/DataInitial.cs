@@ -72,8 +72,8 @@ namespace Entity.Contexts
 
             // ParkingCategory
             modelBuilder.Entity<ParkingCategory>().HasData(
-                new ParkingCategory { Id = 1, Name = "General", code = "GEN", Description = "Categoría general", Asset = true },
-                new ParkingCategory { Id = 2, Name = "VIP", code = "VIP", Description = "Categoría exclusiva", Asset = true }
+                new ParkingCategory { Id = 1, Name = "General", Code = "GEN", Description = "Categoría general", Asset = true },
+                new ParkingCategory { Id = 2, Name = "VIP", Code = "VIP", Description = "Categoría exclusiva", Asset = true }
             );
 
             // Parking
