@@ -78,21 +78,65 @@ namespace Entity.Contexts
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
+       
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            //modelBuilder.Entity<PasswordReset>(e =>
-            //{
-            //    e.Property(x => x.CreatedAt)
-            //     .HasDefaultValueSql("GETUTCDATE()"); // SQL Server (si usas PG sería now() at time zone 'utc')
-            //});
-
-
-            // Llamada al seeding de datos iniciales
+            modelBuilder.Entity<Zones>()
+               .HasIndex(u => u.Name)
+               .IsUnique();
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+            modelBuilder.Entity<TypeVehicle>()
+                .HasIndex(u => u.Name)
+                .IsUnique();
+            modelBuilder.Entity<Slots>()
+              .HasIndex(u => u.Name)
+              .IsUnique();
+            modelBuilder.Entity<Sectors>()
+              .HasIndex(u => u.Name)
+              .IsUnique();
+            modelBuilder.Entity<Rol>()
+               .HasIndex(u => u.Name)
+               .IsUnique();
+            modelBuilder.Entity<RatesType>()
+               .HasIndex(u => u.Name)
+               .IsUnique();
+            modelBuilder.Entity<Person>()
+               .HasIndex(u => u.Document)
+               .IsUnique();
+            modelBuilder.Entity<Person>()
+              .HasIndex(u => u.Email)
+              .IsUnique();
+            modelBuilder.Entity<Permission>()
+              .HasIndex(u => u.Name)
+              .IsUnique();
+            modelBuilder.Entity<ParkingCategory>()
+              .HasIndex(u => u.Name)
+              .IsUnique();
+            modelBuilder.Entity<ParkingCategory>()
+             .HasIndex(u => u.Code)
+             .IsUnique();
+            modelBuilder.Entity<Module>()
+             .HasIndex(u => u.Name)
+             .IsUnique();
+            modelBuilder.Entity<MemberShipType>()
+             .HasIndex(u => u.Name)
+             .IsUnique();
+            modelBuilder.Entity<Form>()
+             .HasIndex(u => u.Name)
+             .IsUnique();
+            modelBuilder.Entity<Camera>()
+               .HasIndex(u => u.Name)
+               .IsUnique();
+            modelBuilder.Entity<Camera>()
+              .HasIndex(u => u.Url)
+              .IsUnique();
             DataInitial.Data(modelBuilder);
         }
-
         /// <summary>
         /// Configura convenciones de tipos de datos, estableciendo la precisión por defecto de los valores decimales.
         /// </summary>
@@ -223,6 +267,7 @@ namespace Entity.Contexts
 
 
         }
+
 
 
     }

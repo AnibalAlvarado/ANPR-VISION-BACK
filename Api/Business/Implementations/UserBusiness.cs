@@ -6,6 +6,7 @@ using Entity.Dtos;
 using Entity.Dtos.Access;
 using Entity.Dtos.Login;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,64 @@ namespace Business.Implementations
             }
         }
 
+         public override async Task Update(UserDto dto)
+        {
+            try
+            {
+                if (dto.Id <= 0)
+                    throw new ArgumentException("El Id debe ser mayor que 0.");
 
+                dto.Username = dto.Username?.Trim();
+
+                if (string.IsNullOrWhiteSpace(dto.Username))
+                    throw new ArgumentException("El campo 'Name' es obligatorio.");
+                if (dto.PersonId <= 0)
+                    throw new ArgumentException("Es obligatorio que tengo una persona.");
+                if (dto.Username.Length < 2)
+                    throw new ArgumentException("El nombre debe tener al menos 2 caracteres.");
+                if (dto.Username.Length > 100)
+                    throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
+
+                // Recuperar la entidad actual
+                var current = await _data.GetById(dto.Id);
+                if (current == null)
+                    throw new InvalidOperationException($"No existe una Persona con Id {dto.Id}.");
+
+                if (!current.Asset)
+                    throw new InvalidOperationException("No se puede actualizar una Persona deshabilitada.");
+
+                // Duplicado en otros registros del mismo parking (excluir propio Id y eliminados)
+                var existsOther = await _data.ExistsAsync(u =>
+                    u.PersonId == dto.PersonId &&
+                    u.Id != dto.Id &&
+                    u.Username != null &&
+                    u.Username.ToLower() == dto.Username.ToLower()
+                );
+                if (existsOther)
+                    throw new ArgumentException($"Ya existe otra zona con el nombre '{dto.Username}' en este parqueadero.");
+
+                // Actualizar la entidad existente (mantenemos IsDeleted del registro actual)
+                current.Username = dto.Username!;
+                current.PersonId = dto.PersonId;
+                // current.IsDeleted = current.IsDeleted; // mantener igual
+
+                await _data.Update(current);
+            }
+            catch (ArgumentException) { throw; }
+            catch (InvalidOperationException) { throw; }
+            catch (DbUpdateException dbEx)
+            {
+                
+
+                throw new BusinessException("Error de BD al actualizar la usuario.", dbEx);
+            }
+            catch (Exception ex)
+            {
+              
+
+                throw new BusinessException("Error al actualizar la usuario.", ex);
+            }
+        }
 
         //public async Task<UserResponseDto?> ValidateUserAsync(string username, string password)
         //{
