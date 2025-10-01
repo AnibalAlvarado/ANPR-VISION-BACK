@@ -1,4 +1,5 @@
-﻿using Entity.Contexts;
+﻿using Confluent.Kafka;
+using Entity.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Utilities.Implementations;
@@ -23,6 +24,16 @@ if (builder.Environment.IsDevelopment())
 // Controllers
 builder.Services.AddControllers();
 builder.Services.AddSignalR(); // habilitar signalR
+
+
+// 1. Configuración Kafka
+builder.Services.AddSingleton(sp =>
+{
+    var config = builder.Configuration.GetSection("Kafka").Get<ConsumerConfig>()
+                ?? throw new InvalidOperationException("Kafka config is missing");
+    return new ConsumerBuilder<string, string>(config).Build();
+});
+
 
 // Swagger
 builder.Services.AddCustomSwagger();
@@ -82,7 +93,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<parkingHub>("/parkingHub");
+app.MapHub<ParkingHub>("/parkingHub");
 
 // 🔹 Redirigir "/" → "/swagger"
 app.MapGet("/", context =>

@@ -69,6 +69,7 @@ namespace Entity.Contexts
         public DbSet<Zones> Zones { get; set; }
 
         public DbSet<Camera> Cameras { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         public DbSet<PasswordReset> PasswordResets { get; set; }
 
