@@ -23,7 +23,7 @@ namespace Data.Implementations
 
         }
 
-        public Task<bool> ExistsAsync(Expression<Func<Parking, bool>> predicate)
+        public override Task<bool> ExistsAsync(Expression<Func<Parking, bool>> predicate)
         {
             // Traducible a SQL por EF Core
             return _context.Parkings.AsNoTracking().AnyAsync(predicate);

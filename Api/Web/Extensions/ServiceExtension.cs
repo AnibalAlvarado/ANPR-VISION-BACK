@@ -1,7 +1,9 @@
 ﻿using Business.Implementations;
 using Business.Implementations.Dashboard;
+using Business.Implementations.Detection;
 using Business.Interfaces;
 using Business.Interfaces.Dashboard;
+using Business.Interfaces.Detection;
 using Data.Implementations;
 using Data.Implementations.Dashboard;
 using Data.Interfaces;
@@ -119,6 +121,7 @@ namespace Web.Extensions
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IDashboardBusiness, DashboardBusiness>();
 
+            services.AddScoped<IVehicleDetectionManagerBusiness, VehicleDetectionManagerBusiness>();
 
 
 
