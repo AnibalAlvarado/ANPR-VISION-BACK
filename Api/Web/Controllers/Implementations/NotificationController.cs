@@ -25,7 +25,7 @@ public class NotificationController : RepositoryController<Notification, Notific
         {
             var data = await _business.GetByParkingAsync(parkingId, onlyUnread);
 
-            if (data == null || !data.Any())
+            if (data == null || data.Count == 0)
             {
                 var responseNull = new ApiResponse<IEnumerable<NotificationDto>>(null, false, "Registro no encontrado", null);
                 return NotFound(responseNull);
@@ -37,6 +37,48 @@ public class NotificationController : RepositoryController<Notification, Notific
         catch (Exception ex)
         {
             var response = new ApiResponse<IEnumerable<NotificationDto>>(null, false, ex.Message.ToString(), null);
+            return StatusCode(StatusCodes.Status500InternalServerError, response);
+        }
+    }
+
+    [HttpPut("{id}/read")]
+    public async Task<ActionResult> MarkAsRead(int id)
+    {
+        try
+        {
+            await _business.MarkAsReadAsync(id);
+            var response = new ApiResponse<object>(
+                new { Id = id, IsRead = true },
+                true,
+                "Notificación marcada como leída",
+                null
+            );
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            var response = new ApiResponse<object>(
+                null,
+                false,
+                ex.Message.ToString(),
+                null
+            );
+            return StatusCode(StatusCodes.Status500InternalServerError, response);
+        }
+    }
+
+    [HttpPost("create")]
+    public async Task<ActionResult<NotificationDto>> CreateAndNotify(NotificationDto dto)
+    {
+        try
+        {
+            var saved = await _business.CreateAndNotifyAsync(dto);
+            var response = new ApiResponse<NotificationDto>(saved, true, "Notificación creada y enviada", null);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            var response = new ApiResponse<NotificationDto>(null, false, ex.Message.ToString(), null);
             return StatusCode(StatusCodes.Status500InternalServerError, response);
         }
     }

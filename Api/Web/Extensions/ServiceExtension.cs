@@ -21,6 +21,7 @@ using Utilities.Helpers;
 using Utilities.Helpers.Validators;
 using Utilities.Implementations;
 using Utilities.Interfaces;
+using Web.Services;
 
 namespace Web.Extensions
 {
@@ -121,7 +122,13 @@ namespace Web.Extensions
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IDashboardBusiness, DashboardBusiness>();
 
+            services.AddScoped<INotificationBusiness, NotificationBusiness>();
+            services.AddScoped<INotificationData, NotificationData>();
+
             services.AddScoped<IVehicleDetectionManagerBusiness, VehicleDetectionManagerBusiness>();
+            services.AddScoped<INotificationDispatcher, SignalRNotificationDispatcher>();
+
+
 
 
 

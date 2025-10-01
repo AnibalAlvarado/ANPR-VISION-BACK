@@ -6,4 +6,5 @@ namespace Data.Interfaces;
 public interface INotificationData : IRepositoryData<Notification>
 {
     Task<IEnumerable<Notification>> GetByParkingAsync(int parkingId, bool onlyUnread = false);
+    Task MarkAsReadAsync(int id);
 }

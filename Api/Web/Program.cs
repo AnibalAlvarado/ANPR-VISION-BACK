@@ -93,7 +93,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<parkingHub>("/parkingHub");
+app.MapHub<ParkingHub>("/parkingHub");
 
 // 🔹 Redirigir "/" → "/swagger"
 app.MapGet("/", context =>

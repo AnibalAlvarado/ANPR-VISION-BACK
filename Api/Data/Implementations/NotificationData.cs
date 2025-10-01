@@ -28,4 +28,14 @@ public class NotificationData : RepositoryData<Notification>, INotificationData
 
         return await query.OrderByDescending(n => n.CreatedAt).ToListAsync();
     }
+
+        public async Task MarkAsReadAsync(int id)
+    {
+        var notification = await _context.Notifications.FindAsync(id);
+        if (notification != null)
+        {
+            notification.IsRead = true;
+            await _context.SaveChangesAsync();
+        }
+    }
 }
