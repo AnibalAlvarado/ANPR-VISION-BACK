@@ -111,8 +111,12 @@ namespace Business.Implementations
                     throw new ArgumentException($"Ya existe un sector con el nombre '{dto.Name}' en esta zona.");
 
                 // asignaciones por defecto para evitar tri-estado
-                if (dto.Asset == null) dto.Asset = true;
-                if (dto.IsDeleted == null) dto.IsDeleted = false;
+                //if (dto.Asset == null) dto.Asset = true;
+                //if (dto.IsDeleted == null) dto.IsDeleted = false;
+
+                dto.Asset = true;
+                dto.IsDeleted = false;
+
 
                 // Mapear manualmente para evitar problemas con relaciones
                 var entity = new Sectors

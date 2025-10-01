@@ -94,8 +94,11 @@ namespace Business.Implementations
                     );
 
                 // Defaults para evitar tri-estado (null-coalescing assignment)
-                if (dto.Asset == null) dto.Asset = true;
-                if (dto.IsDeleted == null) dto.IsDeleted = false;
+                //if (dto.Asset == null) dto.Asset = true;
+                //if (dto.IsDeleted == null) dto.IsDeleted = false;
+
+                dto.Asset = true;
+                dto.IsDeleted = false;
 
                 // 2) Dedupe por nombre (solo NO eliminados — null-safe)
                 var existeDuplicado = await _data.AnyAsync(s =>

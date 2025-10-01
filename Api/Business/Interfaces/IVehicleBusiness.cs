@@ -24,6 +24,10 @@ namespace Business.Interfaces
 
         Task<IEnumerable<VehicleClientListDto>> GetByClientIdWithPresenceAsync(int clientId);
 
+        Task<(VehicleDto Vehicle, RegisteredVehicles Registered)> SaveWithSlotAsync(VehicleDto dto);
+
+
+
 
     }
 }

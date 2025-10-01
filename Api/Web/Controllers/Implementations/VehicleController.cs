@@ -22,35 +22,49 @@ namespace Web.Controllers.Implementations
             _mapper = mapper;
         }
 
+        //[HttpPost]
+        //public override async Task<ActionResult<VehicleDto>> Save(VehicleDto dto)
+        //{
+        //    try
+        //    {
+        //        // 1️⃣ Guardar el vehículo normalmente usando la lógica genérica
+        //        VehicleDto dtoSaved = await _business.Save(dto);
+
+        //        // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
+        //        var registeredVehicle = await _business.RegisterVehicleWithSlotAsync(dtoSaved.Id);
+        //        var registeredVehicleDto = _mapper.Map<RegisteredVehiclesDto>(registeredVehicle);
+
+        //        var response = new
+        //        {
+        //            Vehicle = dtoSaved,
+        //            RegisteredVehicle = registeredVehicleDto
+        //        };
+
+        //        return CreatedAtRoute(new { id = dtoSaved.Id }, response);
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var response = new ApiResponse<object>(null, false, ex.Message, null);
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
+
         [HttpPost]
         public override async Task<ActionResult<VehicleDto>> Save(VehicleDto dto)
         {
             try
             {
-                // 1️⃣ Guardar el vehículo normalmente usando la lógica genérica
-                VehicleDto dtoSaved = await _business.Save(dto);
-
-                // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
-                var registeredVehicle = await _business.RegisterVehicleWithSlotAsync(dtoSaved.Id);
-                var registeredVehicleDto = _mapper.Map<RegisteredVehiclesDto>(registeredVehicle);
+                var result = await _business.SaveWithSlotAsync(dto);
 
                 var response = new
                 {
-                    Vehicle = dtoSaved,
-                    RegisteredVehicle = registeredVehicleDto
+                    Vehicle = result.Vehicle,
+                    RegisteredVehicle = _mapper.Map<RegisteredVehiclesDto>(result.Registered)
                 };
 
-                return CreatedAtRoute(new { id = dtoSaved.Id }, response);
-
-
-                //// 3️⃣ Preparar la respuesta combinada
-                //var response = new
-                //{
-                //    Vehicle = dtoSaved,
-                //    RegisteredVehicle = registeredVehicle
-                //};
-
-                //return CreatedAtRoute(new { id = dtoSaved.Id }, response);
+                return CreatedAtRoute(new { id = result.Vehicle.Id }, response);
             }
             catch (Exception ex)
             {
@@ -58,6 +72,7 @@ namespace Web.Controllers.Implementations
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
 
 
         [HttpGet("join")]

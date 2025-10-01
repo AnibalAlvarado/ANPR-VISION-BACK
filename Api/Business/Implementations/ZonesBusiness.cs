@@ -58,6 +58,8 @@ namespace Business.Implementations
                 {
                     Name = dto.Name!,
                     ParkingId = dto.ParkingId,
+                    Asset = true,
+                    IsDeleted = false
 
                 };
 

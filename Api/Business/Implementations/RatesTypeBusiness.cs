@@ -40,8 +40,11 @@ namespace Business.Implementations
                     throw new ArgumentException("El nombre del tipo de tarifa debe tener al menos 2 caracteres.");
 
                 // Defaults tri-estado
-                if (dto.Asset == null) dto.Asset = true;
-                if (dto.IsDeleted == null) dto.IsDeleted = false;
+                //if (dto.Asset == null) dto.Asset = true;
+                //if (dto.IsDeleted == null) dto.IsDeleted = false;
+
+                dto.Asset = true;
+                dto.IsDeleted = false;
 
                 // Duplicado (case-insensitive) usando ExistsAsync
                 var exists = await _data.ExistsAsync(rt =>

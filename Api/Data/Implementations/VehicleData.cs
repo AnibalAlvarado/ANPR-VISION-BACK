@@ -5,6 +5,7 @@ using Entity.Dtos;
 using Entity.Dtos.vehicle;
 using Entity.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -102,6 +103,11 @@ namespace Data.Implementations
                 };
 
             return await query.ToListAsync();
+        }
+
+        public Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return _context.Database.BeginTransactionAsync();
         }
 
 

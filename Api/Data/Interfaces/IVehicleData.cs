@@ -1,6 +1,7 @@
 ﻿using Entity.Dtos;
 using Entity.Dtos.vehicle;
 using Entity.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace Data.Interfaces
 
         //Task<IEnumerable<VehicleDto>> GetByClientIdAsync(int clientId);
         Task<IEnumerable<VehicleClientListDto>> GetByClientIdWithPresenceAsync(int clientId);
+
+        Task<IDbContextTransaction> BeginTransactionAsync();
 
     }
 }
