@@ -5,7 +5,8 @@ namespace Entity.Models;
 public class Notification : BaseModel
 {
 
-    public int ParkingId { get; set; }   // Multi-parking
+    public int? ParkingId { get; set; }   // Multi-parking
+    public Parking? Parking { get; set; } = null!;
 
     public string Title { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;

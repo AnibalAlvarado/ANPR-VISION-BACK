@@ -42,6 +42,7 @@ namespace Entity.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Form> Forms { get; set; }
         public DbSet<Module> Modules { get; set; }
+        public DbSet<PersonParking> PersonParkings { get; set; }
 
         public DbSet<FormModule> FormModule { get; set; }
 
