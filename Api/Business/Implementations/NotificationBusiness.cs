@@ -44,7 +44,7 @@ public class NotificationBusiness : RepositoryBusiness<Notification, Notificatio
 
         var savedDto = _mapper.Map<NotificationDto>(entity);
 
-        await _dispatcher.SendAsync(entity.ParkingId, savedDto);
+        await _dispatcher.SendAsync((int)entity.ParkingId, savedDto);
 
         return savedDto;
     }

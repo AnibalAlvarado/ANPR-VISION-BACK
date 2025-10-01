@@ -15,5 +15,7 @@ namespace Entity.Models
         public IEnumerable<Zones> Zones { get; set; } = new List<Zones>();
         public ICollection<Rates> Rates { get; set; } = new List<Rates>();
         public IEnumerable<Camera> Camaras { get; set; } = new List<Camera>();
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        public ICollection<PersonParking> PersonParkings { get; set; } = new List<PersonParking>();
     }
 }
