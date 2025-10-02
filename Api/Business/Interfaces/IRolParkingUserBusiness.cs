@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
-    public interface IRolUserBusiness : IRepositoryBusiness<RolUser, RolUserDto>
+    public interface IRolParkingUserBusiness : IRepositoryBusiness<RolParkingUser, RolParkingUserDto>
     {
-        public Task<IEnumerable<RolUserDto>> GetAllJoinAsync();
+        public Task<IEnumerable<RolParkingUserDto>> GetAllJoinAsync();
         Task<bool> ExistsAsync(int userId, int roleId);
     }
 }

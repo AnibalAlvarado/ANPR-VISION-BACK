@@ -131,7 +131,7 @@ namespace Data.Implementations
             try
             {
                 // Obtener todos los roles asociados al usuario
-                var userRoles = await _context.Set<RolUser>()
+                var userRoles = await _context.Set<RolParkingUser>()
                     .Where(ru => ru.UserId == userId)
                     .Join(
                         _context.Set<Rol>(),
@@ -158,7 +158,7 @@ namespace Data.Implementations
         {
             try
             {
-                var userRoles = await _context.Set<RolUser>()
+                var userRoles = await _context.Set<RolParkingUser>()
                     .Where(ru => ru.UserId == userId)
                     .Join(
                         _context.Set<Rol>(),

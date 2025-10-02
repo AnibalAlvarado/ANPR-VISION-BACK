@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Data.Interfaces
 {
-    public interface IRolUserData : IRepositoryData<RolUser>
+    public interface IRolParkingUserData : IRepositoryData<RolParkingUser>
     {
-        public Task<IEnumerable<RolUser>> GetAllJoinAsync();
+        public Task<IEnumerable<RolParkingUser>> GetAllJoinAsync();
 
         Task<bool> ExistsAsync(int userId, int roleId);
     }

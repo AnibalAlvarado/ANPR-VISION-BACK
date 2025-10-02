@@ -2,6 +2,7 @@
 using Business.Interfaces;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Dashboard;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utilities.Exceptions;
 using Utilities.Helpers.Validators;
+using Utilities.Interfaces;
 
 namespace Business.Implementations
 {
@@ -18,11 +20,13 @@ namespace Business.Implementations
     {
         private readonly ITypeVehicleData  _data;
         private readonly IMapper _mapper;
-        public TypeVehicleBusiness(ITypeVehicleData data, IMapper mapper)
+        private readonly IObtainTypeVehicle _obtainTypeVehicle;
+        public TypeVehicleBusiness(ITypeVehicleData data, IMapper mapper,IObtainTypeVehicle obtainTypeVehicle)
             : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
+            _obtainTypeVehicle = obtainTypeVehicle;
         }
         public override async Task<TypeVehicleDto> Save(TypeVehicleDto dto)
         {
@@ -80,9 +84,6 @@ namespace Business.Implementations
                 if (tipoExistente == null)
                     throw new InvalidOperationException($"No existe un tipo de vehículo con Id {dto.Id}.");
 
-                if (!tipoExistente.Asset)
-                    throw new InvalidOperationException("No se puede actualizar un tipo de vehículo deshabilitado.");
-
                 if (string.IsNullOrWhiteSpace(dto.Name))
                     throw new ArgumentException("El campo Nombre es obligatorio.");
                 if (dto.Name.Length < 3)
@@ -90,7 +91,7 @@ namespace Business.Implementations
                 if (dto.Name.Length > 100)
                     throw new ArgumentException("El nombre no puede superar los 100 caracteres.");
 
-                // ✅ Duplicado contra otros (excluyendo el propio Id)
+                //  Duplicado contra otros (excluyendo el propio Id)
                 var existsOther = await _data.ExistsAsync(tv =>
                     tv.Name.ToLower() == dto.Name.ToLower() && tv.Id != dto.Id
                 );
@@ -114,6 +115,14 @@ namespace Business.Implementations
             }
         }
 
+        public async Task<int> GetTypeVehicleByPlate(string plate)
+        {
+            IEnumerable<TypeVehicle> vehicleTypes = await _data.GetAll();
+            string obtainedType = _obtainTypeVehicle.GetTypeVehicleByPlate(plate);
+            var match = vehicleTypes.FirstOrDefault(v => v.Name.Contains(obtainedType, StringComparison.OrdinalIgnoreCase));
+            int returnType = match?.Id ?? 0;
+            return returnType;
+        }
 
     }
 }

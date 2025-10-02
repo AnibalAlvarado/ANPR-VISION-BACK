@@ -56,7 +56,7 @@ namespace Business.Implementations
             }
         }
         // Método para registrar vehículo y asignar slot
-        public async Task<RegisteredVehicles> RegisterVehicleWithSlotAsync(int vehicleId)
+        public async Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId)
         {
             // 1Obtener el vehículo existente
             var vehicle = await _data.GetById(vehicleId);
@@ -107,8 +107,11 @@ namespace Business.Implementations
 
             await _registeredVehicleData.Save(registeredVehicle);
 
+            RegisteredVehiclesDto returnRegisteredVehicle = _mapper.Map<RegisteredVehiclesDto>(registeredVehicle);
 
-            return registeredVehicle;
+            returnRegisteredVehicle.Slots = assignedSlot.Name;
+
+            return returnRegisteredVehicle;
         }
         //public override async Task<VehicleDto> Save(VehicleDto dto)
         //{
@@ -262,36 +265,14 @@ namespace Business.Implementations
                 // 🔹 Guardar entidad
                 dto.Asset = true;
 
-                // 🔹 Mapear solo propiedades simples y IDs
-                var config = new MapperConfiguration(cfg =>
-                {
-                    cfg.CreateMap<VehicleDto, Vehicle>()
-                        .ForMember(dest => dest.Plate, opt => opt.MapFrom(src => src.Plate))
-                        .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color))
-                        .ForMember(dest => dest.TypeVehicleId, opt => opt.MapFrom(src => src.TypeVehicleId))
-                        .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.ClientId))
-                        .ForMember(dest => dest.Client, opt => opt.Ignore())
-                        .ForMember(dest => dest.TypeVehicle, opt => opt.Ignore())
-                        .ForMember(dest => dest.RegisteredVehicles, opt => opt.Ignore())
-                        .ForMember(dest => dest.Memberships, opt => opt.Ignore());
-                });
-                var mapper = config.CreateMapper();
-                Vehicle entity = mapper.Map<Vehicle>(dto);
+                Vehicle entity = _mapper.Map<Vehicle>(dto);
 
                 // 🔹 Guardar en la base de datos
                 entity = await _data.Save(entity);
 
+                VehicleDto entityDto = _mapper.Map<VehicleDto>(entity);
                 // 🔹 Devolver DTO con solo IDs
-                return new VehicleDto
-                {
-                    Id = entity.Id,
-                    Plate = entity.Plate,
-                    Color = entity.Color,
-                    TypeVehicleId = entity.TypeVehicleId,
-                    ClientId = entity.ClientId,
-                    Asset = entity.Asset,
-                    IsDeleted = entity.IsDeleted
-                };
+                return entityDto;
             }
             catch (InvalidOperationException invOe)
             {
@@ -306,11 +287,6 @@ namespace Business.Implementations
                 throw new BusinessException("Error al registrar el vehículo.", ex);
             }
         }
-
-
-
-
-
 
         public async Task<RegisteredVehiclesDto?> GetActiveVehicleBySlotAsync(int slotId)
         {

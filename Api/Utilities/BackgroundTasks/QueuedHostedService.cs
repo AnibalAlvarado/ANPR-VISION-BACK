@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Utilities.BackgroundTasks
@@ -21,7 +19,7 @@ namespace Utilities.BackgroundTasks
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("⏳ Tarea recibida en la cola. Ejecutando...");
+            _logger.LogInformation("📌 Worker de cola iniciado...");
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -29,20 +27,25 @@ namespace Utilities.BackgroundTasks
 
                 if (workItem == null)
                 {
-                    _logger.LogWarning("⚠ No hay tarea para procesar.");
                     continue;
                 }
 
-                try
+                // 🔹 Disparar en paralelo
+                _ = Task.Run(async () =>
                 {
-                    await workItem(stoppingToken);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error ejecutando tarea en segundo plano.");
-                }
+                    try
+                    {
+                        await workItem(stoppingToken);
+                        _logger.LogDebug("✅ Tarea en segundo plano ejecutada correctamente.");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "❌ Error ejecutando tarea en segundo plano.");
+                    }
+                }, stoppingToken);
             }
-        }
 
+            _logger.LogInformation("🛑 Worker de cola detenido.");
+        }
     }
 }

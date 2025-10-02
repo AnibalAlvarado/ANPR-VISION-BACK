@@ -17,30 +17,30 @@ using Utilities.Interfaces;
 
 namespace Data.Implementations
 {
-    public class RolUserData : RepositoryData<RolUser>, IRolUserData
+    public class RolParkingUserData : RepositoryData<RolParkingUser>, IRolParkingUserData
     {
-        private readonly ILogger<RolUserData> _logger;
+        private readonly ILogger<RolParkingUserData> _logger;
 
-        public RolUserData(ApplicationDbContext context, IConfiguration configuration,  ILogger<RolUserData> logger, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
+        public RolParkingUserData(ApplicationDbContext context, IConfiguration configuration,  ILogger<RolParkingUserData> logger, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
             : base(context, configuration, auditService, currentUserService, mapper)
         {
             _logger = logger;
         }
 
-        public async Task<IEnumerable<RolUser>> GetAllJoinAsync()
+        public async Task<IEnumerable<RolParkingUser>> GetAllJoinAsync()
         {
             //await AuditAsync("GetAllJoinAsync");
 
-            return await _context.RolUser
+            return await _context.RolParkingUsers
                 .Include(x => x.User)
                 .Include(x => x.Rol)
                 .ToListAsync();
         }
 
 
-        public override async Task<IEnumerable<RolUser>> GetAll(IDictionary<string, string?>? filters = null)
+        public override async Task<IEnumerable<RolParkingUser>> GetAll(IDictionary<string, string?>? filters = null)
         {
-            var query = _context.RolUser
+            var query = _context.RolParkingUsers
                 .Include(ru => ru.User)
                 .Include(ru => ru.Rol)
                 .AsQueryable();
@@ -56,10 +56,10 @@ namespace Data.Implementations
             return entities;
         }
 
-        public override async Task<RolUser> GetById(int id)
+        public override async Task<RolParkingUser> GetById(int id)
         {
             await AuditAsync("GetById", id);
-            return await _context.RolUser
+            return await _context.RolParkingUsers
                 .Include(ru => ru.User)
                 .Include(ru => ru.Rol)
                 .FirstOrDefaultAsync(ru => ru.Id == id);
@@ -69,7 +69,7 @@ namespace Data.Implementations
         {
             try
             {
-                return await _context.Set<RolUser>()
+                return await _context.Set<RolParkingUser>()
                         .AnyAsync(ur => ur.UserId == userId && ur.RolId == roleId);
             }
             catch (Exception ex)
