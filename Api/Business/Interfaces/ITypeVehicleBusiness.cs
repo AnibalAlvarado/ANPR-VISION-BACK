@@ -10,6 +10,6 @@ namespace Business.Interfaces
 {
     public interface ITypeVehicleBusiness : IRepositoryBusiness<TypeVehicle, TypeVehicleDto>
     {
-
+        Task<int> GetTypeVehicleByPlate(string plate);
     }
 }

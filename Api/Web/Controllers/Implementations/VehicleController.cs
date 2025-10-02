@@ -4,6 +4,7 @@ using Data.Implementations;
 using Entity.Dtos;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers.Implementations
 {
@@ -30,26 +31,16 @@ namespace Web.Controllers.Implementations
                 VehicleDto dtoSaved = await _business.Save(dto);
 
                 // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
-                var registeredVehicle = await _business.RegisterVehicleWithSlotAsync(dtoSaved.Id);
-                var registeredVehicleDto = _mapper.Map<RegisteredVehiclesDto>(registeredVehicle);
+                RegisteredVehiclesDto registeredVehicle = await _business.RegisterVehicleWithSlotAsync(dtoSaved.Id);
 
                 var response = new
                 {
                     Vehicle = dtoSaved,
-                    RegisteredVehicle = registeredVehicleDto
+                    RegisteredVehicle = registeredVehicle
                 };
 
                 return CreatedAtRoute(new { id = dtoSaved.Id }, response);
 
-
-                //// 3️⃣ Preparar la respuesta combinada
-                //var response = new
-                //{
-                //    Vehicle = dtoSaved,
-                //    RegisteredVehicle = registeredVehicle
-                //};
-
-                //return CreatedAtRoute(new { id = dtoSaved.Id }, response);
             }
             catch (Exception ex)
             {

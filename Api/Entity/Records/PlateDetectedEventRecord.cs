@@ -4,7 +4,7 @@ public record class PlateDetectedEventRecord
 {
     public string Plate { get; init; } = string.Empty;   // Placa detectada
     public string CameraId { get; init; } = string.Empty; // Identificador de la cámara
-    public string? ParkingId { get; init; }              // Multi-parking (opcional)
+    public int? ParkingId { get; init; }              // Multi-parking (opcional)
     public DateTime Timestamp { get; init; }             // Momento detección
     public string FrameId { get; init; } = string.Empty; // Id del frame o detección
     public string? ImageUrl { get; init; }   

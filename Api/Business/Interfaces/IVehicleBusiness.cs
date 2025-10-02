@@ -16,7 +16,7 @@ namespace Business.Interfaces
      
         Task<IEnumerable<VehicleDto>> GetAllJoinAsync();
         // Nuevo método para registrar vehículo + slot automáticamente
-        Task<RegisteredVehicles> RegisterVehicleWithSlotAsync(int vehicleId);
+        Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId);
 
         Task<RegisteredVehiclesDto?> GetActiveVehicleBySlotAsync(int slotId);
 

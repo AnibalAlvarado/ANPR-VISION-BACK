@@ -18,5 +18,6 @@ namespace Entity.Dtos
         // Opcional
         public int? SlotsId { get; set; }
         public string? Slots { get; set; }
+        public string? Sector {  get; set; }
     }
 }

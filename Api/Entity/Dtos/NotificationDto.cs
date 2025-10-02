@@ -4,7 +4,7 @@ namespace Entity.Dtos;
 
 public class NotificationDto : BaseDto
 {
-    public Guid ParkingId { get; set; }
+    public int ParkingId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public string Type { get; set; } = "Info";
