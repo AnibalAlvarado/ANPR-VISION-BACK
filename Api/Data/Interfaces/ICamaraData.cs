@@ -13,5 +13,7 @@ namespace Data.Interfaces
     {
         Task<IEnumerable<CameraDto>> GetAllJoinAsync();
         Task<bool> ExistsDuplicateAsync(CameraDto dto);
+        Task<IEnumerable<CameraDto>> GetByParkingAsync(int parkingId);
     }
 }
+

@@ -14,7 +14,7 @@ using Utilities.Interfaces;
 
 namespace Data.Implementations
 {
-    public class FormModuleData : RepositoryData<FormModule>, IFormModuleData
+    public class FormModuleData : RepositoryData<FormModule>, IPersonParkignData
     {
         public FormModuleData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
             : base(context, configuration,auditService, currentUserService,mapper)

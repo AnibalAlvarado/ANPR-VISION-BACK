@@ -20,5 +20,8 @@ namespace Data.Interfaces
         Task<bool> AnyAsync(Expression<Func<Slots, bool>> predicate); // 👈
         Task<int> CountExistingBySectorAsync(int sectorId);
         Task<OccupancyDto> GetOccupancyGlobalAsync();
+
+        Task<IEnumerable<SlotsDto>> GetAllByParkingIdAsync(int parkingId);
+
     }
 }

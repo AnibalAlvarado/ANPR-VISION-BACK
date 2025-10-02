@@ -50,7 +50,7 @@ namespace Web.Extensions
             services.AddScoped<IFormData, FormData>();
 
             services.AddScoped<IFormModuleBusiness, FormModuleBusiness>();
-            services.AddScoped<IFormModuleData, FormModuleData>();
+            services.AddScoped<IPersonParkignData, FormModuleData>();
 
             services.AddScoped<IModuleBusiness, ModuleBusiness>();
             services.AddScoped<IModuleData, ModuleData>();
@@ -127,6 +127,10 @@ namespace Web.Extensions
 
             services.AddScoped<IVehicleDetectionManagerBusiness, VehicleDetectionManagerBusiness>();
             services.AddScoped<INotificationDispatcher, SignalRNotificationDispatcher>();
+
+            services.AddScoped<IPersonParkingBusiness, PersonParkingBusiness>();
+            services.AddScoped<IPersonParkingData, PersonParkingData>();
+
 
 
 

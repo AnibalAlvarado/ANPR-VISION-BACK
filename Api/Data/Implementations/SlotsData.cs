@@ -103,5 +103,28 @@ namespace Data.Implementations
             };
         }
 
+        public async Task<IEnumerable<SlotsDto>> GetAllByParkingIdAsync(int parkingId)
+        {
+            return await _context.Slots
+                .AsNoTracking()
+                .Where(s => s.Sectors != null &&
+                            s.Sectors.Zones != null &&
+                            s.Sectors.Zones.ParkingId == parkingId &&
+                            (s.IsDeleted == null || s.IsDeleted == false))
+                .Select(s => new SlotsDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    IsAvailable = s.IsAvailable,
+                    Asset = s.Asset,
+                    IsDeleted = s.IsDeleted,
+                    SectorsId = s.SectorsId,
+                    Sectors = s.Sectors != null ? s.Sectors.Name : null,
+                    
+                })
+                .ToListAsync();
+        }
+
+
     }
 }

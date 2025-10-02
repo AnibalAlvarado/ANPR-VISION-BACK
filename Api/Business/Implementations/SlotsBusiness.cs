@@ -262,6 +262,29 @@ namespace Business.Implementations
        => _data.GetOccupancyGlobalAsync();
 
 
+        public async Task<IEnumerable<SlotsDto>> GetAllByParkingIdAsync(int parkingId)
+        {
+            try
+            {
+                if (parkingId <= 0)
+                    throw new ArgumentException("El id del parqueadero no es válido.");
+
+                var slots = await _data.GetAllByParkingIdAsync(parkingId);
+
+                if (slots == null || !slots.Any())
+                    throw new InvalidOperationException("No se encontraron slots para el parqueadero especificado.");
+
+                return slots;
+            }
+            catch (InvalidOperationException) { throw; }
+            catch (ArgumentException) { throw; }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al obtener los slots por parqueadero.", ex);
+            }
+        }
+
+
 
 
 

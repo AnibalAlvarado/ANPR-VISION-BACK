@@ -74,6 +74,8 @@ namespace Entity.Contexts
 
         public DbSet<PasswordReset> PasswordResets { get; set; }
 
+        //public DbSet<PersonParking> PersonParking { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // No es necesario configurar el proveedor aquí, ya que se hace a través de la fábrica

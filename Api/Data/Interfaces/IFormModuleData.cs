@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data.Interfaces
 {
-    public interface IFormModuleData : IRepositoryData<FormModule>
+    public interface IPersonParkignData : IRepositoryData<FormModule>
     {
         Task<IEnumerable<FormModule>> GetAllJoinAsync();
 

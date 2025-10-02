@@ -228,6 +228,30 @@ namespace Business.Implementations
         }
 
 
+        public async Task<IEnumerable<CameraDto>> GetByParkingAsync(int parkingId)
+        {
+            try
+            {
+                if (parkingId <= 0)
+                    throw new ArgumentException("ParkingId inválido.");
+
+                var entities = await _data.GetByParkingAsync(parkingId);
+
+                if (!entities.Any())
+                    throw new InvalidOperationException("No se encontraron cámaras para el parqueadero especificado.");
+
+                return entities;
+            }
+            catch (InvalidOperationException) { throw; }
+            catch (ArgumentException) { throw; }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al obtener cámaras por parqueadero.", ex);
+            }
+        }
+
+
+
 
 
 

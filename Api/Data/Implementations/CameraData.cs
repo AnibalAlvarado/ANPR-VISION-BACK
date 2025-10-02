@@ -67,6 +67,25 @@ namespace Data.Implementations
                 );
         }
 
+        public async Task<IEnumerable<CameraDto>> GetByParkingAsync(int parkingId)
+        {
+            return await _context.Cameras
+                .AsNoTracking()
+                .Where(c => c.ParkingId == parkingId && (c.IsDeleted == null || c.IsDeleted == false))
+                .Select(p => new CameraDto
+                {
+                    Id = p.Id,
+                    Asset = p.Asset,
+                    IsDeleted = p.IsDeleted,
+                    Name = p.Name,
+                    Resolution = p.Resolution,
+                    Url = p.Url,
+                    ParkingId = p.ParkingId,
+                    Parking = p.Parking != null ? p.Parking.Name : null
+                })
+                .ToListAsync();
+        }
+
 
 
 
