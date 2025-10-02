@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Entity.Migrations.pgAdmin
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251002055854_AddRolParkingUser")]
-    partial class AddRolParkingUser
+    [Migration("20251002145619_NewEntityRolParkingUser")]
+    partial class NewEntityRolParkingUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

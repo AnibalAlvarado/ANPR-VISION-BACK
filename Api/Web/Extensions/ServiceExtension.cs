@@ -11,6 +11,7 @@ using Data.Interfaces.Dashboard;
 using Entity.Context;
 using Entity.Dtos;
 using Entity.Models;
+using Infrastructure.Kafka;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 using Utilities.Audit.Services;
@@ -29,6 +30,8 @@ namespace Web.Extensions
     {
         public static IServiceCollection AddAppServices(this IServiceCollection services)
         {
+            // 🔹 Registrar el BackgroundService
+            services.AddHostedService<KafkaConsumerService>();
             //segundo plano
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddHostedService<QueuedHostedService>();

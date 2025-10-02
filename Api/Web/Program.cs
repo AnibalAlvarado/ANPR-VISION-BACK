@@ -25,14 +25,8 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddControllers();
 builder.Services.AddSignalR(); // habilitar signalR
 
-
-// 1. Configuración Kafka
-builder.Services.AddSingleton(sp =>
-{
-    var config = builder.Configuration.GetSection("Kafka").Get<ConsumerConfig>()
-                ?? throw new InvalidOperationException("Kafka config is missing");
-    return new ConsumerBuilder<string, string>(config).Build();
-});
+// config kafka
+builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetSection("Kafka"));
 
 
 // Swagger
