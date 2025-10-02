@@ -17,7 +17,6 @@ namespace Entity.Models
         public int Age { get; set; }
 
         public Client Client { get; set; }
-        public ICollection<PersonParking> PersonParkings { get; set; } = new List<PersonParking>();
 
     }
 }

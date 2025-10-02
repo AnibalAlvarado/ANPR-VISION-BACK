@@ -23,13 +23,13 @@ namespace Business.Implementations
         private readonly ILogger<UserBusiness> _logger;
         private readonly IEmailService _emailService;
         private readonly IRolBusiness _rolBusiness;
-        private readonly IRolUserBusiness _rolUserBusiness;
+        private readonly IRolParkingUserBusiness _rolUserBusiness;
         private readonly IJwtAuthenticationService _jwtAuthenticatonService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IPasswordReset _passwordReset;
 
         public UserBusiness(
-        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness,IRolUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher, IPasswordReset passwordReset) : base(data, mapper)
+        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness, IRolParkingUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher, IPasswordReset passwordReset) : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
@@ -236,7 +236,7 @@ namespace Business.Implementations
                 return;
 
             // 4. Asignar el rol al usuario
-            var userRoleDto = new RolUserDto
+            var userRoleDto = new RolParkingUserDto
             {
                 UserId = user.Id,
                 RolId = defaultRole.Id

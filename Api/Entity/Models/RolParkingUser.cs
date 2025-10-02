@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace Entity.Models
 {
-    public class RolUser : BaseModel
+    public class RolParkingUser : BaseModel
     {
         public int RolId { get; set; }
         public int UserId { get; set; }
+        public int ParkingId { get; set; }
 
         public Rol? Rol { get; set; }
         public User? User { get; set; }
+        public Parking? Parking { get; set; }
     }
 }

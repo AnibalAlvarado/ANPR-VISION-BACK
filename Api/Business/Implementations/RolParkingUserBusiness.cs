@@ -14,13 +14,13 @@ using Utilities.Exceptions;
 
 namespace Business.Implementations
 {
-    public class RolUserBusiness : RepositoryBusiness<RolUser, RolUserDto>, IRolUserBusiness
+    public class RolParkingUserBusiness : RepositoryBusiness<RolParkingUser, RolParkingUserDto>, IRolParkingUserBusiness
     {
-        private readonly IRolUserData _data;
+        private readonly IRolParkingUserData _data;
         private readonly IMapper _mapper;
-        private readonly ILogger<RolUserBusiness> _logger;
+        private readonly ILogger<RolParkingUserBusiness> _logger;
 
-        public RolUserBusiness(IRolUserData data, IMapper mapper, ILogger<RolUserBusiness> logger)
+        public RolParkingUserBusiness(IRolParkingUserData data, IMapper mapper, ILogger<RolParkingUserBusiness> logger)
             : base(data, mapper)
         {
             _data = data;
@@ -41,21 +41,21 @@ namespace Business.Implementations
                 throw new BusinessException("Error al verificar existencia del rol para el usuario", ex);
             }
         }
-        public async Task<IEnumerable<RolUserDto>> GetAllJoinAsync()
+        public async Task<IEnumerable<RolParkingUserDto>> GetAllJoinAsync()
         {
             var entities = await _data.GetAllJoinAsync();
-            return _mapper.Map<IEnumerable<RolUserDto>>(entities);
+            return _mapper.Map<IEnumerable<RolParkingUserDto>>(entities);
         }
 
-        public override async Task<RolUserDto> GetById(int id)
+        public override async Task<RolParkingUserDto> GetById(int id)
         {
             var entity = await _data.GetById(id);
             if (entity == null)
-                throw new Exception($"No se encontró RolUser con ID {id}");
-            return _mapper.Map<RolUserDto>(entity);
+                throw new Exception($"No se encontró RolParkingUser con ID {id}");
+            return _mapper.Map<RolParkingUserDto>(entity);
         }
 
-        public override async Task<RolUserDto> Save(RolUserDto dto)
+        public override async Task<RolParkingUserDto> Save(RolParkingUserDto dto)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Business.Implementations
                 if (dto.RolId <= 0) throw new ArgumentException("RolId inválido.");
 
                 // Evitar duplicados: mismo UserId + RolId y que no esté marcado como eliminado
-                // Requiere que tu repo tenga ExistsAsync(Expression<Func<RolUser,bool>>)
+                // Requiere que tu repo tenga ExistsAsync(Expression<Func<RolParkingUser,bool>>)
                 var exists = await _data.ExistsAsync(r =>
                     r.UserId == dto.UserId &&
                     r.RolId == dto.RolId &&
@@ -78,19 +78,19 @@ namespace Business.Implementations
                 dto.Asset = true;
                 dto.IsDeleted = false;
 
-                var entity = _mapper.Map<RolUser>(dto);
+                var entity = _mapper.Map<RolParkingUser>(dto);
                 var saved = await _data.Save(entity);
 
-                return _mapper.Map<RolUserDto>(saved);
+                return _mapper.Map<RolParkingUserDto>(saved);
             }
             catch (ArgumentException) { throw; }
             catch (Exception ex)
             {
-                throw new BusinessException("Error al registrar RolUser.", ex);
+                throw new BusinessException("Error al registrar RolParkingUser.", ex);
             }
         }
 
-        public override async Task Update(RolUserDto dto)
+        public override async Task Update(RolParkingUserDto dto)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace Business.Implementations
             catch (InvalidOperationException) { throw; }
             catch (Exception ex)
             {
-                throw new BusinessException("Error al actualizar RolUser.", ex);
+                throw new BusinessException("Error al actualizar RolParkingUser.", ex);
             }
         }
 

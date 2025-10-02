@@ -50,10 +50,21 @@ namespace Entity.Contexts
                 new FormModule { Id = 1, FormId = 1, ModuleId = 1, Asset = true }
             );
 
+            // ParkingCategory
+            modelBuilder.Entity<ParkingCategory>().HasData(
+                new ParkingCategory { Id = 1, Name = "General", Code = "GEN", Description = "Categoría general", Asset = true },
+                new ParkingCategory { Id = 2, Name = "VIP", Code = "VIP", Description = "Categoría exclusiva", Asset = true }
+            );
+            // Parking
+            modelBuilder.Entity<Parking>().HasData(
+                new Parking { Id = 1, Name = "Parqueadero Central", Location = "Centro", ParkingCategoryId = 1, Asset = true },
+                new Parking { Id = 2, Name = "Parqueadero Norte", Location = "Norte", ParkingCategoryId = 2, Asset = true }
+            );
+
             // RolUser
-            modelBuilder.Entity<RolUser>().HasData(
-                new RolUser { Id = 1, RolId = 1, UserId = 1, Asset = true },
-                new RolUser { Id = 2, RolId = 2, UserId = 2, Asset = true }
+            modelBuilder.Entity<RolParkingUser>().HasData(
+                new RolParkingUser { Id = 1, RolId = 1, UserId = 1, ParkingId = 1, Asset = true },
+                new RolParkingUser { Id = 2, RolId = 2, UserId = 2, ParkingId = 2, Asset = true }
             );
 
             // RolFormPermission
@@ -70,17 +81,6 @@ namespace Entity.Contexts
                 new TypeVehicle { Id = 3, Name = "Camión", Asset = true }
             );
 
-            // ParkingCategory
-            modelBuilder.Entity<ParkingCategory>().HasData(
-                new ParkingCategory { Id = 1, Name = "General", Code = "GEN", Description = "Categoría general", Asset = true },
-                new ParkingCategory { Id = 2, Name = "VIP", Code = "VIP", Description = "Categoría exclusiva", Asset = true }
-            );
-
-            // Parking
-            modelBuilder.Entity<Parking>().HasData(
-                new Parking { Id = 1, Name = "Parqueadero Central", Location = "Centro", ParkingCategoryId = 1, Asset = true },
-                new Parking { Id = 2, Name = "Parqueadero Norte", Location = "Norte", ParkingCategoryId = 2, Asset = true }
-            );
 
             // Zones
             modelBuilder.Entity<Zones>().HasData(

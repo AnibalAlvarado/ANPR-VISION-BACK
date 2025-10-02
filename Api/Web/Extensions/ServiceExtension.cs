@@ -67,8 +67,8 @@ namespace Web.Extensions
             services.AddScoped<IRolFormPermissionBusiness, RolFormPermissionBusiness>();
             services.AddScoped<IRolFormPermissionData, RolFormPermissionData>();
 
-            services.AddScoped<IRolUserBusiness, RolUserBusiness>();
-            services.AddScoped<IRolUserData, RolUserData>();
+            services.AddScoped<IRolParkingUserBusiness, RolParkingUserBusiness>();
+            services.AddScoped<IRolParkingUserData, RolParkingUserData>();
 
             services.AddScoped<IUserBusiness, UserBusiness>();
             services.AddScoped<IUserData, UserData>();
@@ -127,6 +127,8 @@ namespace Web.Extensions
 
             services.AddScoped<IVehicleDetectionManagerBusiness, VehicleDetectionManagerBusiness>();
             services.AddScoped<INotificationDispatcher, SignalRNotificationDispatcher>();
+
+            services.AddScoped<IObtainTypeVehicle, ObtainTypeVehicle>();
 
 
 

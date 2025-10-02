@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace Entity.Dtos
 {
-    public class RolUserDto : BaseDto
+    public class RolParkingUserDto : BaseDto
     {
         public int UserId { get; set; }
         public string? UserName { get; set; } = null!;
         public int RolId { get; set; }
         public string? RolName { get; set; } = null!;
+        public int ParkingId { get; set; }
+        public string? ParkingName { get; set; } = null!;
     }
 
 

@@ -47,11 +47,11 @@ namespace Utilities.Implementations
 
             //CreateMap<RolUser, RolUserDto>();
 
-            CreateMap<RolUser, RolUserDto>()
+            CreateMap<RolParkingUser, RolParkingUserDto>()
                         .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Username))
                         .ForMember(dest => dest.RolName, opt => opt.MapFrom(src => src.Rol.Name));
 
-            CreateMap<RolUserDto, RolUser>();
+            CreateMap<RolParkingUserDto, RolParkingUser>();
 
             CreateMap<User, UserDto>()
                  .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.FirstName));
