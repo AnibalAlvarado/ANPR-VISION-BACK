@@ -1,4 +1,4 @@
-﻿using Entity.Models;
+﻿using Entity.Models.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;

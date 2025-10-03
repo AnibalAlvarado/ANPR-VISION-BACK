@@ -1,5 +1,7 @@
 ﻿using Dapper;
-using Entity.Models;
+using Entity.Models.Operational;
+using Entity.Models.Parameter;
+using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,4 @@
-﻿using Entity.Models;
+﻿using Entity.Models.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
-using Entity.Dtos;
-using Entity.Models;
+using Entity.Dtos.Operational;
+using Entity.Dtos.Parameter;
+using Entity.Dtos.Security;
+using Entity.Models.Operational;
+using Entity.Models.Parameter;
+using Entity.Models.Security;
 using System;
 using System.Security;
 using Utilities.Interfaces;

@@ -1,6 +1,6 @@
 using System;
-using Business.Interfaces;
-using Entity.Dtos;
+using Business.Interfaces.Operational;
+using Entity.Dtos.Operational;
 using Microsoft.AspNetCore.SignalR;
 using Web.Hubs;
 

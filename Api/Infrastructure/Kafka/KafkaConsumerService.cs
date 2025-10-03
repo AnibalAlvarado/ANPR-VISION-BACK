@@ -59,7 +59,7 @@ public class KafkaConsumerService : BackgroundService
 
                         if (evt is not null)
                         {
-                            // 👇 Fire and forget
+                            //  Fire and forget
                             _ = Task.Run(async () =>
                             {
                                 try

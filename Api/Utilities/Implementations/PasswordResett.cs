@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entity.Contexts;
-using Entity.Models;
+using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Interfaces;
 

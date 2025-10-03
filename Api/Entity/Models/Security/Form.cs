@@ -8,11 +8,11 @@ namespace Entity.Models.Security
 {
     public class Form : GenericModel
     {
-        public string Url { get; set; }
-        public string Icon { get; set; }
-        public int Module { get; set; }
-        public bool SuperAdmin { get; set; }
-        public int ModuleId { get; set; }
+
+        public string Description { get; set; }
+
+        public virtual ICollection<FormModule> FormModules { get; set; } = new List<FormModule>();
+        public virtual ICollection<RolFormPermission> RolFormPermission { get; set; } = new List<RolFormPermission>();
 
     }
 }

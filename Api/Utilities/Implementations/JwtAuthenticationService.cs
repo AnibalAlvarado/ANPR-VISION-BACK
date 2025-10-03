@@ -1,4 +1,4 @@
-﻿using Entity.Models;
+﻿using Entity.Models.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

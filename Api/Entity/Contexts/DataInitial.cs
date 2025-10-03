@@ -1,5 +1,7 @@
 ﻿using System;
-using Entity.Models;
+using Entity.Models.Operational;
+using Entity.Models.Parameter;
+using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entity.Contexts
@@ -23,8 +25,9 @@ namespace Entity.Contexts
 
             // Personas
             modelBuilder.Entity<Person>().HasData(
-                new Person { Id = 1, FirstName = "Admin", LastName = "Principal", Phone = "111111111", Document = "0001", Email = "admin@mail.com", Age = 30, Asset = true },
-                new Person { Id = 2, FirstName = "Usuario", LastName = "Demo", Phone = "222222222", Document = "0002", Email = "usuario@mail.com", Age = 25, Asset = true }
+                new Person { Id = 1, FirstName = "Admin", LastName = "Principal", Phone = "111111111", Document = "0001", Email = "admin@gmail.com", Age = 30, Asset = true },
+                new Person { Id = 2, FirstName = "Usuario", LastName = "Demo", Phone = "222222222", Document = "0002", Email = "usuario@gmail.com", Age = 25, Asset = true },
+                new Person { Id = 3, FirstName = "Consumidor", LastName = "Final", Phone = "222222222222", Document = "222222222222", Email = "consumidorFinal@gmail.com", Age = 18, Asset = true }
             );
 
             // Usuarios (contraseñas hasheadas con BCrypt)
@@ -32,7 +35,8 @@ namespace Entity.Contexts
             // User123!   → hash generado
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, Username = "admin", Email = "admin@mail.com", Password = "$2a$12$C3DSGP6PRwi3a4hsLdnrs.kYnRkJ0PgR3ky/AbI5Dmem7U3e/lSpq", PersonId = 1, Asset = true },
-                new User { Id = 2, Username = "usuario", Email = "usuario@mail.com", Password = "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm", PersonId = 2, Asset = true }
+                new User { Id = 2, Username = "usuario", Email = "usuario@mail.com", Password = "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm", PersonId = 2, Asset = true },
+                new User { Id = 3, Username = "Consumidor Final", Email = "usuario@mail.com", Password = "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm", PersonId = 3, Asset = true }
             );
 
             // Módulos
@@ -64,7 +68,8 @@ namespace Entity.Contexts
             // RolUser
             modelBuilder.Entity<RolParkingUser>().HasData(
                 new RolParkingUser { Id = 1, RolId = 1, UserId = 1, ParkingId = 1, Asset = true },
-                new RolParkingUser { Id = 2, RolId = 2, UserId = 2, ParkingId = 2, Asset = true }
+                new RolParkingUser { Id = 2, RolId = 2, UserId = 2, ParkingId = 2, Asset = true },
+                new RolParkingUser { Id = 3, RolId = 2, UserId = 3, ParkingId = 2, Asset = true }
             );
 
             // RolFormPermission
@@ -119,7 +124,8 @@ namespace Entity.Contexts
             // Clients
             modelBuilder.Entity<Client>().HasData(
                 new Client { Id = 1, Name = "Cliente Demo", PersonId = 1, Asset = true },
-                new Client { Id = 2, Name = "Cliente Premium", PersonId = 2, Asset = true }
+                new Client { Id = 2, Name = "Cliente Premium", PersonId = 2, Asset = true },
+                new Client { Id = 3, Name = "Consumidor Final", PersonId = 3, Asset = true }
             );
 
             // Vehicles
