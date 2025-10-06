@@ -125,17 +125,17 @@ namespace Utilities.Implementations
                .ForMember(dest => dest.ParkingCategoryId, opt => opt.MapFrom(src => src.ParkingCategoryId))
                .ForMember(dest => dest.ParkingCategory, opt => opt.MapFrom(src => src.ParkingCategory.Name));
 
-            CreateMap<PersonParking, PersonParkingDto>()
-                   .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
-                   .ForMember(dest => dest.ParkingId, opt => opt.MapFrom(src => src.ParkingId))
-                   .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.FirstName))
-                   .ForMember(dest => dest.ParkingName, opt => opt.MapFrom(src => src.Parking.Name));
+            //CreateMap<PersonParking, PersonParkingDto>()
+            //       .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
+            //       .ForMember(dest => dest.ParkingId, opt => opt.MapFrom(src => src.ParkingId))
+            //       .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person.FirstName))
+            //       .ForMember(dest => dest.ParkingName, opt => opt.MapFrom(src => src.Parking.Name));
 
-            CreateMap<PersonParkingDto, PersonParking>()
-              .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
-              .ForMember(dest => dest.Person, opt => opt.Ignore())
-              .ForMember(dest => dest.ParkingId, opt => opt.MapFrom(src => src.ParkingId))
-              .ForMember(dest => dest.Parking, opt => opt.Ignore());
+            //CreateMap<PersonParkingDto, PersonParking>()
+            //  .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
+            //  .ForMember(dest => dest.Person, opt => opt.Ignore())
+            //  .ForMember(dest => dest.ParkingId, opt => opt.MapFrom(src => src.ParkingId))
+            //  .ForMember(dest => dest.Parking, opt => opt.Ignore());
 
 
 

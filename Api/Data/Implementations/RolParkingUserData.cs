@@ -34,6 +34,7 @@ namespace Data.Implementations
             return await _context.RolParkingUsers
                 .Include(x => x.User)
                 .Include(x => x.Rol)
+                .Include(x => x.Parking)
                 .ToListAsync();
         }
 
@@ -43,6 +44,7 @@ namespace Data.Implementations
             var query = _context.RolParkingUsers
                 .Include(ru => ru.User)
                 .Include(ru => ru.Rol)
+                .Include(ru => ru.Parking)
                 .AsQueryable();
 
             // si quieres, también puedes aplicar filtros genéricos aquí
@@ -62,6 +64,7 @@ namespace Data.Implementations
             return await _context.RolParkingUsers
                 .Include(ru => ru.User)
                 .Include(ru => ru.Rol)
+                .Include(ru => ru.Parking)
                 .FirstOrDefaultAsync(ru => ru.Id == id);
         }
 
@@ -70,7 +73,7 @@ namespace Data.Implementations
             try
             {
                 return await _context.Set<RolParkingUser>()
-                        .AnyAsync(ur => ur.UserId == userId && ur.RolId == roleId);
+                        .AnyAsync(ur => ur.UserId == userId && ur.RolId == roleId );
             }
             catch (Exception ex)
             {

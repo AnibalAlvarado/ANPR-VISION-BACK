@@ -130,8 +130,7 @@ namespace Web.Extensions
 
             services.AddScoped<IObtainTypeVehicle, ObtainTypeVehicle>();
 
-            services.AddScoped<IPersonParkingBusiness, PersonParkingBusiness>();
-            services.AddScoped<IPersonParkingData, PersonParkingData>();
+          
 
 
 

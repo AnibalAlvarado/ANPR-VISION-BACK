@@ -2,7 +2,6 @@
 using Business.Interfaces;
 using Data.Implementations;
 using Entity.Dtos;
-using Entity.Dtos.vehicle;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -11,7 +10,7 @@ namespace Web.Controllers.Implementations
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VehicleController: RepositoryController<Vehicle, VehicleDto>
+    public class VehicleController : RepositoryController<Vehicle, VehicleDto>
     {
         private readonly IVehicleBusiness _business;
         private readonly IMapper _mapper;
@@ -23,41 +22,13 @@ namespace Web.Controllers.Implementations
             _mapper = mapper;
         }
 
-        //[HttpPost]
-        //public override async Task<ActionResult<VehicleDto>> Save(VehicleDto dto)
-        //{
-        //    try
-        //    {
-        //        // 1️⃣ Guardar el vehículo normalmente usando la lógica genérica
-        //        VehicleDto dtoSaved = await _business.Save(dto);
-
-        //        // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
-        //        var registeredVehicle = await _business.RegisterVehicleWithSlotAsync(dtoSaved.Id);
-        //        var registeredVehicleDto = _mapper.Map<RegisteredVehiclesDto>(registeredVehicle);
-
-        //        var response = new
-        //        {
-        //            Vehicle = dtoSaved,
-        //            RegisteredVehicle = registeredVehicleDto
-        //        };
-
-        //        return CreatedAtRoute(new { id = dtoSaved.Id }, response);
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var response = new ApiResponse<object>(null, false, ex.Message, null);
-        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
-        //    }
-        //}
-
         [HttpPost]
         public override async Task<ActionResult<VehicleDto>> Save(VehicleDto dto)
         {
             try
             {
-                var result = await _business.SaveWithSlotAsync(dto);
+                // 1️⃣ Guardar el vehículo normalmente usando la lógica genérica
+                VehicleDto dtoSaved = await _business.Save(dto);
 
                 // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
                 RegisteredVehiclesDto registeredVehicle = await _business.RegisterVehicleWithSlotAsync(dtoSaved.Id);
@@ -77,7 +48,6 @@ namespace Web.Controllers.Implementations
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-
 
 
         [HttpGet("join")]
@@ -104,7 +74,7 @@ namespace Web.Controllers.Implementations
         [HttpGet("slot/{slotId}")]
         public async Task<IActionResult> GetActiveVehicleBySlot(int slotId)
         {
-            var result = await _business.GetActiveVehicleBySlotAsync(slotId); 
+            var result = await _business.GetActiveVehicleBySlotAsync(slotId);
 
             if (result == null)
                 return NotFound("No hay un vehículo activo en este slot.");
@@ -112,26 +82,6 @@ namespace Web.Controllers.Implementations
             return Ok(result);
         }
 
-        [HttpGet("byClient/{clientId:int}")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<VehicleClientListDto>>>> GetByClient(int clientId)
-        {
-            try
-            {
-                var data = await _business.GetByClientIdWithPresenceAsync(clientId);
-                var response = new ApiResponse<IEnumerable<VehicleClientListDto>>(data, true, "Ok", null);
-                return Ok(response);
-            }
-            catch (ArgumentException aex)
-            {
-                var bad = new ApiResponse<IEnumerable<VehicleClientListDto>>(null, false, aex.Message, null);
-                return BadRequest(bad);
-            }
-            catch (Exception ex)
-            {
-                var error = new ApiResponse<IEnumerable<VehicleClientListDto>>(null, false, ex.Message, null);
-                return StatusCode(StatusCodes.Status500InternalServerError, error);
-            }
-        }
 
     }
 }

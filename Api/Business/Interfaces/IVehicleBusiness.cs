@@ -14,17 +14,12 @@ namespace Business.Interfaces
     public interface IVehicleBusiness : IRepositoryBusiness<Vehicle, VehicleDto>
     {
 
-     
+
         Task<IEnumerable<VehicleDto>> GetAllJoinAsync();
         // Nuevo método para registrar vehículo + slot automáticamente
         Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId);
 
         Task<RegisteredVehiclesDto?> GetActiveVehicleBySlotAsync(int slotId);
-        //Task<IEnumerable<VehicleDto>> GetByClientIdAsync(int clientId);
-
-        Task<IEnumerable<VehicleClientListDto>> GetByClientIdWithPresenceAsync(int clientId);
-
-        Task<(VehicleDto Vehicle, RegisteredVehicles Registered)> SaveWithSlotAsync(VehicleDto dto);
 
 
 

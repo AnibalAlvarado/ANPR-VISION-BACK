@@ -3,13 +3,11 @@ using Business.Interfaces;
 using Data.Implementations;
 using Data.Interfaces;
 using Entity.Dtos;
-using Entity.Dtos.vehicle;
 using Entity.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Utilities.Exceptions;
 using Utilities.Helpers.Validators;
@@ -17,7 +15,7 @@ using Utilities.Helpers.Validators;
 namespace Business.Implementations
 {
 
-    public class VehicleBusiness : RepositoryBusiness<Vehicle, VehicleDto> ,IVehicleBusiness
+    public class VehicleBusiness : RepositoryBusiness<Vehicle, VehicleDto>, IVehicleBusiness
     {
         private readonly IVehicleData _data;
         private readonly IMapper _mapper;
@@ -113,90 +111,6 @@ namespace Business.Implementations
 
             return returnRegisteredVehicle;
         }
-        //public override async Task<VehicleDto> Save(VehicleDto dto)
-        //{
-        //    try
-        //    {
-        //        // 🔹 Limpieza de strings
-        //        dto.Plate = dto.Plate?.Trim().ToUpper() ?? "";
-        //        dto.Color = dto.Color?.Trim();
-
-        //        // 🔹 Validación de campos obligatorios
-        //        Validations.ValidateDto(dto, "Plate", "TypeVehicleId", "ClientId");
-
-        //        if (string.IsNullOrWhiteSpace(dto.Plate))
-        //            throw new ArgumentException("El campo 'Plate' es obligatorio.");
-
-        //        // 🔹 Validación de placa (Colombia)
-        //        var regexColombia = @"^([A-Z]{3}-\d{3}|[A-Z]{2}-\d{3}[A-Z])$";
-        //        if (!System.Text.RegularExpressions.Regex.IsMatch(dto.Plate, regexColombia))
-        //            throw new ArgumentException("La placa no tiene un formato válido según la normativa colombiana.");
-
-        //        // 🔹 Validación Color (opcional)
-        //        if (!string.IsNullOrWhiteSpace(dto.Color) && dto.Color.Length > 30)
-        //            throw new ArgumentException("El color no puede superar los 30 caracteres.");
-
-        //        // 🔹 Validación TypeVehicleId
-        //        if (dto.TypeVehicleId <= 0)
-        //            throw new ArgumentException("Debe seleccionar un tipo de vehículo válido.");
-
-        //        // 🔹 Validación ClientId
-        //        if (dto.ClientId <= 0)
-        //            throw new ArgumentException("Debe seleccionar un cliente válido.");
-
-        //        // 🔹 Validar que la placa no exista ya en la BD
-        //        var exists = await _data.ExistsAsync(v => v.Plate.ToUpper() == dto.Plate.ToUpper());
-        //        if (exists)
-        //            throw new ArgumentException($"Ya existe un vehículo registrado con la placa '{dto.Plate}'.");
-
-        //        // 🔹 Guardar entidad
-        //        dto.Asset = true;
-
-        //        // 🔹 Mapear solo propiedades simples y IDs
-        //        var config = new MapperConfiguration(cfg =>
-        //        {
-        //            cfg.CreateMap<VehicleDto, Vehicle>()
-        //                .ForMember(dest => dest.Plate, opt => opt.MapFrom(src => src.Plate))
-        //                .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color))
-        //                .ForMember(dest => dest.TypeVehicleId, opt => opt.MapFrom(src => src.TypeVehicleId))
-        //                .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.ClientId))
-        //                .ForMember(dest => dest.Client, opt => opt.Ignore())
-        //                .ForMember(dest => dest.TypeVehicle, opt => opt.Ignore())
-        //                .ForMember(dest => dest.RegisteredVehicles, opt => opt.Ignore())
-        //                .ForMember(dest => dest.Memberships, opt => opt.Ignore());
-        //        });
-        //        var mapper = config.CreateMapper();
-        //        Vehicle entity = mapper.Map<Vehicle>(dto);
-
-        //        // 🔹 Guardar en la base de datos
-        //        entity = await _data.Save(entity);
-
-        //        // 🔹 Devolver DTO con solo IDs
-        //        return new VehicleDto
-        //        {
-        //            Id = entity.Id,
-        //            Plate = entity.Plate,
-        //            Color = entity.Color,
-        //            TypeVehicleId = entity.TypeVehicleId,
-        //            ClientId = entity.ClientId,
-        //            Asset = entity.Asset,
-        //            IsDeleted = entity.IsDeleted
-        //        };
-        //    }
-        //    catch (InvalidOperationException invOe)
-        //    {
-        //        throw new InvalidOperationException($"Error: {invOe.Message}", invOe);
-        //    }
-        //    catch (ArgumentException argEx)
-        //    {
-        //        throw new ArgumentException($"Error: {argEx.Message}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new BusinessException("Error al registrar el vehículo.", ex);
-        //    }
-        //}
-
         public override async Task<VehicleDto> Save(VehicleDto dto)
         {
             try
@@ -211,39 +125,10 @@ namespace Business.Implementations
                 if (string.IsNullOrWhiteSpace(dto.Plate))
                     throw new ArgumentException("El campo 'Plate' es obligatorio.");
 
-                // 🔹 Validación de placa según el tipo de vehículo en Colombia
-                bool placaValida = false;
-                if (dto.TypeVehicleId <= 0)
-                    throw new ArgumentException("Debe seleccionar un tipo de vehículo válido.");
-
-                switch (dto.TypeVehicleId)
-                {
-                    case 1: // Carros (particulares, oficiales, públicos)
-                            // Ejemplo: ABC123
-                        placaValida = Regex.IsMatch(dto.Plate, @"^[A-Z]{3}\d{3}$");
-                        break;
-
-                    case 4: // Motos
-                            // Ejemplo: ABC12D
-                        placaValida = Regex.IsMatch(dto.Plate, @"^[A-Z]{3}\d{2}[A-Z]$");
-                        break;
-
-                    case 3: // Diplomáticos
-                            // Ejemplo: CD1234, OI1234, AT1234
-                        placaValida = Regex.IsMatch(dto.Plate, @"^(CD|OI|AT)\d{3,4}$");
-                        break;
-
-                    case 2: // Oficiales especiales (Ejército, Policía, etc.)
-                            // Ejemplo: EJC123, FAC456, POL789
-                        placaValida = Regex.IsMatch(dto.Plate, @"^(EJC|FAC|POL)\d{3,4}$");
-                        break;
-
-                    default:
-                        throw new ArgumentException("El tipo de vehículo no tiene validación definida.");
-                }
-
-                if (!placaValida)
-                    throw new ArgumentException($"La placa '{dto.Plate}' no corresponde al formato válido para el tipo de vehículo seleccionado.");
+                // 🔹 Validación de placa (Colombia)
+                var regexColombia = @"^([A-Z]{3}-\d{3}|[A-Z]{2}-\d{3}[A-Z])$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(dto.Plate, regexColombia))
+                    throw new ArgumentException("La placa no tiene un formato válido según la normativa colombiana.");
 
                 // 🔹 Validación Color (opcional)
                 if (!string.IsNullOrWhiteSpace(dto.Color) && dto.Color.Length > 30)
@@ -303,43 +188,6 @@ namespace Business.Implementations
                 EntryDate = registeredVehicle.EntryDate
             };
         }
-        public async Task<IEnumerable<VehicleClientListDto>> GetByClientIdWithPresenceAsync(int clientId)
-        {
-            if (clientId <= 0) throw new ArgumentException("El clientId es inválido.");
-            try
-            {
-                var list = await _data.GetByClientIdWithPresenceAsync(clientId);
-                return list; // lista vacía es válida
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al obtener los vehículos del cliente (con estado).", ex);
-            }
-        }
-
-        public async Task<(VehicleDto Vehicle, RegisteredVehicles Registered)> SaveWithSlotAsync(VehicleDto dto)
-        {
-            using var transaction = await _data.BeginTransactionAsync();
-            try
-            {
-                // 1. Guardar el vehículo (usa tu lógica actual de Save)
-                var vehicle = await Save(dto);
-
-                // 2. Intentar asignar slot
-                var registered = await RegisterVehicleWithSlotAsync(vehicle.Id);
-
-                // 3. Confirmar la transacción
-                await transaction.CommitAsync();
-
-                return (vehicle, registered);
-            }
-            catch (Exception)
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        }
-
 
     }
 }

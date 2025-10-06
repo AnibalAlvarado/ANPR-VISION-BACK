@@ -188,7 +188,7 @@ namespace Data.Implementations
         {
             try
             {
-                var roles = await _context.Set<RolUser>()
+                var roles = await _context.Set<RolParkingUser>()
                 .Where(ru => ru.UserId == userId)
                 .Include(ru => ru.Rol)
                     .ThenInclude(r => r.RolFormPermission)

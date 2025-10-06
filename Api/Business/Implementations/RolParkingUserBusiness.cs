@@ -63,16 +63,18 @@ namespace Business.Implementations
                 if (dto == null) throw new ArgumentException("Datos inválidos.");
                 if (dto.UserId <= 0) throw new ArgumentException("UserId inválido.");
                 if (dto.RolId <= 0) throw new ArgumentException("RolId inválido.");
+                if (dto.ParkingId <= 0) throw new ArgumentException("ParkingId inválido.");
 
                 // Evitar duplicados: mismo UserId + RolId y que no esté marcado como eliminado
                 // Requiere que tu repo tenga ExistsAsync(Expression<Func<RolParkingUser,bool>>)
                 var exists = await _data.ExistsAsync(r =>
                     r.UserId == dto.UserId &&
                     r.RolId == dto.RolId &&
+                    r.ParkingId == dto.ParkingId &&
                     (r.IsDeleted != true)    // null-safe: considera null como no eliminado
                 );
                 if (exists)
-                    throw new ArgumentException("El usuario ya tiene asignado ese rol.");
+                    throw new ArgumentException("El usuario ya tiene asignado ese rol en este parqueadero.");
 
                 // Valores por defecto para nuevo registro
                 dto.Asset = true;
@@ -98,6 +100,7 @@ namespace Business.Implementations
                 if (dto.Id <= 0) throw new ArgumentException("Id inválido.");
                 if (dto.UserId <= 0) throw new ArgumentException("UserId inválido.");
                 if (dto.RolId <= 0) throw new ArgumentException("RolId inválido.");
+                if (dto.ParkingId <= 0) throw new ArgumentException("ParkingId inválido.");
 
                 // Verificar que exista el registro que quiero actualizar
                 var current = await _data.GetById(dto.Id);
@@ -109,6 +112,7 @@ namespace Business.Implementations
                     r.Id != dto.Id &&
                     r.UserId == dto.UserId &&
                     r.RolId == dto.RolId &&
+                    r.ParkingId == dto.ParkingId &&
                     (r.IsDeleted != true)
                 );
                 if (existsOther)
@@ -117,6 +121,7 @@ namespace Business.Implementations
                 // Mapear únicamente los campos que quieres actualizar (evita sobrescribir relaciones)
                 current.UserId = dto.UserId;
                 current.RolId = dto.RolId;
+                current.ParkingId = dto.ParkingId;
 
                 // Si manejas Asset / IsDeleted desde DTO, actualízalos; si no, coméntalos
                 current.IsDeleted = dto.IsDeleted;

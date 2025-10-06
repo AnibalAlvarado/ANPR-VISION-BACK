@@ -3,6 +3,8 @@ using Business.Interfaces;
 using Data.Implementations;
 using Data.Interfaces;
 using Entity.Dtos;
+using Entity.Dtos.Access;
+using Entity.Dtos.Login;
 using Entity.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -27,9 +29,10 @@ namespace Business.Implementations
         private readonly IJwtAuthenticationService _jwtAuthenticatonService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IPasswordReset _passwordReset;
+        private readonly IClientData _clientData;
 
         public UserBusiness(
-        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IEmailService emailService,IRolBusiness rolBusiness, IRolParkingUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher, IPasswordReset passwordReset) : base(data, mapper)
+        IUserData data, IMapper mapper, ILogger<UserBusiness> logger,IClientData clientData,IEmailService emailService,IRolBusiness rolBusiness, IRolParkingUserBusiness rolUserBusiness, IJwtAuthenticationService jwtAuthenticatonService, IPasswordHasher passwordHasher, IPasswordReset passwordReset) : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;

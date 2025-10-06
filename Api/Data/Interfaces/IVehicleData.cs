@@ -16,10 +16,5 @@ namespace Data.Interfaces
         Task<IEnumerable<VehicleDto>> GetAllJoinAsync();
         Task<RegisteredVehicles?> GetActiveRegisteredVehicleBySlotAsync(int slotId);
 
-        //Task<IEnumerable<VehicleDto>> GetByClientIdAsync(int clientId);
-        Task<IEnumerable<VehicleClientListDto>> GetByClientIdWithPresenceAsync(int clientId);
-
-        Task<IDbContextTransaction> BeginTransactionAsync();
-
     }
 }
