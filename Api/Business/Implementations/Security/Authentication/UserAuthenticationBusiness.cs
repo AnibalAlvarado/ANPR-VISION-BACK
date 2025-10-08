@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business.Interfaces.Security.Authentication;
+using Data.Interfaces;
 using Data.Interfaces.Parameter;
 using Data.Interfaces.Security;
 using Entity.Dtos.Login;

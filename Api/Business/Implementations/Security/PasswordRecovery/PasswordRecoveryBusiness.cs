@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Business.Interfaces.Security.PasswordRecovery;
+using Data.Interfaces;
 using Data.Interfaces.Security;
 using Entity.Models.Security;
 using Microsoft.Extensions.Logging;

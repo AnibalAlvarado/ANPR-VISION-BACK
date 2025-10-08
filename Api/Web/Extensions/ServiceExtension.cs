@@ -4,22 +4,16 @@ using Business.Implementations.Detection;
 using Business.Implementations.Operational;
 using Business.Implementations.Parameter;
 using Business.Implementations.Security;
-<<<<<<< HEAD
 using Business.Implementations.Security.Authentication;
 using Business.Implementations.Security.PasswordRecovery;
-=======
->>>>>>> 6ca5cd43fe20de25915aa779da030276258b25d7
 using Business.Interfaces;
 using Business.Interfaces.Dashboard;
 using Business.Interfaces.Detection;
 using Business.Interfaces.Operational;
 using Business.Interfaces.Parameter;
 using Business.Interfaces.Security;
-<<<<<<< HEAD
 using Business.Interfaces.Security.Authentication;
 using Business.Interfaces.Security.PasswordRecovery;
-=======
->>>>>>> 6ca5cd43fe20de25915aa779da030276258b25d7
 using Data.Implementations;
 using Data.Implementations.Dashboard;
 using Data.Implementations.Operational;

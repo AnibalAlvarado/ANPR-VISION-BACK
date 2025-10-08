@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Interfaces.Security;
 using Data.Implementations;
+using Data.Interfaces;
 using Data.Interfaces.Parameter;
 using Data.Interfaces.Security;
 using Entity.Dtos.Access;
