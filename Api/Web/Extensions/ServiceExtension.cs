@@ -1,16 +1,33 @@
 ﻿using Business.Implementations;
 using Business.Implementations.Dashboard;
 using Business.Implementations.Detection;
+using Business.Implementations.Operational;
+using Business.Implementations.Parameter;
+using Business.Implementations.Security;
+using Business.Implementations.Security.Authentication;
+using Business.Implementations.Security.PasswordRecovery;
 using Business.Interfaces;
 using Business.Interfaces.Dashboard;
 using Business.Interfaces.Detection;
+using Business.Interfaces.Operational;
+using Business.Interfaces.Parameter;
+using Business.Interfaces.Security;
+using Business.Interfaces.Security.Authentication;
+using Business.Interfaces.Security.PasswordRecovery;
 using Data.Implementations;
 using Data.Implementations.Dashboard;
+using Data.Implementations.Operational;
+using Data.Implementations.Parameter;
+using Data.Implementations.Security;
 using Data.Interfaces;
 using Data.Interfaces.Dashboard;
+using Data.Interfaces.Operational;
+using Data.Interfaces.Parameter;
+using Data.Interfaces.Security;
 using Entity.Context;
-using Entity.Dtos;
-using Entity.Models;
+using Entity.Dtos.Security;
+using Entity.Models.Security;
+using Infrastructure.Kafka;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 using Utilities.Audit.Services;
@@ -29,6 +46,8 @@ namespace Web.Extensions
     {
         public static IServiceCollection AddAppServices(this IServiceCollection services)
         {
+            // 🔹 Registrar el BackgroundService
+            services.AddHostedService<KafkaConsumerService>();
             //segundo plano
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddHostedService<QueuedHostedService>();
@@ -127,6 +146,13 @@ namespace Web.Extensions
 
             services.AddScoped<IVehicleDetectionManagerBusiness, VehicleDetectionManagerBusiness>();
             services.AddScoped<INotificationDispatcher, SignalRNotificationDispatcher>();
+            services.AddScoped<IUserAuthenticationBusiness, UserAuthenticationBusiness>();
+
+            services.AddScoped<IPasswordRecoveryBusiness, PasswordRecoveryBusiness>();
+
+
+
+
 
             services.AddScoped<IObtainTypeVehicle, ObtainTypeVehicle>();
 

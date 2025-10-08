@@ -6,20 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Dtos\Operational\**" />
-    <Compile Remove="Dtos\Parameter\**" />
-    <Compile Remove="Dtos\Security\**" />
-    <Compile Remove="Models\Security\**" />
-    <EmbeddedResource Remove="Dtos\Operational\**" />
-    <EmbeddedResource Remove="Dtos\Parameter\**" />
-    <EmbeddedResource Remove="Dtos\Security\**" />
-    <EmbeddedResource Remove="Models\Security\**" />
-    <None Remove="Dtos\Operational\**" />
-    <None Remove="Dtos\Parameter\**" />
-    <None Remove="Dtos\Security\**" />
-    <None Remove="Models\Security\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />

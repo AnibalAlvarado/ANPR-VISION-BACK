@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entity.Contexts;
-using Entity.Models;
+using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Interfaces;
 
@@ -26,17 +26,37 @@ namespace Utilities.Implementations
             _context.PasswordResets.Add(reset);
             await _context.SaveChangesAsync();
         }
-   
+
         public async Task<PasswordReset?> GetValidCode(int userId, string code)
         {
             return await _context.PasswordResets
-                .FirstOrDefaultAsync(r =>
-                    r.UsuarioId == userId &&
-                    r.Code == code &&
-                    r.Used == false &&
-                    r.ExpiryDate > DateTime.UtcNow);
+                .Where(r => r.UsuarioId == userId &&
+                            r.Code == code &&
+                            !r.Used &&
+                            r.ExpiryDate > DateTime.UtcNow)
+                .OrderByDescending(r => r.CreatedAt)
+                .FirstOrDefaultAsync();
         }
-      
+
+        //public async Task<PasswordReset?> GetValidCode(int userId, string code)
+        //{
+        //    return await _context.PasswordResets
+        //        .FromSqlRaw(@"
+        //    SELECT * FROM ""PasswordResets""
+        //    WHERE ""UsuarioId"" = {0}
+        //      AND ""Code"" = {1}
+        //      AND NOT ""Used""
+        //      AND ""ExpiryDate"" > now()
+        //    ORDER BY ""CreatedAt"" DESC
+        //    LIMIT 1", userId, code)
+        //        .AsNoTracking()
+        //        .FirstOrDefaultAsync();
+        //}
+
+
+
+
+
 
         public async Task MarkAsUsed(PasswordReset reset)
         {

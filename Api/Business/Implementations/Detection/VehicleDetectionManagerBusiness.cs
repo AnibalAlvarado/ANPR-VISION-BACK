@@ -1,6 +1,8 @@
-using Business.Interfaces;
 using Business.Interfaces.Detection;
-using Entity.Dtos;
+using Business.Interfaces.Operational;
+using Business.Interfaces.Parameter;
+using Data.Implementations.Operational;
+using Entity.Dtos.Operational;
 using Entity.Models;
 using Entity.Records;
 using Microsoft.Extensions.Logging;
@@ -45,15 +47,14 @@ public class VehicleDetectionManagerBusiness : IVehicleDetectionManagerBusiness
             });
         });
 
-
-
         //validar si existe
-        var exists = await _vehicleBusiness.ExistsAsync(v => v.Plate.ToUpper() == evt.Plate.ToUpper());
+        bool exists = await _vehicleBusiness.ExistsAsync(v => v.Plate.ToUpper() == evt.Plate.ToUpper());
         if (!exists)
         {
             await NewVehicleDetection(evt);
         }
 
+        await ExistingVehicleDetection(evt);
 
         await Task.Delay(100, cancellationToken);
     }
@@ -65,7 +66,8 @@ public class VehicleDetectionManagerBusiness : IVehicleDetectionManagerBusiness
         {
             Plate = evt.Plate,
             Color = "",
-            TypeVehicleId = typeVehicle
+            TypeVehicleId = typeVehicle,
+            ClientId = 3
         };
         VehicleDto vehicleResult = await _vehicleBusiness.Save(vehicleDto);
         RegisteredVehiclesDto entryRegister = await _vehicleBusiness.RegisterVehicleWithSlotAsync(vehicleResult.Id);
@@ -84,6 +86,31 @@ public class VehicleDetectionManagerBusiness : IVehicleDetectionManagerBusiness
                 RelatedEntityId = entryRegister.Id
             });
         });
+
+    }
+
+    private async Task ExistingVehicleDetection(PlateDetectedEventRecord evt)
+    {
+        VehicleDto existedVehicle = await _vehicleBusiness.GetVehicleByPlate(evt.Plate);
+        bool existInBlacklist = await _blackListBusiness.ExistsAsync(b => b.VehicleId == existedVehicle.Id);
+        if (existInBlacklist)
+        {
+            //_taskQueue.Enqueue(async token =>
+            //{
+            //    await _notificationBusiness.CreateAndNotifyAsync(new NotificationDto
+            //    {
+            //        ParkingId = evt.ParkingId ?? 0,
+            //        Title = "Vehículo registrado y entrada creada",
+            //        Message = $"El vehículo con placa {evt.Plate} fue registrado como {vehicleDto.TypeVehicleId}, " +
+            //                  $" se generó su entrada en el parqueadero {evt.ParkingId}." +
+            //                  $"Y se asigno el slot {entryRegister.Slots}.",
+            //        Type = "Success",
+            //        CreatedAt = DateTime.UtcNow,
+            //        IsRead = false,
+            //        RelatedEntityId = entryRegister.Id
+            //    });
+            //});
+        }
 
     }
 }

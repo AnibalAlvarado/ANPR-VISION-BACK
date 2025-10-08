@@ -1,5 +1,8 @@
 ﻿using Dapper;
-using Entity.Models;
+using Entity.Contexts.Interceptors;
+using Entity.Models.Operational;
+using Entity.Models.Parameter;
+using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +12,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace Entity.Contexts
 {
@@ -79,6 +84,7 @@ namespace Entity.Contexts
         {
             // No es necesario configurar el proveedor aquí, ya que se hace a través de la fábrica
             optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.AddInterceptors(new UtcTimeZoneInterceptor());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
