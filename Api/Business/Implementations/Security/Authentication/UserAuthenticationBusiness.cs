@@ -84,10 +84,22 @@ namespace Business.Implementations.Security.Authentication
                 return null;
             }
             // Obtener roles asociados al usuario
-            var roleNames = await _userData.GetUserRoleAsync(user.Id);
+            //var roleNames = await _userData.GetUserRoleAsync(user.Id);
+
+            // Obtener roles detallados (por parking)
+            //var rolesByParking = await _userData.GetUserRoleAsync(user.Id);
+            var rolesByParking = await _userData.GetUserRolesAsync(user.Id);
+
+
+            // Obtener solo los nombres de roles únicos para el JWT
+            var roleNames = rolesByParking.Select(r => r.RoleName).Distinct().ToList();
+
             // Mapear entidad a DTO de respuesta
             var response = _mapper.Map<UserResponseDto>(user);
+            //response.Roles = roleNames;
             response.Roles = roleNames;
+            response.RolesByParking = rolesByParking;
+
             response.UserId = user.Id;
             // Generar token JWT con la información del usuario y roles
             response.Token = _jwtService.GenerarToken(user, roleNames);

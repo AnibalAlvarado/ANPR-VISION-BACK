@@ -3,6 +3,7 @@ using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos.Access;
 using Entity.Dtos.Security;
+using Entity.Models.Parameter;
 using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -154,35 +155,72 @@ namespace Data.Implementations
         }
 
 
-        public async Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId)
+        //public async Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId)
+        //{
+        //    try
+        //    {
+        //        var userRoles = await _context.Set<RolParkingUser>()
+        //            .Where(ru => ru.UserId == userId)
+        //            .Join(
+        //                _context.Set<Rol>(),
+        //                ru => ru.RolId,
+        //                r => r.Id,
+        //                (ru, r) => new UserRoleStatusDto
+        //                {
+        //                    RolUserId = ru.Id,      // ID de la tabla pivote
+        //                    RoleName = r.Name,
+        //                    Asset = ru.Asset
+        //                }
+        //            )
+        //            .ToListAsync();
+
+        //        //await AuditAsync("GetUserRolesAsync", userId);
+
+        //        return userRoles;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error al obtener roles para el usuario con ID: {UserId}", userId);
+        //        throw;
+        //    }
+        //}
+
+        public async Task<List<UserRoleByParkingDto>> GetUserRolesAsync(int userId)
         {
             try
             {
-                var userRoles = await _context.Set<RolParkingUser>()
-                    .Where(ru => ru.UserId == userId)
+                var rolesByParking = await _context.Set<RolParkingUser>()
+                    .Where(rpu => rpu.UserId == userId)
                     .Join(
                         _context.Set<Rol>(),
-                        ru => ru.RolId,
+                        rpu => rpu.RolId,
                         r => r.Id,
-                        (ru, r) => new UserRoleStatusDto
+                        (rpu, r) => new { rpu, r }
+                    )
+                    .Join(
+                        _context.Set<Parking>(),
+                        rr => rr.rpu.ParkingId,
+                        p => p.Id,
+                        (rr, p) => new UserRoleByParkingDto
                         {
-                            RolUserId = ru.Id,      // ID de la tabla pivote
-                            RoleName = r.Name,
-                            Asset = ru.Asset
+                            ParkingId = p.Id,
+                            ParkingName = p.Name,
+                            RoleId = rr.r.Id,
+                            RoleName = rr.r.Name,
+                            Asset = rr.rpu.Asset
                         }
                     )
                     .ToListAsync();
 
-                //await AuditAsync("GetUserRolesAsync", userId);
-
-                return userRoles;
+                return rolesByParking;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener roles para el usuario con ID: {UserId}", userId);
+                _logger.LogError(ex, "Error al obtener roles por parking para el usuario {UserId}", userId);
                 throw;
             }
         }
+
 
         public async Task<UserAccessDto> GetUserAccessAsync(int userId)
         {

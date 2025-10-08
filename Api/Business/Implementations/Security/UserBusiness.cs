@@ -172,7 +172,7 @@ namespace Business.Implementations.Security
             }
         }
 
-        public async Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId)
+        public async Task<List<UserRoleByParkingDto>> GetUserRolesAsync(int userId)
         {
             try
             {

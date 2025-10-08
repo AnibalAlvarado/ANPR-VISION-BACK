@@ -14,7 +14,7 @@ namespace Business.Interfaces.Security
         Task AssignDefaultRoleAsync(int userId);
         Task SendWelcomeEmailAsync(string to);
 
-        Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);
+        Task<List<UserRoleByParkingDto>> GetUserRolesAsync(int userId);
 
         Task<UserAccessDto> GetUserAccessAsync(int userId, bool includePermissions = true, bool includeForms = true);
 

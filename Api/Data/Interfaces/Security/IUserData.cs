@@ -17,9 +17,12 @@ namespace Data.Interfaces
 
         Task<List<string>> GetUserRoleAsync(int userId);
 
-        Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);
+        //Task<List<UserRoleStatusDto>> GetUserRolesAsync(int userId);
 
         Task<UserAccessDto> GetUserAccessAsync(int userId);
+
+        Task<List<UserRoleByParkingDto>> GetUserRolesAsync(int userId);
+
 
     }
 }
