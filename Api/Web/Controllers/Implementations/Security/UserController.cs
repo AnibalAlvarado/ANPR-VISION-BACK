@@ -25,6 +25,41 @@ namespace Web.Controllers.Implementations.Security
             _backgroundTaskQueue = backgroundTaskQueue;
         }
 
+<<<<<<< HEAD
+=======
+        [HttpPost("login")]
+        public async Task<ActionResult<ApiResponse<UserResponseDto>>> Login([FromBody] LoginRequestDto loginRequest)
+        {
+            try
+            {
+                // Validar el modelo
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new ApiResponse<UserResponseDto>(null, false, "Datos de inicio de sesión inválidos", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+                }
+
+                // Validar credenciales
+                var user = await _business.ValidateUserAsync(loginRequest.Username, loginRequest.Password);
+
+                // Si no se encuentra el usuario o las credenciales son incorrectas
+                if (user == null)
+                {
+                    return Unauthorized(new ApiResponse<UserResponseDto>(null, false, "Nombre de usuario o contraseña incorrectos", null));
+                }
+
+
+
+                // Devolver la información del usuario autenticado
+                return Ok(new ApiResponse<UserResponseDto>(user, true, "Inicio de sesión exitoso", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error durante la autenticación del usuario");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new ApiResponse<UserResponseDto>(null, false, "Error interno del servidor durante la autenticación", null));
+            }
+        }
+>>>>>>> 6ca5cd43fe20de25915aa779da030276258b25d7
 
         [HttpPost]
         public override async Task<ActionResult<UserDto>> Save(UserDto dto)
@@ -90,6 +125,60 @@ namespace Web.Controllers.Implementations.Security
             }
         }
 
+<<<<<<< HEAD
        
+=======
+        // ===============================
+        // 🔑 RECUPERACIÓN DE CONTRASEÑA
+        // ===============================
+
+        // Paso 1: solicitar recuperación (envía código al correo)
+        [HttpPost("request-password-reset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] ResetRequestDto request)
+        {
+            try
+            {
+                await _business.RequestPasswordResetAsync(request.Email);
+                return Ok(new ApiResponse<object>(null, true, "Se ha enviado un código de recuperación a tu correo.", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error solicitando recuperación de contraseña");
+                return BadRequest(new ApiResponse<object>(null, false, ex.Message, null));
+            }
+        }
+
+        // Paso 2: validar código
+        [HttpPost("verify-code")]
+        public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeDto request)
+        {
+            try
+            {
+                var isValid = await _business.VerifyResetCodeAsync(request.Email, request.Code);
+                return Ok(new ApiResponse<object>(new { valid = isValid }, true, isValid ? "Código válido." : "Código inválido.", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verificando código de recuperación");
+                return BadRequest(new ApiResponse<object>(null, false, ex.Message, null));
+            }
+        }
+
+        // Paso 3: resetear contraseña
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
+        {
+            try
+            {
+                await _business.VerifyCodeAndResetPasswordAsync(request.Email, request.Code, request.NewPassword);
+                return Ok(new ApiResponse<object>(null, true, "La contraseña ha sido restablecida correctamente.", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reseteando contraseña");
+                return BadRequest(new ApiResponse<object>(null, false, ex.Message, null));
+            }
+        }
+>>>>>>> 6ca5cd43fe20de25915aa779da030276258b25d7
     }
 }

@@ -12,7 +12,6 @@ namespace Utilities.Implementations
 {
     public class PasswordHasher : IPasswordHasher
     {
-        //private readonly PasswordHasher<User> _hasher = new();
         private readonly ILogger<PasswordHasher> _logger;
         private const int WorkFactor = 12; // ajustable por config
 
@@ -20,11 +19,7 @@ namespace Utilities.Implementations
         {
             _logger = logger;
         }
-        //public bool VerifyHashedPassword(string hashedPassword, string providedPassword)
-        //{
-        //    var result = _hasher.VerifyHashedPassword(null, hashedPassword, providedPassword);
-        //    return result == PasswordVerificationResult.Success;
-        //}
+      
 
         /// <summary>
         /// Genera el hash seguro de una contraseña usando BCrypt.

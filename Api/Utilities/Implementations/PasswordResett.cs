@@ -38,21 +38,7 @@ namespace Utilities.Implementations
                 .FirstOrDefaultAsync();
         }
 
-        //public async Task<PasswordReset?> GetValidCode(int userId, string code)
-        //{
-        //    return await _context.PasswordResets
-        //        .FromSqlRaw(@"
-        //    SELECT * FROM ""PasswordResets""
-        //    WHERE ""UsuarioId"" = {0}
-        //      AND ""Code"" = {1}
-        //      AND NOT ""Used""
-        //      AND ""ExpiryDate"" > now()
-        //    ORDER BY ""CreatedAt"" DESC
-        //    LIMIT 1", userId, code)
-        //        .AsNoTracking()
-        //        .FirstOrDefaultAsync();
-        //}
-
+     
 
 
 

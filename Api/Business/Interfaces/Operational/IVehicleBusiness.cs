@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Interfaces.Operational
+namespace Business.Interfaces
 {
     public interface IVehicleBusiness : IRepositoryBusiness<Vehicle, VehicleDto>
     {

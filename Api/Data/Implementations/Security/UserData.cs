@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Data.Interfaces.Security;
+using Data.Interfaces;
 using Entity.Contexts;
 using Entity.Dtos.Access;
 using Entity.Dtos.Security;
@@ -16,7 +16,7 @@ using Utilities.Audit.Services;
 using Utilities.Helpers;
 using Utilities.Interfaces;
 
-namespace Data.Implementations.Security
+namespace Data.Implementations
 {
     public class UserData : RepositoryData<User>, IUserData
     {

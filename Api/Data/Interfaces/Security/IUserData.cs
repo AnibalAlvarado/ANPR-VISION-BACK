@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Interfaces.Security
+namespace Data.Interfaces
 {
     public interface IUserData : IRepositoryData<User>
     {
