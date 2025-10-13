@@ -11,6 +11,7 @@ namespace Business.Interfaces.Parameter
     public interface IRatesBusiness : IRepositoryBusiness<Rates, RatesDto>
     {
         Task<IEnumerable<RatesDto>> GetAllJoinAsync();
+        Task<IEnumerable<RatesDto>> GetByParkingAsync(int parkingId);
 
     }
 }

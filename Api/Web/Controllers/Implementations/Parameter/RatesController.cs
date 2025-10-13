@@ -38,6 +38,30 @@ namespace Web.Controllers.Implementations.Parameter
             }
         }
 
-        
+        [HttpGet("by-parking/{parkingId:int}")]
+        public async Task<ActionResult<IEnumerable<RatesDto>>> GetByParking(int parkingId)
+        {
+            try
+            {
+                var data = await _business.GetByParkingAsync(parkingId);
+
+                if (data == null || !data.Any())
+                {
+                    var responseNull = new ApiResponse<IEnumerable<RatesDto>>(null, false, "No se encontraron tarifas para este parqueadero.", null);
+                    return NotFound(responseNull);
+                }
+
+                var response = new ApiResponse<IEnumerable<RatesDto>>(data, true, "Ok", null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<IEnumerable<RatesDto>>(null, false, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+
+
     }
 }

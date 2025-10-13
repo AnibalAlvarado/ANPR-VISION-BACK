@@ -182,5 +182,32 @@ namespace Data.Implementations.Operational
             return result.OrderBy(x => x.Name).ToList();
         }
 
+        public async Task<IEnumerable<RegisteredVehiclesDto>> GetByParkingAsync(int parkingId)
+        {
+            return await _context.RegisteredVehicles
+                .AsNoTracking()
+                .Where(rv =>
+                    rv.ExitDate == null &&
+                    rv.SlotsId != null &&
+                    rv.Slots.Sectors.Zones.ParkingId == parkingId &&
+                    (rv.IsDeleted == false || rv.IsDeleted == null))
+                .Select(rv => new RegisteredVehiclesDto
+                {
+                    Id = rv.Id,
+                    Asset = rv.Asset,
+                    IsDeleted = rv.IsDeleted,
+                    EntryDate = rv.EntryDate,
+                    ExitDate = rv.ExitDate,
+
+                    VehicleId = rv.VehicleId,
+                    Vehicle = rv.Vehicle != null ? rv.Vehicle.Plate : null,
+
+                    SlotsId = rv.SlotsId,
+                    Slots = rv.Slots != null ? rv.Slots.Name : null
+                })
+                .ToListAsync();
+        }
+
+
     }
 }

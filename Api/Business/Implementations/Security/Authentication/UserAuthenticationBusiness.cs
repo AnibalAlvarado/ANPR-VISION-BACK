@@ -124,5 +124,32 @@ namespace Business.Implementations.Security.Authentication
             // Retornar el resultado final con el token y los datos del usuario
             return response;
         }
+
+        public async Task<bool> ValidateUserParkingAccessAsync(int userId, int parkingId)
+        {
+            var rolesByParking = await _userData.GetUserRolesAsync(userId);
+            return rolesByParking.Any(r => r.ParkingId == parkingId);
+        }
+
+        public async Task<string> GenerateTokenWithParkingAsync(int userId, int parkingId)
+        {
+            var user = await _userData.GetById(userId);
+            if (user == null)
+                throw new Exception("Usuario no encontrado");
+
+            var rolesByParking = await _userData.GetUserRolesAsync(userId);
+            var roleNames = rolesByParking
+                .Where(r => r.ParkingId == parkingId)
+                .Select(r => r.RoleName)
+                .Distinct()
+                .ToList();
+
+            var extraClaims = new Dictionary<string, string>
+    {
+        { "parkingId", parkingId.ToString() }
+    };
+
+            return _jwtService.GenerarToken(user, roleNames, extraClaims);
+        }
     }
 }

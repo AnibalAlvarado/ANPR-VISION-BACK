@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Utilities.Implementations;
 using Utilities.Interfaces;
+using Utilities.Middleware;
 using Web;
 using Web.Config;
 using Web.Extensions;
@@ -85,6 +86,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<ParkingContextMiddleware>();
 
 app.MapControllers();
 app.MapHub<ParkingHub>("/parkingHub");

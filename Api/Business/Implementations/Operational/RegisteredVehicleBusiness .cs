@@ -80,6 +80,33 @@ namespace Business.Implementations.Operational
         public Task<List<OccupancyItemDto>> GetSectorOccupancyByZoneAsync(int zoneId)
         => _data.GetSectorOccupancyByZoneAsync(zoneId);
 
+        public async Task<IEnumerable<RegisteredVehiclesDto>> GetByParkingAsync(int parkingId)
+        {
+            try
+            {
+                if (parkingId <= 0)
+                    throw new ArgumentException("Debe especificar un ID de parqueadero válido.");
+
+                var data = await _data.GetByParkingAsync(parkingId);
+
+                if (!data.Any())
+                    throw new InvalidOperationException("No se encontraron registros para este parqueadero.");
+
+                return data;
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException($"Error: {invEx.Message}", invEx);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al obtener los vehículos por parqueadero.", ex);
+            }
+        }
 
     }
 }

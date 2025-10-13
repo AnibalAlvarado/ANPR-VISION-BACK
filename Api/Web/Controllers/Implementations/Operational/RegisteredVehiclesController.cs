@@ -106,5 +106,30 @@ namespace Web.Controllers.Implementations.Operational
             }
         }
 
+
+        [HttpGet("by-parking/{parkingId:int}")]
+        public async Task<IActionResult> GetByParking([FromRoute] int parkingId)
+        {
+            try
+            {
+                var data = await _business.GetByParkingAsync(parkingId);
+
+                if (data == null || !data.Any())
+                {
+                    var responseNull = new ApiResponse<IEnumerable<RegisteredVehiclesDto>>(null, false, "No se encontraron vehículos para este parqueadero.", null);
+                    return NotFound(responseNull);
+                }
+
+                var response = new ApiResponse<IEnumerable<RegisteredVehiclesDto>>(data, true, "Ok", null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<IEnumerable<RegisteredVehiclesDto>>(null, false, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+
     }
 }

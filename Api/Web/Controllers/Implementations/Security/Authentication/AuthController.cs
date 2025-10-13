@@ -1,6 +1,9 @@
-﻿using Business.Interfaces.Security.Authentication;
+﻿using System.Security.Claims;
+using Business.Interfaces.Security.Authentication;
+using Entity.Dtos.Login;
 using Entity.Dtos.Security;
 using Entity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers.Implementations.Security.Authentication
@@ -43,9 +46,45 @@ namespace Web.Controllers.Implementations.Security.Authentication
             }
         }
 
-        // (Opcional) futuros endpoints:
-        // [HttpPost("refresh")]
-        // [HttpPost("logout")]
-        // [HttpPost("google-login")]
+        [Authorize]
+        [HttpPost("select-parking")]
+        public async Task<ActionResult<ApiResponse<object>>> SelectParking([FromBody] ParkingSelectionDto request)
+        {
+            try
+            {
+                if (request.ParkingId <= 0)
+                    return BadRequest(new ApiResponse<object>(null, false, "ParkingId inválido", null));
+
+                //  Obtener ID del usuario autenticado desde el token actual
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized(new ApiResponse<object>(null, false, "Usuario no autenticado", null));
+
+                int userId = int.Parse(userIdClaim);
+
+                // Validar que el usuario tenga acceso a ese parking
+                bool hasAccess = await _authBusiness.ValidateUserParkingAccessAsync(userId, request.ParkingId);
+                if (!hasAccess)
+                    return Forbid();
+
+                // Generar nuevo token con el parkingId embebido
+                var newToken = await _authBusiness.GenerateTokenWithParkingAsync(userId, request.ParkingId);
+
+                return Ok(new ApiResponse<object>(
+                    new { token = newToken },
+                    true,
+                    "Token actualizado con parking seleccionado",
+                    null
+                ));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al seleccionar parking");
+                return StatusCode(500, new ApiResponse<object>(null, false, "Error interno del servidor", null));
+            }
+        }
+
+
+
     }
 }

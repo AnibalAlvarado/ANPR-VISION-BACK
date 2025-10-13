@@ -25,6 +25,7 @@ using Data.Interfaces.Operational;
 using Data.Interfaces.Parameter;
 using Data.Interfaces.Security;
 using Entity.Context;
+using Entity.Contexts.parking;
 using Entity.Dtos.Security;
 using Entity.Models.Security;
 using Infrastructure.Kafka;
@@ -156,13 +157,14 @@ namespace Web.Extensions
 
             services.AddScoped<IObtainTypeVehicle, ObtainTypeVehicle>();
 
-          
 
 
 
 
 
 
+
+            services.AddScoped<IParkingContext, ParkingContext>();
 
 
             services.AddTransient<Validations>();

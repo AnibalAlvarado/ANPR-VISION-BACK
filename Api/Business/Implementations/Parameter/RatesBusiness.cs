@@ -129,5 +129,32 @@ namespace Business.Implementations.Parameter
             }
         }
 
+        public async Task<IEnumerable<RatesDto>> GetByParkingAsync(int parkingId)
+        {
+            try
+            {
+                if (parkingId <= 0)
+                    throw new ArgumentException("Debe especificar un ID de parqueadero válido.");
+
+                var rates = await _data.GetByParkingAsync(parkingId);
+                if (!rates.Any())
+                    throw new InvalidOperationException("No se encontraron tarifas para este parqueadero.");
+
+                return rates;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                throw new InvalidOperationException($"Error: {invEx.Message}", invEx);
+            }
+            catch (ArgumentException argEx)
+            {
+                throw new ArgumentException($"Error: {argEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al obtener las tarifas por parqueadero.", ex);
+            }
+        }
+
     }
 }

@@ -62,6 +62,38 @@ namespace Data.Implementations.Parameter
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<RatesDto>> GetByParkingAsync(int parkingId)
+        {
+            return await _context.Rates
+                .AsNoTracking()
+                .Where(r => r.ParkingId == parkingId && (r.IsDeleted == false || r.IsDeleted == null))
+                .Select(p => new RatesDto
+                {
+                    Id = p.Id,
+                    Asset = p.Asset,
+                    IsDeleted = p.IsDeleted,
+
+                    Name = p.Name,
+                    Type = p.Type,
+                    Amount = p.Amount,
+                    StarHour = p.StarHour,
+                    EndHour = p.EndHour,
+                    Year = p.Year,
+
+                    ParkingId = p.ParkingId,
+                    Parking = p.Parking != null ? p.Parking.Name : null,
+
+                    RatesTypeId = p.RatesTypeId,
+                    RatesType = p.RatesType != null ? p.RatesType.Name : null,
+
+                    TypeVehicleId = p.TypeVehicleId,
+                    TypeVehicle = p.TypeVehicle != null ? p.TypeVehicle.Name : null
+                })
+                .ToListAsync();
+        }
+
+
+
 
     }
 }

@@ -32,6 +32,7 @@ namespace Utilities.Implementations
             var expirationDate = DateTime.UtcNow.AddMinutes(expirationMinutes);
             var inactivityMinutes = _configuration["JWT:IdleTimeoutInMinutes"];
 
+
             var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),

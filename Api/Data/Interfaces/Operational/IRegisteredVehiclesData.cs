@@ -19,5 +19,7 @@ namespace Data.Interfaces.Operational
         Task<int> GetTotalCurrentlyParkedAsync();
         Task<VehicleTypeDistributionDto> GetVehicleTypeDistributionGlobalAsync(bool includeZeros = true);
         Task<List<OccupancyItemDto>> GetSectorOccupancyByZoneAsync(int zoneId);
+        Task<IEnumerable<RegisteredVehiclesDto>> GetByParkingAsync(int parkingId);
+
     }
 }
