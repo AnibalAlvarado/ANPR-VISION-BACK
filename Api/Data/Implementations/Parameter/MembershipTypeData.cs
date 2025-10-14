@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Parameter;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Models.Parameter;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -15,8 +16,8 @@ namespace Data.Implementations.Parameter
 {
     public class MemberShipTypeData : RepositoryData<MemberShipType>, IMemberShipTypeData
     {
-        public MemberShipTypeData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public MemberShipTypeData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
 
         }

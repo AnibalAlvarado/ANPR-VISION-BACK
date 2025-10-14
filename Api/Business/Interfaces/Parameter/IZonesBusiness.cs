@@ -11,6 +11,6 @@ namespace Business.Interfaces.Parameter
     public interface IZonesBusiness : IRepositoryBusiness<Zones, ZonesDto>
     {
         Task<IEnumerable<ZonesDto>> GetAllJoinAsync();
-        Task<IEnumerable<ZonesDto>> GetAllByParkingId(int parkingId);
+        //Task<IEnumerable<ZonesDto>> GetAllByParkingId(int parkingId);
     }
 }

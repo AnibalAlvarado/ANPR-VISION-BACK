@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos.Access;
 using Entity.Dtos.Security;
 using Entity.Models.Parameter;
@@ -23,8 +24,8 @@ namespace Data.Implementations
     {
         private readonly ILogger<UserData> _logger;
         private readonly IAuditService _auditService;
-        public UserData(ApplicationDbContext context, IConfiguration configuration,ILogger<UserData> logger, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public UserData(ApplicationDbContext context, IConfiguration configuration,ILogger<UserData> logger, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
             _logger = logger;
             _auditService = auditService;

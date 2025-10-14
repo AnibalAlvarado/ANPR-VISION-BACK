@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Parameter;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos.Dashboard;
 using Entity.Dtos.Parameter;
 using Entity.Models.Parameter;
@@ -19,8 +20,8 @@ namespace Data.Implementations.Parameter
 {
     public class SlotsData : RepositoryData<Slots>, ISlotsData
     {
-        public SlotsData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public SlotsData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
 
         }

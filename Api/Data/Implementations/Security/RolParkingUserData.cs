@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Security;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,8 +22,8 @@ namespace Data.Implementations.Security
     {
         private readonly ILogger<RolParkingUserData> _logger;
 
-        public RolParkingUserData(ApplicationDbContext context, IConfiguration configuration,  ILogger<RolParkingUserData> logger, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public RolParkingUserData(ApplicationDbContext context, IConfiguration configuration,  ILogger<RolParkingUserData> logger, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
             _logger = logger;
         }

@@ -16,7 +16,7 @@ namespace Entity.Contexts.parking
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public int ParkingId
+        public int? ParkingId
         {
             get
             {

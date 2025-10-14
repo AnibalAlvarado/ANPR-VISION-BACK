@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Operational;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos.Dashboard;
 using Entity.Dtos.Operational;
 using Entity.Models.Operational;
@@ -19,8 +20,8 @@ namespace Data.Implementations.Operational
 {
     public class RegisteredVehicleData : RepositoryData<RegisteredVehicles>, IRegisteredVehiclesData
     {
-        public RegisteredVehicleData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public RegisteredVehicleData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
 
         }

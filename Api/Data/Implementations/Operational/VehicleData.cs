@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Operational;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos.Operational;
 using Entity.Models.Operational;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +23,8 @@ namespace Data.Implementations.Operational
     {
         private readonly ILogger<VehicleData> _logger;
 
-        public VehicleData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, ILogger<VehicleData> logger)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public VehicleData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, ILogger<VehicleData> logger, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
             _logger = logger;
         }

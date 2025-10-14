@@ -19,16 +19,16 @@ namespace Utilities.Middleware
 
         public async Task InvokeAsync(HttpContext context, IParkingContext parkingContext)
         {
-            if (context.Request.Headers.TryGetValue("X-Parking-Id", out var parkingIdHeader))
+            var user = context.User;
+            if (user?.Identity?.IsAuthenticated == true)
             {
-                if (int.TryParse(parkingIdHeader, out var parkingId))
-                {
-                    (parkingContext as ParkingContext)?.SetParkingId(parkingId);
-                }
+               
             }
 
             await _next(context);
         }
     }
+
+
 
 }

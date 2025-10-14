@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Security;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +18,8 @@ namespace Data.Implementations.Security
 {
     public class RolData : RepositoryData<Rol>, IRolData
     {
-        public RolData(ApplicationDbContext context, IConfiguration configuration,IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration,  auditService, currentUserService, mapper)
+        public RolData(ApplicationDbContext context, IConfiguration configuration,IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration,  auditService, currentUserService, mapper, parkingContext)
         {
 
         }

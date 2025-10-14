@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Parameter;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos.Parameter;
 using Entity.Models.Parameter;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,8 @@ namespace Data.Implementations.Parameter
 {
     public class SectorsData : RepositoryData<Sectors>, ISectorsData
     {
-        public SectorsData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public SectorsData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
 
         }

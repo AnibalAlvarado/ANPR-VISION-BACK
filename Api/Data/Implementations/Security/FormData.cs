@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Security;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos;
 using Entity.Models.Security;
 using Microsoft.Extensions.Configuration;
@@ -16,8 +17,8 @@ namespace Data.Implementations.Security
 {
     public class FormData : RepositoryData<Form>, IFormData
     {
-        public FormData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public FormData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
 
         }

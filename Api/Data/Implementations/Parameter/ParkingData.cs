@@ -2,6 +2,7 @@
 using AutoMapper;
 using Data.Interfaces.Parameter;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos.Parameter;
 using Entity.Models.Parameter;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +17,8 @@ namespace Data.Implementations.Parameter
     {
         private readonly ILogger<ParkingData> _logger;
 
-        public ParkingData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, ILogger<ParkingData> logger)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public ParkingData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, ILogger<ParkingData> logger, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
             _logger = logger;
 

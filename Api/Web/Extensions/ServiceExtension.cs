@@ -167,6 +167,7 @@ namespace Web.Extensions
             services.AddScoped<IParkingContext, ParkingContext>();
 
 
+
             services.AddTransient<Validations>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IPasswordReset, PasswordResett>();

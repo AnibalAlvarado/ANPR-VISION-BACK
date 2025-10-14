@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Operational;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Dtos.Operational;
 using Entity.Models.Operational;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,8 @@ namespace Data.Implementations.Operational
 {
     public class BlackListData : RepositoryData<BlackList>, IBlackListData
     {
-        public BlackListData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration, auditService, currentUserService, mapper)
+        public BlackListData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
         {
 
         }

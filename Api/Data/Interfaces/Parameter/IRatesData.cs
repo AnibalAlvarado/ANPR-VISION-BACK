@@ -12,7 +12,7 @@ namespace Data.Interfaces.Parameter
     {
         Task<IEnumerable<RatesDto>> GetAllJoinAsync();
 
-        Task<IEnumerable<RatesDto>> GetByParkingAsync(int parkingId);
+        //Task<IEnumerable<RatesDto>> GetByParkingAsync(int parkingId);
 
     }
 }

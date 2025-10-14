@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Interfaces.Security;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.DtoSpecific.RolFormPermission;
 using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,8 @@ namespace Data.Implementations.Security
 {
     public class RolFormPermissionData : RepositoryData<RolFormPermission>, IRolFormPermissionData
     {
-        public RolFormPermissionData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper)
-            : base(context, configuration,auditService, currentUserService, mapper)
+        public RolFormPermissionData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext)
+            : base(context, configuration,auditService, currentUserService, mapper, parkingContext)
         {
 
         }

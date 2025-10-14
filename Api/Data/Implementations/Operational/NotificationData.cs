@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Data.Interfaces.Operational;
 using Entity.Contexts;
+using Entity.Contexts.parking;
 using Entity.Models.Operational;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +14,7 @@ namespace Data.Implementations.Operational;
 public class NotificationData : RepositoryData<Notification>, INotificationData
 {
 
-    public NotificationData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper) : base(context, configuration, auditService, currentUserService, mapper)
+    public NotificationData(ApplicationDbContext context, IConfiguration configuration, IAuditService auditService, ICurrentUserService currentUserService, IMapper mapper, IParkingContext parkingContext) : base(context, configuration, auditService, currentUserService, mapper, parkingContext)
     {
 
     }
