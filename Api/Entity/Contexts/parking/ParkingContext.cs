@@ -22,7 +22,12 @@ namespace Entity.Contexts.parking
             {
                 var user = _httpContextAccessor.HttpContext?.User;
                 var claim = user?.FindFirst("parkingId");
-                return claim != null ? int.Parse(claim.Value) : 0;
+
+                // Si el claim no existe o no es un número válido, devolvemos null
+                if (claim == null || !int.TryParse(claim.Value, out var id))
+                    return null;
+
+                return id;
             }
         }
     }
