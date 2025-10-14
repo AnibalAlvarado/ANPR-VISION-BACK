@@ -8,7 +8,7 @@ namespace Utilities.Interfaces
 {
     public interface IPasswordHasher
     {
-        bool VerifyHashedPassword(string hashedPassword, string providedPassword);
+        //bool VerifyHashedPassword(string hashedPassword, string providedPassword);
         string HashPassword(string password);
         bool VerifyPassword(string hashedPassword, string providedPassword);
     }

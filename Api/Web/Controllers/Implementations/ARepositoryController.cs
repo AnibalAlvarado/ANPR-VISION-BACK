@@ -5,7 +5,7 @@ using Web.Controllers.Interfaces;
 
 namespace Web.Controllers.Implementations
 {
-    public abstract class ARepositoryController<T,D> : ControllerBase, IRepositoryController<T,D> where T : BaseModel where D : BaseDto
+    public abstract class ARepositoryController<T, D> : ControllerBase, IRepositoryController<T, D> where T : BaseModel where D : BaseDto
     {
 
         public abstract Task<ActionResult<IEnumerable<D>>> GetAll([FromQuery] Dictionary<string, string?> filters);
@@ -16,5 +16,8 @@ namespace Web.Controllers.Implementations
         public abstract Task<ActionResult> Delete(int id);
         public abstract Task<IActionResult> GetDynamicAsync();
         public abstract Task<ActionResult<PagedResult<D>>> GetPaged([FromQuery] QueryParameters query);
+
+        public abstract Task<bool> ExistsAsynca(string field, string value, int? currentId);
+
     }
 }

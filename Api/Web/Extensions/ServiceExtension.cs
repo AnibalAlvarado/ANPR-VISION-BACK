@@ -1,10 +1,34 @@
 ﻿using Business.Implementations;
+using Business.Implementations.Dashboard;
+using Business.Implementations.Detection;
+using Business.Implementations.Operational;
+using Business.Implementations.Parameter;
+using Business.Implementations.Security;
+using Business.Implementations.Security.Authentication;
+using Business.Implementations.Security.PasswordRecovery;
 using Business.Interfaces;
+using Business.Interfaces.Dashboard;
+using Business.Interfaces.Detection;
+using Business.Interfaces.Operational;
+using Business.Interfaces.Parameter;
+using Business.Interfaces.Security;
+using Business.Interfaces.Security.Authentication;
+using Business.Interfaces.Security.PasswordRecovery;
 using Data.Implementations;
+using Data.Implementations.Dashboard;
+using Data.Implementations.Operational;
+using Data.Implementations.Parameter;
+using Data.Implementations.Security;
 using Data.Interfaces;
+using Data.Interfaces.Dashboard;
+using Data.Interfaces.Operational;
+using Data.Interfaces.Parameter;
+using Data.Interfaces.Security;
 using Entity.Context;
-using Entity.Dtos;
-using Entity.Models;
+using Entity.Contexts.parking;
+using Entity.Dtos.Security;
+using Entity.Models.Security;
+using Infrastructure.Kafka;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 using Utilities.Audit.Services;
@@ -15,6 +39,7 @@ using Utilities.Helpers;
 using Utilities.Helpers.Validators;
 using Utilities.Implementations;
 using Utilities.Interfaces;
+using Web.Services;
 
 namespace Web.Extensions
 {
@@ -22,6 +47,8 @@ namespace Web.Extensions
     {
         public static IServiceCollection AddAppServices(this IServiceCollection services)
         {
+            // 🔹 Registrar el BackgroundService
+            services.AddHostedService<KafkaConsumerService>();
             //segundo plano
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddHostedService<QueuedHostedService>();
@@ -43,7 +70,7 @@ namespace Web.Extensions
             services.AddScoped<IFormData, FormData>();
 
             services.AddScoped<IFormModuleBusiness, FormModuleBusiness>();
-            services.AddScoped<IFormModuleData, FormModuleData>();
+            services.AddScoped<IPersonParkignData, FormModuleData>();
 
             services.AddScoped<IModuleBusiness, ModuleBusiness>();
             services.AddScoped<IModuleData, ModuleData>();
@@ -60,14 +87,17 @@ namespace Web.Extensions
             services.AddScoped<IRolFormPermissionBusiness, RolFormPermissionBusiness>();
             services.AddScoped<IRolFormPermissionData, RolFormPermissionData>();
 
-            services.AddScoped<IRolUserBusiness, RolUserBusiness>();
-            services.AddScoped<IRolUserData, RolUserData>();
+            services.AddScoped<IRolParkingUserBusiness, RolParkingUserBusiness>();
+            services.AddScoped<IRolParkingUserData, RolParkingUserData>();
 
             services.AddScoped<IUserBusiness, UserBusiness>();
             services.AddScoped<IUserData, UserData>();
 
             services.AddScoped<IBlackListBusiness, BlackListBusiness>();
             services.AddScoped<IBlackListData, BlackListData>();
+
+            services.AddScoped<ICamaraBusiness, CamaraBusiness>();
+            services.AddScoped<ICamaraData, CameraData>();
 
             services.AddScoped<IClientBusiness, ClientBusiness>();
             services.AddScoped<IClientData, ClientData>();
@@ -108,11 +138,39 @@ namespace Web.Extensions
             services.AddScoped<IZonesBusiness, ZonesBusiness>();
             services.AddScoped<IZonesData, ZonesData>();
 
-          
+            // Program.cs o Startup.cs (ConfigureServices)
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IDashboardBusiness, DashboardBusiness>();
+
+            services.AddScoped<INotificationBusiness, NotificationBusiness>();
+            services.AddScoped<INotificationData, NotificationData>();
+
+            services.AddScoped<IVehicleDetectionManagerBusiness, VehicleDetectionManagerBusiness>();
+            services.AddScoped<INotificationDispatcher, SignalRNotificationDispatcher>();
+            services.AddScoped<IUserAuthenticationBusiness, UserAuthenticationBusiness>();
+
+            services.AddScoped<IPasswordRecoveryBusiness, PasswordRecoveryBusiness>();
+
+
+
+
+
+            services.AddScoped<IObtainTypeVehicle, ObtainTypeVehicle>();
+
+
+
+
+
+
+
+
+            services.AddScoped<IParkingContext, ParkingContext>();
+
 
 
             services.AddTransient<Validations>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IPasswordReset, PasswordResett>();
             return services;
         }
     }

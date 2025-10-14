@@ -9,21 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\Implementations\Operational\**" />
-    <Compile Remove="Controllers\Implementations\Parameter\**" />
-    <Compile Remove="Controllers\Implementations\Security\**" />
-    <Content Remove="Controllers\Implementations\Operational\**" />
-    <Content Remove="Controllers\Implementations\Parameter\**" />
-    <Content Remove="Controllers\Implementations\Security\**" />
-    <EmbeddedResource Remove="Controllers\Implementations\Operational\**" />
-    <EmbeddedResource Remove="Controllers\Implementations\Parameter\**" />
-    <EmbeddedResource Remove="Controllers\Implementations\Security\**" />
-    <None Remove="Controllers\Implementations\Operational\**" />
-    <None Remove="Controllers\Implementations\Parameter\**" />
-    <None Remove="Controllers\Implementations\Security\**" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="2.11.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
@@ -44,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Business\Business.csproj" />
     <ProjectReference Include="..\Entity\Entity.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 

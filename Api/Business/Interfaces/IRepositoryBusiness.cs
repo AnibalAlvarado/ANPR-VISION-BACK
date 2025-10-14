@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
-    public interface IRepositoryBusiness<T,D> where T : BaseModel where D : BaseDto
+    public interface IRepositoryBusiness<T, D> where T : BaseModel where D : BaseDto
     {
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
         /// <summary>
@@ -57,5 +57,8 @@ namespace Business.Interfaces
         Task<List<ExpandoObject>> GetAllDynamicAsync();
 
         Task<PagedResult<D>> GetAllPaginatedAsync(QueryParameters query, Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IQueryable<T>>? include = null, CancellationToken cancellationToken = default);
+
+        Task<bool> ExistsAsynca(string field, string value, int? currentId);
     }
+
 }

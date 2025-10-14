@@ -1,4 +1,4 @@
-﻿using Entity.Models;
+﻿using Entity.Models.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +10,6 @@ namespace Utilities.Interfaces
     public interface IJwtAuthenticationService
     {
         string GenerarToken(User usuario, List<string> roles);
+        string GenerarToken(User usuario, List<string> roles, IDictionary<string, string>? extraClaims); // NUEVO
     }
 }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Utilities.Exceptions;
 using static Dapper.SqlMapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.EntityFrameworkCore; 
 
 namespace Business.Implementations
 {
@@ -140,6 +141,39 @@ namespace Business.Implementations
             }
         }
 
+        public override async Task<bool> ExistsAsynca(string field, string value, int? currentId)
+        {
+           
+            var param = Expression.Parameter(typeof(T), "e");
+
+  
+            var efProperty = Expression.Call(
+                typeof(EF),
+                nameof(EF.Property),
+                new[] { typeof(string) },
+                param,
+                Expression.Constant(field)
+            );
+
+    
+            var equals = Expression.Equal(
+                efProperty,
+                Expression.Constant(value, typeof(string))
+            );
+
+            Expression body = equals;
+
+            if (currentId.HasValue)
+            {
+                var idProp = Expression.Property(param, nameof(BaseModel.Id));
+                var notSameId = Expression.NotEqual(idProp, Expression.Constant(currentId.Value));
+                body = Expression.AndAlso(body, notSameId);
+            }
+
+            var predicate = Expression.Lambda<Func<T, bool>>(body, param);
+
+            return await _data.ExistsAsync(predicate);
+        }
 
     }
 }

@@ -1,5 +1,8 @@
 ﻿using Dapper;
-using Entity.Models;
+using Entity.Contexts.Interceptors;
+using Entity.Models.Operational;
+using Entity.Models.Parameter;
+using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +12,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace Entity.Contexts
 {
@@ -48,7 +53,7 @@ namespace Entity.Contexts
         public DbSet<Rol> Rol { get; set; }
         public DbSet<Permission> Permissions { get; set; }
 
-        public DbSet<RolUser> RolUser { get; set; }
+        public DbSet<RolParkingUser> RolParkingUsers { get; set; }
         public DbSet<RolFormPermission> RolFormPermission { get; set; }
         
 
@@ -68,15 +73,30 @@ namespace Entity.Contexts
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Zones> Zones { get; set; }
 
+        public DbSet<Camera> Cameras { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<PasswordReset> PasswordResets { get; set; }
+
+        //public DbSet<PersonParking> PersonParking { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // No es necesario configurar el proveedor aquí, ya que se hace a través de la fábrica
             optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.AddInterceptors(new UtcTimeZoneInterceptor());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            //modelBuilder.Entity<PasswordReset>(e =>
+            //{
+            //    e.Property(x => x.CreatedAt)
+            //     .HasDefaultValueSql("GETUTCDATE()"); // SQL Server (si usas PG sería now() at time zone 'utc')
+            //});
+
 
             // Llamada al seeding de datos iniciales
             DataInitial.Data(modelBuilder);
