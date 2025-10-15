@@ -62,6 +62,43 @@ namespace Data.Implementations
                 .FirstOrDefaultAsync(rv => rv.SlotsId == slotId && rv.ExitDate == null);
         }
 
+        public async Task<IEnumerable<VehicleDto>> GetByClientIdAsync(int clientId)
+        {
+            try
+            {
+                return await _context.Vehicles
+                    .AsNoTracking()
+                    .Where(v => v.ClientId == clientId && v.Asset == true)
+                    .Select(v => new VehicleDto
+                    {
+                        // --- BaseDto ---
+                        Id = v.Id,
+                        Asset = v.Asset,
+                        IsDeleted = v.IsDeleted,
+
+                        // --- Campos propios ---
+                        Plate = v.Plate,
+                        Color = v.Color,
+
+                        // --- Relaciones ---
+                        TypeVehicleId = v.TypeVehicleId,
+                        TypeVehicle = v.TypeVehicle != null
+                            ? v.TypeVehicle.Name
+                            : null,
+
+                        ClientId = v.ClientId,
+                        Client = v.Client != null
+                            ? v.Client.Name
+                            : null
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener los vehículos del cliente con ID {ClientId}", clientId);
+                throw;
+            }
+        }
 
 
 

@@ -73,13 +73,13 @@ namespace Data.Implementations
         }
 
 
-        public async Task<User?> GetUserByUsernameAsync(string username)
+       public async Task<User?> GetUserByUsernameAsync(string username)
         {
             try
             {
-                //await AuditAsync("GetUserByUsernameAsync");
-                return await _context.Set<User>()
-                    .FirstOrDefaultAsync(u => u.Username == username && u.Asset);
+                return await _context.Users
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Username == username && u.Asset == true);
             }
             catch (Exception ex)
             {
@@ -93,8 +93,9 @@ namespace Data.Implementations
             try
             {
                 //await AuditAsync("GetUserByEmailAsync");
-                return await _context.Set<User>()
-                    .FirstOrDefaultAsync(u => u.Email == email && u.Asset);
+                  return await _context.Users
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Email == email && u.Asset == true);
             }
             catch (Exception ex)
             {

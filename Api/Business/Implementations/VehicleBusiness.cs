@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utilities.Exceptions;
 using Utilities.Helpers.Validators;
-
+using Microsoft.Extensions.Logging;
 namespace Business.Implementations
 {
 
@@ -22,8 +22,9 @@ namespace Business.Implementations
         private readonly IRegisteredVehiclesData _registeredVehicleData; // Data para RegisteredVehicles
         private readonly ISectorsData _sectorData; // Data para sectores y slots
         private readonly ISlotsData _slotsData;
+         private readonly ILogger<VehicleBusiness> _logger;
 
-        public VehicleBusiness(IVehicleData data, IMapper mapper, IRegisteredVehiclesData registeredVehicleData, ISectorsData sectorData, ISlotsData slotsData)
+        public VehicleBusiness(IVehicleData data, IMapper mapper, IRegisteredVehiclesData registeredVehicleData, ISectorsData sectorData, ISlotsData slotsData, ILogger<VehicleBusiness> logger)
             : base(data, mapper)
         {
             _data = data;
@@ -31,6 +32,7 @@ namespace Business.Implementations
             _registeredVehicleData = registeredVehicleData;
             _sectorData = sectorData;
             _slotsData = slotsData;
+           _logger = logger;
         }
         public async Task<IEnumerable<VehicleDto>> GetAllJoinAsync()
         {
@@ -170,6 +172,18 @@ namespace Business.Implementations
             catch (Exception ex)
             {
                 throw new BusinessException("Error al registrar el vehículo.", ex);
+            }
+        }
+        public async Task<IEnumerable<VehicleDto>> GetByClientIdAsync(int clientId)
+        {
+            try
+            {
+                return await _data.GetByClientIdAsync(clientId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en Business al obtener vehículos del cliente con ID {ClientId}", clientId);
+                throw;
             }
         }
 

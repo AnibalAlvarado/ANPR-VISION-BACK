@@ -24,6 +24,8 @@ namespace Web.Controllers.Implementations
         }
 
         [HttpPost("login")]
+        // [HttpPost]
+        // [Route("api/user/login")]
         public async Task<ActionResult<ApiResponse<UserResponseDto>>> Login([FromBody] LoginRequestDto loginRequest)
         {
             try

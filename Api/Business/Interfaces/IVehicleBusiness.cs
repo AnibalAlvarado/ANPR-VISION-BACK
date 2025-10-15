@@ -19,6 +19,7 @@ namespace Business.Interfaces
         Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId);
 
         Task<RegisteredVehiclesDto?> GetActiveVehicleBySlotAsync(int slotId);
+        Task<IEnumerable<VehicleDto>> GetByClientIdAsync(int clientId);
 
 
     }

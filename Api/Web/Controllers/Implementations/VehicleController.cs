@@ -5,7 +5,7 @@ using Entity.Dtos;
 using Entity.Models;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-
+using Microsoft.Extensions.Logging;
 namespace Web.Controllers.Implementations
 {
     [ApiController]
@@ -14,12 +14,13 @@ namespace Web.Controllers.Implementations
     {
         private readonly IVehicleBusiness _business;
         private readonly IMapper _mapper;
-
-        public VehicleController(IVehicleBusiness business, IMapper mapper)
+        private readonly ILogger<VehicleController> _logger;
+        public VehicleController(IVehicleBusiness business, IMapper mapper,          ILogger<VehicleController> logger)
             : base(business)
         {
             _business = business;
             _mapper = mapper;
+               _logger = logger;
         }
 
         [HttpPost]
@@ -80,6 +81,25 @@ namespace Web.Controllers.Implementations
                 return NotFound("No hay un vehículo activo en este slot.");
 
             return Ok(result);
+        }
+        [HttpGet("byClient/{clientId}")]
+        public async Task<IActionResult> GetByClientId(int clientId)
+        {
+            try
+            {
+                var data = await _business.GetByClientIdAsync(clientId);
+
+                if (data == null || !data.Any())
+                    return NotFound(new ApiResponse<IEnumerable<VehicleDto>>(null, false, "No se encontraron vehículos para este cliente.", null));
+
+                return Ok(new ApiResponse<IEnumerable<VehicleDto>>(data, true, "Vehículos obtenidos correctamente.", null));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en el controlador al obtener vehículos del cliente {ClientId}", clientId);
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new ApiResponse<IEnumerable<VehicleDto>>(null, false, "Error interno del servidor.", ex.Message));
+            }
         }
 
 
