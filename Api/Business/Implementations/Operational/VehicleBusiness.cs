@@ -63,19 +63,19 @@ namespace Business.Implementations.Operational
         public async Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId)
         {
             // 1Obtener el vehículo existente
-            var vehicle = await _data.GetById(vehicleId);
+            Vehicle vehicle = await _data.GetById(vehicleId);
             if (vehicle == null)
                 throw new Exception("Vehículo no encontrado.");
 
             //  Obtener sectores compatibles con el tipo de vehículo
-            var validSectors = await _sectorData.GetSectorsByVehicleTypeAsync(vehicle.TypeVehicleId);
+            List<Sectors> validSectors = await _sectorData.GetSectorsByVehicleTypeAsync(vehicle.TypeVehicleId);
 
             //  Filtrar slots disponibles
-            var availableSlots = new List<Slots>();
+            List<Slots> availableSlots = new List<Slots>();
 
-            foreach (var sector in validSectors)
+            foreach (Sectors sector in validSectors)
             {
-                foreach (var slot in sector.Slots)
+                foreach (Slots slot in sector.Slots)
                 {
                     bool isOccupied = await _registeredVehicleData.AnyActiveRegisteredVehicleInSlotAsync(slot.Id);
                     if (!isOccupied && slot.IsAvailable) // Validamos IsAvailable
@@ -92,8 +92,8 @@ namespace Business.Implementations.Operational
             }
 
             //  Seleccionar un slot aleatorio
-            var random = new Random();
-            var assignedSlot = availableSlots[random.Next(availableSlots.Count)];
+            Random random = new();
+            Slots assignedSlot = availableSlots[random.Next(availableSlots.Count)];
 
             // 6. Marcar el slot como ocupado
             assignedSlot.IsAvailable = false;
