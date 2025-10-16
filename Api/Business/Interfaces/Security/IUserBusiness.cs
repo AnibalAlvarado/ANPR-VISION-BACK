@@ -17,6 +17,7 @@ namespace Business.Interfaces.Security
         Task<List<UserRoleByParkingDto>> GetUserRolesAsync(int userId);
 
         Task<UserAccessDto> GetUserAccessAsync(int userId, bool includePermissions = true, bool includeForms = true);
+        Task<IEnumerable<UserDto>> GetAllByParkingAsync();
 
 
 

@@ -23,6 +23,28 @@ namespace Data.Implementations.Security
         {
 
         }
+
+        public async Task<IEnumerable<Rol>> GetAllByParkingAsync()
+        {
+            var parkingId = _parkingContext.ParkingId; // 👈 del contexto actual
+
+            var roles = await (
+                from r in _context.Rol.AsNoTracking()
+                join rpu in _context.RolParkingUsers on r.Id equals rpu.RolId
+                where rpu.ParkingId == parkingId && (r.IsDeleted == false || r.IsDeleted == null)
+                select new Rol
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+                    Description = r.Description,
+                    Asset = r.Asset,
+                    IsDeleted = r.IsDeleted
+                }
+            ).Distinct().ToListAsync();
+
+            return roles;
+        }
+
         public async Task<Rol?> GetByNameAsync(string name)
         {
             try
@@ -58,18 +80,6 @@ namespace Data.Implementations.Security
 
             await _context.SaveChangesAsync();
         }
-        //public async Task<Rol> GetByNameAsync(string name)
-        //{
-
-        //    try
-        //    {
-        //        return await _context.Set<Rol>()
-        //                .FirstOrDefaultAsync(r => r.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new DataException("Error al obtener el rol por nombre", ex);
-        //    }
-        //}
+      
     }
 }
