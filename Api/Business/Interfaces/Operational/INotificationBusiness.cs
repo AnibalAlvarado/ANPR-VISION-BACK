@@ -9,4 +9,5 @@ public interface INotificationBusiness : IRepositoryBusiness<Notification, Notif
     Task<List<NotificationDto>> GetByParkingAsync(int parkingId, bool onlyUnread = false);
     Task MarkAsReadAsync(int id);
     Task<NotificationDto> CreateAndNotifyAsync(NotificationDto dto);
+    Task<NotificationDto> EnqueueAndNotifyAsync(NotificationDto dto);
 }

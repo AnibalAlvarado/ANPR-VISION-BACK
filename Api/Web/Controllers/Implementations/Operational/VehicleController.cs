@@ -15,13 +15,15 @@ namespace Web.Controllers.Implementations.Operational
     public class VehicleController : RepositoryController<Vehicle, VehicleDto>
     {
         private readonly IVehicleBusiness _business;
+        private readonly IRegisteredVehicleBusiness _registeredVehicleBusiness;
         private readonly IMapper _mapper;
 
-        public VehicleController(IVehicleBusiness business, IMapper mapper)
+        public VehicleController(IVehicleBusiness business, IMapper mapper, IRegisteredVehicleBusiness registeredVehicleBusiness)
             : base(business)
         {
             _business = business;
             _mapper = mapper;
+            _registeredVehicleBusiness = registeredVehicleBusiness;
         }
 
         [HttpPost]
@@ -33,7 +35,7 @@ namespace Web.Controllers.Implementations.Operational
                 VehicleDto dtoSaved = await _business.Save(dto);
 
                 // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
-                RegisteredVehiclesDto registeredVehicle = await _business.RegisterVehicleWithSlotAsync(dtoSaved.Id);
+                RegisteredVehiclesDto registeredVehicle = await _registeredVehicleBusiness.RegisterVehicleWithSlotAsync(dtoSaved.Id, dto.ParkingId ?? 0);
 
                 var response = new
                 {

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Business.Interfaces.Operational;
 using Business.Interfaces.Parameter;
 using Data.Interfaces;
+using Data.Interfaces.Operational;
 using Data.Interfaces.Parameter;
 using Entity.Dtos.Dashboard;
 using Entity.Dtos.Parameter;
@@ -20,14 +22,16 @@ namespace Business.Implementations.Parameter
     {
         private readonly ISlotsData _data;
         private readonly IMapper _mapper;
-        private readonly IRepositoryData<Sectors> _sectors;
+        private readonly ISectorsBusiness _sectorsBusiness;
+        private readonly IRegisteredVehiclesData _registeredVehicleData;
 
-        public SlotsBusiness(ISlotsData data, IMapper mapper, IRepositoryData<Sectors> sectors)
+        public SlotsBusiness(ISlotsData data, IMapper mapper, ISectorsBusiness sectors, IRegisteredVehiclesData registeredVehicle)
             : base(data, mapper)
         {
             _data = data;
             _mapper = mapper;
-            _sectors = sectors;
+            _sectorsBusiness = sectors;
+            _registeredVehicleData = registeredVehicle;
         }
 
 
@@ -85,7 +89,7 @@ namespace Business.Implementations.Parameter
                     throw new ArgumentException("El campo SectorsId debe ser mayor a 0.");
 
                 // 1) El sector debe existir y NO estar eliminado (null-safe)
-                var sector = await _sectors.GetById(dto.SectorsId);
+                var sector = await _sectorsBusiness.GetById(dto.SectorsId);
                 if (sector == null)
                     throw new InvalidOperationException($"El sector con Id {dto.SectorsId} no existe.");
 
@@ -179,7 +183,7 @@ namespace Business.Implementations.Parameter
                 if (actual == null)
                     throw new InvalidOperationException($"El slot con Id {dto.Id} no existe.");
 
-                var sectorDestino = await _sectors.GetById(dto.SectorsId);
+                var sectorDestino = await _sectorsBusiness.GetById(dto.SectorsId);
                 if (sectorDestino == null)
                     throw new InvalidOperationException($"El sector con Id {dto.SectorsId} no existe.");
 
@@ -286,9 +290,28 @@ namespace Business.Implementations.Parameter
         }
 
 
+        public async Task<Slots> AssignAvailableSlotAsync(int typeVehicleId, int parkingId)
+        {
+            List<Sectors> validSectors = await _sectorsBusiness.GetSectorsByVehicleTypeAsync(typeVehicleId, parkingId);
 
+            List<Slots> availableSlots = new List<Slots>();
 
+            foreach (Sectors sector in validSectors)
+            {
+                foreach (Slots slot in sector.Slots)
+                {
+                    bool occupied = await _registeredVehicleData.AnyActiveRegisteredVehicleInSlotAsync(slot.Id);
+                    if (!occupied && slot.IsAvailable)
+                        availableSlots.Add(slot);
+                }
+            }
 
+            if (availableSlots.Count == 0)
+                throw new BusinessException("No hay slots disponibles para este tipo de vehículo.");
+
+            Slots assignedSlot = availableSlots[new Random().Next(availableSlots.Count)];
+            return assignedSlot;
+        }
 
     }
 }
