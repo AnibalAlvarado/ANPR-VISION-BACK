@@ -26,29 +26,65 @@ namespace Data.Implementations.Parameter
 
         }
 
+        //public async Task<IEnumerable<SlotsDto>> GetAllJoinAsync()
+        //{
+        //    return await _context.Slots
+        //        .AsNoTracking()
+        //        .Select(p => new SlotsDto
+        //        {
+        //            // --- BaseDto ---
+        //            Id = p.Id,                      // int? en BaseDto
+        //            Asset = p.Asset,                 // bool? en BaseDto
+        //            IsDeleted = p.IsDeleted,         // bool en BaseDto
+
+        //            // --- GenericDto ---
+        //            Name = p.Name,                   // string en GenericDto
+
+        //            // --- SectorsDto ---
+        //            IsAvailable = p.IsAvailable,
+        //            SectorsId = p.SectorsId,
+        //            Sectors = p.Sectors != null
+        //                ? p.Sectors.Name
+        //                : null
+        //        })
+        //        .ToListAsync();
+        //}
+
         public async Task<IEnumerable<SlotsDto>> GetAllJoinAsync()
         {
-            return await _context.Slots
+            var parkingId = _parkingContext.ParkingId;
+
+            var query = _context.Slots
                 .AsNoTracking()
+                .Include(s => s.Sectors)
+                    .ThenInclude(se => se.Zones)
+                .Where(s => s.IsDeleted == false || s.IsDeleted == null);
+
+            // 👇 Solo aplica el filtro si hay Parking en el contexto
+            if (parkingId.HasValue)
+            {
+                query = query.Where(s => s.Sectors.Zones.ParkingId == parkingId.Value);
+            }
+
+            return await query
                 .Select(p => new SlotsDto
                 {
                     // --- BaseDto ---
-                    Id = p.Id,                      // int? en BaseDto
-                    Asset = p.Asset,                 // bool? en BaseDto
-                    IsDeleted = p.IsDeleted,         // bool en BaseDto
+                    Id = p.Id,
+                    Asset = p.Asset,
+                    IsDeleted = p.IsDeleted,
 
                     // --- GenericDto ---
-                    Name = p.Name,                   // string en GenericDto
+                    Name = p.Name,
 
-                    // --- SectorsDto ---
+                    // --- SlotsDto ---
                     IsAvailable = p.IsAvailable,
                     SectorsId = p.SectorsId,
-                    Sectors = p.Sectors != null
-                        ? p.Sectors.Name
-                        : null
+                    Sectors = p.Sectors != null ? p.Sectors.Name : null
                 })
                 .ToListAsync();
         }
+
 
         public async Task<IEnumerable<Slots>> GetAllBySectorId(int sectorId)
         {

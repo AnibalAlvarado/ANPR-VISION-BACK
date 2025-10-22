@@ -56,6 +56,39 @@ namespace Data.Implementations
             }
         }
 
+        public async Task<IEnumerable<User>> GetAllByParkingAsync()
+        {
+            try
+            {
+                var parkingId = _parkingContext.ParkingId; // 👈 ID del parking actual
+
+                var users = await (
+                    from u in _context.Users.AsNoTracking()
+                        .Include(u => u.Person)
+                    join rpu in _context.RolParkingUsers on u.Id equals rpu.UserId
+                    where rpu.ParkingId == parkingId && (u.IsDeleted == false || u.IsDeleted == null)
+                    select new User
+                    {
+                        Id = u.Id,
+                        Username = u.Username,
+                        Email = u.Email,
+                        PersonId = u.PersonId,
+                        Person = u.Person,
+                        Asset = u.Asset,
+                        IsDeleted = u.IsDeleted
+                    }
+                ).Distinct().ToListAsync();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener los usuarios asociados al parking actual");
+                throw;
+            }
+        }
+
+
 
         public override async Task<User?> GetById(int id)
         {

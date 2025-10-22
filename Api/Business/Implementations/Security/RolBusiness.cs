@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Interfaces.Security;
 using Data.Interfaces.Security;
+using Entity.Dtos.Operational;
 using Entity.Dtos.Security;
 using Entity.Models.Security;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,24 @@ namespace Business.Implementations.Security
             _mapper = mapper;
             _logger = logger;
         }
+
+        public async Task<IEnumerable<RolDto>> GetAllByParkingAsync()
+        {
+            try
+            {
+                var roles = await _data.GetAllByParkingAsync();
+
+                // Mapear los roles a DTO
+                return _mapper.Map<IEnumerable<RolDto>>(roles);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener los roles por parking");
+                throw new BusinessException("Error al obtener los roles por parking", ex);
+            }
+        }
+
+
 
         public async Task<RolDto> GetByNameAsync(string name)
         {

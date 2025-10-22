@@ -11,8 +11,11 @@ namespace Data.Interfaces.Parameter
      public interface IClientData :IRepositoryData<Client>
     {
 
-        Task<IEnumerable<ClientDto>> GetAllJoinAsync();
+        //Task<IEnumerable<ClientDto>> GetAllJoinAsync();
         Task<Client?> GetClientWithVehiclesByPersonIdAsync(int personId);
+
+        Task<IEnumerable<ClientDto>> GetAllJoinAsync();
+
 
     }
 }

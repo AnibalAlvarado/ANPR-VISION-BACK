@@ -22,6 +22,7 @@ namespace Data.Interfaces
         Task<UserAccessDto> GetUserAccessAsync(int userId);
 
         Task<List<UserRoleByParkingDto>> GetUserRolesAsync(int userId);
+        Task<IEnumerable<User>> GetAllByParkingAsync();
 
 
     }
