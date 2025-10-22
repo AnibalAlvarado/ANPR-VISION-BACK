@@ -24,33 +24,63 @@ namespace Data.Implementations.Parameter
 
         }
 
+        //public async Task<IEnumerable<SectorsDto>> GetAllJoinAsync()
+        //{
+        //    return await _context.Sectors
+        //        .AsNoTracking()
+        //        .Select(p => new SectorsDto
+        //        {
+        //            // --- BaseDto ---
+        //            Id = p.Id,                      // int? en BaseDto
+        //            Asset = p.Asset,                 // bool? en BaseDto
+        //            IsDeleted = p.IsDeleted,         // bool en BaseDto
+
+        //            // --- GenericDto ---
+        //            Name = p.Name,                   // string en GenericDto
+
+        //            // --- SectorsDto ---
+        //            Capacity = p.Capacity,
+        //            ZonesId = p.ZonesId,
+        //            Zones = p.Zones != null
+        //                ? p.Zones.Name
+        //                : null,
+        //            TypeVehicleId = p.TypeVehicleId,
+        //            TypeVehicle = p.TypeVehicle != null
+        //                ? p.TypeVehicle.Name
+        //                : null
+        //        })
+        //        .ToListAsync();
+        //}
+
         public async Task<IEnumerable<SectorsDto>> GetAllJoinAsync()
         {
+            var parkingId = _parkingContext.ParkingId; 
+
             return await _context.Sectors
                 .AsNoTracking()
+                .Include(s => s.Zones)
+                .Include(s => s.TypeVehicle)
+                .Where(s => s.Zones.ParkingId == parkingId && (s.IsDeleted == false || s.IsDeleted == null)) 
                 .Select(p => new SectorsDto
                 {
                     // --- BaseDto ---
-                    Id = p.Id,                      // int? en BaseDto
-                    Asset = p.Asset,                 // bool? en BaseDto
-                    IsDeleted = p.IsDeleted,         // bool en BaseDto
+                    Id = p.Id,
+                    Asset = p.Asset,
+                    IsDeleted = p.IsDeleted,
 
                     // --- GenericDto ---
-                    Name = p.Name,                   // string en GenericDto
+                    Name = p.Name,
 
                     // --- SectorsDto ---
                     Capacity = p.Capacity,
                     ZonesId = p.ZonesId,
-                    Zones = p.Zones != null
-                        ? p.Zones.Name
-                        : null,
+                    Zones = p.Zones != null ? p.Zones.Name : null,
                     TypeVehicleId = p.TypeVehicleId,
-                    TypeVehicle = p.TypeVehicle != null
-                        ? p.TypeVehicle.Name
-                        : null
+                    TypeVehicle = p.TypeVehicle != null ? p.TypeVehicle.Name : null
                 })
                 .ToListAsync();
         }
+
 
         public async Task<IEnumerable<Sectors>> GetAllByZoneId(int zoneId)
         {
@@ -60,13 +90,14 @@ namespace Data.Implementations.Parameter
                 .ToListAsync();
         }
 
-        public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId)
+        public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId, int parkingId)
         {
-            // Traer sectores que tengan el mismo tipo de vehículo
-            // e incluir los slots relacionados
             var sectors = await _context.Sectors
-                .Where(s => s.TypeVehicleId == vehicleTypeId)
                 .Include(s => s.Slots)
+                .Include(s => s.Zones) // importante para poder filtrar por ParkingId
+                .Where(s =>
+                    s.TypeVehicleId == vehicleTypeId &&
+                    s.Zones.ParkingId == parkingId)
                 .ToListAsync();
 
             return sectors;

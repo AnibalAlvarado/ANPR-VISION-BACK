@@ -59,65 +59,7 @@ namespace Business.Implementations.Operational
                 throw new Exception("Error al obtener las vehiculos .", ex);
             }
         }
-        // Método para registrar vehículo y asignar slot
-        public async Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId)
-        {
-            // 1Obtener el vehículo existente
-            var vehicle = await _data.GetById(vehicleId);
-            if (vehicle == null)
-                throw new Exception("Vehículo no encontrado.");
 
-            //  Obtener sectores compatibles con el tipo de vehículo
-            var validSectors = await _sectorData.GetSectorsByVehicleTypeAsync(vehicle.TypeVehicleId);
-
-            //  Filtrar slots disponibles
-            var availableSlots = new List<Slots>();
-
-            foreach (var sector in validSectors)
-            {
-                foreach (var slot in sector.Slots)
-                {
-                    bool isOccupied = await _registeredVehicleData.AnyActiveRegisteredVehicleInSlotAsync(slot.Id);
-                    if (!isOccupied && slot.IsAvailable) // Validamos IsAvailable
-                    {
-                        availableSlots.Add(slot);
-                    }
-                }
-            }
-
-            //  Validar que haya slots libres
-            if (!availableSlots.Any())
-            {
-                throw new Exception("No hay slots disponibles para este tipo de vehículo.");
-            }
-
-            //  Seleccionar un slot aleatorio
-            var random = new Random();
-            var assignedSlot = availableSlots[random.Next(availableSlots.Count)];
-
-            // 6. Marcar el slot como ocupado
-            assignedSlot.IsAvailable = false;
-            await _slotsData.Update(assignedSlot);
-
-
-            //  Crear RegisteredVehicle
-            var registeredVehicle = new RegisteredVehicles
-            {
-                VehicleId = vehicle.Id,
-                SlotsId = assignedSlot.Id,
-                EntryDate = DateTime.UtcNow,
-                Status = ERegisterStatus.In,
-                Asset = true
-            };
-
-            await _registeredVehicleData.Save(registeredVehicle);
-
-            RegisteredVehiclesDto returnRegisteredVehicle = _mapper.Map<RegisteredVehiclesDto>(registeredVehicle);
-
-            returnRegisteredVehicle.Slots = assignedSlot.Name;
-
-            return returnRegisteredVehicle;
-        }
         public override async Task<VehicleDto> Save(VehicleDto dto)
         {
             try

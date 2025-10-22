@@ -28,34 +28,69 @@ namespace Data.Implementations.Operational
         {
             _logger = logger;
         }
+        //public async Task<IEnumerable<VehicleDto>> GetAllJoinAsync()
+        //{
+        //    return await _context.Vehicles
+        //        .AsNoTracking()
+        //        .Select(p => new VehicleDto
+        //        {
+        //            // --- BaseDto ---
+        //            Id = p.Id,                      // int? en BaseDto
+        //            Asset = p.Asset,                 // bool? en BaseDto
+        //            IsDeleted = p.IsDeleted,         // bool en BaseDto
+
+        //            // --- GenericDto ---
+        //            Plate = p.Plate,                   // string en GenericDto
+        //            Color = p.Color,
+
+        //            // --- ZonesDto ---
+        //            TypeVehicleId = p.TypeVehicleId,
+        //            TypeVehicle = p.TypeVehicle != null
+        //                ? p.TypeVehicle.Name
+        //                : null,
+
+        //            ClientId = p.ClientId,
+        //            Client = p.Client != null
+        //                ? p.Client.Name
+        //                : null
+        //        })
+        //        .ToListAsync();
+        //}
+
         public async Task<IEnumerable<VehicleDto>> GetAllJoinAsync()
         {
-            return await _context.Vehicles
-                .AsNoTracking()
-                .Select(p => new VehicleDto
+            var parkingId = _parkingContext.ParkingId; // 👈 este viene del contexto actual
+
+            var query =
+                from v in _context.Vehicles
+                    .AsNoTracking()
+                    .Include(v => v.TypeVehicle)
+                    .Include(v => v.Client)
+                        .ThenInclude(c => c.Person)
+                join c in _context.Clients on v.ClientId equals c.Id
+                join p in _context.Persons on c.PersonId equals p.Id
+                join u in _context.Users on p.Id equals u.PersonId
+                join rpu in _context.RolParkingUsers on u.Id equals rpu.UserId
+                where rpu.ParkingId == parkingId // 👈 filtro clave
+                select new VehicleDto
                 {
-                    // --- BaseDto ---
-                    Id = p.Id,                      // int? en BaseDto
-                    Asset = p.Asset,                 // bool? en BaseDto
-                    IsDeleted = p.IsDeleted,         // bool en BaseDto
-
-                    // --- GenericDto ---
-                    Plate = p.Plate,                   // string en GenericDto
-                    Color = p.Color,
-
-                    // --- ZonesDto ---
-                    TypeVehicleId = p.TypeVehicleId,
-                    TypeVehicle = p.TypeVehicle != null
-                        ? p.TypeVehicle.Name
-                        : null,
-
-                    ClientId = p.ClientId,
-                    Client = p.Client != null
-                        ? p.Client.Name
+                    Id = v.Id,
+                    Asset = v.Asset,
+                    IsDeleted = v.IsDeleted,
+                    Plate = v.Plate,
+                    Color = v.Color,
+                    TypeVehicleId = v.TypeVehicleId,
+                    TypeVehicle = v.TypeVehicle != null ? v.TypeVehicle.Name : null,
+                    ClientId = v.ClientId,
+                    Client = v.Client != null
+                        ? v.Client.Person.FirstName + " " + v.Client.Person.LastName
                         : null
-                })
-                .ToListAsync();
+                };
+
+            return await query.ToListAsync();
         }
+
+
         public async Task<RegisteredVehicles?> GetActiveRegisteredVehicleBySlotAsync(int slotId)
         {
             return await _context.RegisteredVehicles

@@ -28,27 +28,45 @@ namespace Business.Implementations.Parameter
             _personRepository = personRepository;
         }
 
-        public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
+        //public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
+        //{
+        //    try
+        //    {
+        //        IEnumerable<ClientDto> entities = await _data.GetAllJoinAsync();
+        //        if (!entities.Any()) throw new InvalidOperationException("No se encontraron clientes.");
+        //        return entities;
+        //    }
+        //    catch (InvalidOperationException invEx)
+        //    {
+        //        throw new InvalidOperationException("error: ", invEx);
+        //    }
+        //    catch (ArgumentException argEx)
+        //    {
+        //        throw new ArgumentException("error: ", argEx);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Error al obtener las clientes .", ex);
+        //    }
+        //}
+
+        public async Task<IEnumerable<ClientDto>> GetAllByParkingAsync()
         {
             try
             {
-                IEnumerable<ClientDto> entities = await _data.GetAllJoinAsync();
-                if (!entities.Any()) throw new InvalidOperationException("No se encontraron clientes.");
-                return entities;
+                var clients = await _data.GetAllJoinAsync();
+                if (!clients.Any())
+                    throw new InvalidOperationException("No se encontraron clientes asociados a este parking.");
+
+                return clients;
             }
-            catch (InvalidOperationException invEx)
-            {
-                throw new InvalidOperationException("error: ", invEx);
-            }
-            catch (ArgumentException argEx)
-            {
-                throw new ArgumentException("error: ", argEx);
-            }
+            catch (InvalidOperationException) { throw; }
             catch (Exception ex)
             {
-                throw new Exception("Error al obtener las clientes .", ex);
+                throw new BusinessException("Error al obtener los clientes por parking.", ex);
             }
         }
+
         private static string GetPersonDisplayName(Person? person)
         {
             if (person == null) return string.Empty;

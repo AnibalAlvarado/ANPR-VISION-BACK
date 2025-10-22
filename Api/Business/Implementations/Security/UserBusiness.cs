@@ -67,6 +67,13 @@ namespace Business.Implementations.Security
             }
         }
 
+
+        public async Task<IEnumerable<UserDto>> GetAllByParkingAsync()
+        {
+            var users = await _data.GetAllByParkingAsync();
+            return _mapper.Map<IEnumerable<UserDto>>(users);
+        }
+
         public override async Task<UserDto> Save(UserDto dto)
         {
             try

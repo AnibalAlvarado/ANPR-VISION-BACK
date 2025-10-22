@@ -24,34 +24,67 @@ namespace Data.Implementations.Operational
 
         }
 
+        //public async Task<IEnumerable<BlackListDto>> GetAllJoinAsync()
+        //{
+        //    return await _context.BlackList
+        //        .AsNoTracking()
+        //        .Select(p => new BlackListDto
+        //        {
+        //            // --- BaseDto ---
+        //            Id = p.Id,                      // int? en BaseDto
+        //            Asset = p.Asset,                 // bool? en BaseDto
+        //            IsDeleted = p.IsDeleted,         // bool en BaseDto
+
+        //            // --- GenericDto ---
+
+        //            Reason = p.Reason,
+        //            RestrictionDate = p.RestrictionDate,
+
+
+
+
+        //            // --- ZonesDto ---
+        //            VehicleId = p.VehicleId,
+        //            Vehicle = p.Vehicle != null  
+        //                ? p.Vehicle.Plate
+        //                : null
+        //        })
+        //        .ToListAsync();
+        //}
+
         public async Task<IEnumerable<BlackListDto>> GetAllJoinAsync()
         {
-            return await _context.BlackList
-                .AsNoTracking()
-                .Select(p => new BlackListDto
+            var parkingId = _parkingContext.ParkingId; // 👈 del contexto actual
+
+            var query =
+                from b in _context.BlackList.AsNoTracking()
+                join v in _context.Vehicles.Include(v => v.TypeVehicle).Include(v => v.Client) on b.VehicleId equals v.Id
+                join c in _context.Clients on v.ClientId equals c.Id
+                join p in _context.Persons on c.PersonId equals p.Id
+                join u in _context.Users on p.Id equals u.PersonId
+                join rpu in _context.RolParkingUsers on u.Id equals rpu.UserId
+                where rpu.ParkingId == parkingId && b.IsDeleted == false
+                select new BlackListDto
                 {
                     // --- BaseDto ---
-                    Id = p.Id,                      // int? en BaseDto
-                    Asset = p.Asset,                 // bool? en BaseDto
-                    IsDeleted = p.IsDeleted,         // bool en BaseDto
+                    Id = b.Id,
+                    Asset = b.Asset,
+                    IsDeleted = b.IsDeleted,
 
-                    // --- GenericDto ---
+                    // --- BlackListDto ---
+                    Reason = b.Reason,
+                    RestrictionDate = b.RestrictionDate,
+                    VehicleId = b.VehicleId,
 
-                    Reason = p.Reason,
-                    RestrictionDate = p.RestrictionDate,
+                    // 👇 Mostramos la placa (ya está en tu DTO)
+                    Vehicle = v != null ? v.Plate : null
+                };
 
-
-                     
-
-                    // --- ZonesDto ---
-                    VehicleId = p.VehicleId,
-                    Vehicle = p.Vehicle != null  
-                        ? p.Vehicle.Plate
-                        : null
-                })
-                .ToListAsync();
+            return await query.ToListAsync();
         }
 
-        
+
+
+
     }
 }

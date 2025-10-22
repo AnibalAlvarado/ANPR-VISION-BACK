@@ -12,7 +12,7 @@ namespace Data.Interfaces.Parameter
     {
         Task<IEnumerable<SectorsDto>> GetAllJoinAsync();
         Task<IEnumerable<Sectors>> GetAllByZoneId(int zoneId);
-        Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId);
+        Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId , int parkingId);
 
     }
 }

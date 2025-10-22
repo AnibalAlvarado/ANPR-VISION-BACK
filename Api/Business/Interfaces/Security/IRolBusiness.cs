@@ -11,5 +11,6 @@ namespace Business.Interfaces.Security
     public interface IRolBusiness : IRepositoryBusiness<Rol, RolDto>
     {
         Task<RolDto> GetByNameAsync(string name);
+        Task<IEnumerable<RolDto>> GetAllByParkingAsync();
     }
 }

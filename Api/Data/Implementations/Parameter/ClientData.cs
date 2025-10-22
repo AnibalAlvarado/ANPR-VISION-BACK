@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities.Audit.Services;
+using Utilities.Exceptions;
 using Utilities.Helpers;
 using Utilities.Interfaces;
 
@@ -30,28 +31,99 @@ namespace Data.Implementations.Parameter
 
         }
 
+        //public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
+        //{
+        //    return await _context.Clients
+        //        .AsNoTracking()
+        //        .Select(p => new ClientDto
+        //        {
+        //            // --- BaseDto ---
+        //            Id = p.Id,                      // int? en BaseDto
+        //            Asset = p.Asset,                 // bool? en BaseDto
+        //            IsDeleted = p.IsDeleted,         // bool en BaseDto
+
+        //            // --- GenericDto ---
+        //            Name = p.Name,                   // string en GenericDto
+
+        //            // --- ZonesDto ---
+        //            PersonId = p.PersonId,
+        //            Person = p.Person != null
+        //                ? p.Person.FirstName
+        //                : null
+        //        })
+        //        .ToListAsync();
+        //}
+
+
+        //public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
+        //{
+        //    try
+        //    {
+        //        var parkingId = _parkingContext.ParkingId; // 👈 Contexto actual del parking
+
+        //        var clients = await (
+        //            from c in _context.Clients.AsNoTracking()
+        //            join p in _context.Persons on c.PersonId equals p.Id
+        //            join u in _context.Users on p.Id equals u.PersonId
+        //            join rpu in _context.RolParkingUsers on u.Id equals rpu.UserId
+        //            where rpu.ParkingId == parkingId && (c.IsDeleted == false || c.IsDeleted == null)
+        //            select new ClientDto
+        //            {
+        //                Id = c.Id,
+        //                Name = c.Name,
+        //                PersonId = c.PersonId,
+        //                Person = p.FirstName + " " + p.LastName,
+        //                Asset = c.Asset,
+        //                IsDeleted = c.IsDeleted
+        //            }
+        //        ).Distinct().ToListAsync();
+
+        //        return clients;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error al obtener clientes por parking");
+        //        throw;
+        //    }
+        //}
+
         public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
         {
-            return await _context.Clients
-                .AsNoTracking()
-                .Select(p => new ClientDto
-                {
-                    // --- BaseDto ---
-                    Id = p.Id,                      // int? en BaseDto
-                    Asset = p.Asset,                 // bool? en BaseDto
-                    IsDeleted = p.IsDeleted,         // bool en BaseDto
+            try
+            {
+                var parkingId = _parkingContext.ParkingId;
 
-                    // --- GenericDto ---
-                    Name = p.Name,                   // string en GenericDto
+                if (parkingId == null)
+                    throw new InvalidOperationException("No se ha establecido el ParkingId en el contexto actual.");
 
-                    // --- ZonesDto ---
-                    PersonId = p.PersonId,
-                    Person = p.Person != null
-                        ? p.Person.FirstName
-                        : null
-                })
-                .ToListAsync();
+                var clients = await (
+                    from client in _context.Clients.AsNoTracking()
+                    join person in _context.Persons on client.PersonId equals person.Id
+                    join user in _context.Users on person.Id equals user.PersonId
+                    join rpu in _context.RolParkingUsers on user.Id equals rpu.UserId
+                    where rpu.ParkingId == parkingId && (client.IsDeleted == false || client.IsDeleted == null)
+                    select new ClientDto
+                    {
+                        Id = client.Id,
+                        Name = client.Name,
+                        PersonId = client.PersonId,
+                        Person = $"{person.FirstName} {person.LastName}",
+                        Asset = client.Asset,
+                        IsDeleted = client.IsDeleted
+                    }
+                ).ToListAsync();
+
+                return clients;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener los clientes asociados al parking.");
+                throw new DataException("Error al obtener los clientes asociados al parking.", ex);
+            }
         }
+
+
+
 
         public async Task<Client?> GetClientWithVehiclesByPersonIdAsync(int personId)
         {
