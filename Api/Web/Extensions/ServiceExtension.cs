@@ -1,6 +1,7 @@
 ﻿using Business.Implementations;
 using Business.Implementations.Dashboard;
 using Business.Implementations.Detection;
+using Business.Implementations.Menu;
 using Business.Implementations.Operational;
 using Business.Implementations.Parameter;
 using Business.Implementations.Security;
@@ -9,6 +10,7 @@ using Business.Implementations.Security.PasswordRecovery;
 using Business.Interfaces;
 using Business.Interfaces.Dashboard;
 using Business.Interfaces.Detection;
+using Business.Interfaces.Menu;
 using Business.Interfaces.Operational;
 using Business.Interfaces.Parameter;
 using Business.Interfaces.Security;
@@ -16,11 +18,13 @@ using Business.Interfaces.Security.Authentication;
 using Business.Interfaces.Security.PasswordRecovery;
 using Data.Implementations;
 using Data.Implementations.Dashboard;
+using Data.Implementations.Menu;
 using Data.Implementations.Operational;
 using Data.Implementations.Parameter;
 using Data.Implementations.Security;
 using Data.Interfaces;
 using Data.Interfaces.Dashboard;
+using Data.Interfaces.Menu;
 using Data.Interfaces.Operational;
 using Data.Interfaces.Parameter;
 using Data.Interfaces.Security;
@@ -165,6 +169,9 @@ namespace Web.Extensions
 
 
             services.AddScoped<IParkingContext, ParkingContext>();
+            services.AddScoped<IMenuData, MenuData>();
+            services.AddScoped<IMenuBusiness, MenuBusiness>();
+
 
 
 
