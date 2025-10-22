@@ -3,6 +3,7 @@ using Business.Interfaces.Detection;
 using Business.Interfaces.Operational;
 using Business.Interfaces.Parameter;
 using Entity.Dtos.Operational;
+using Entity.Dtos.Parameter;
 using Entity.Enums;
 using Entity.Models;
 using Entity.Records;
@@ -21,6 +22,7 @@ namespace Business.Implementations.Detection
         private readonly INotificationBusiness _notificationBusiness;
         private readonly IBlackListBusiness _blackListBusiness;
         private readonly ITypeVehicleBusiness _typeVehicleBusiness;
+        private readonly ICamaraBusiness _camaraBusiness;
         private readonly IBackgroundTaskQueue _taskQueue;
 
         public VehicleDetectionManagerBusiness(
@@ -30,7 +32,8 @@ namespace Business.Implementations.Detection
             INotificationBusiness notificationBusiness,
             IBlackListBusiness blackListBusiness,
             ITypeVehicleBusiness typeVehicleBusiness,
-            IBackgroundTaskQueue taskQueue)
+            IBackgroundTaskQueue taskQueue,
+            ICamaraBusiness camaraBusiness)
         {
             _logger = logger;
             _vehicleBusiness = vehicleBusiness;
@@ -39,12 +42,21 @@ namespace Business.Implementations.Detection
             _blackListBusiness = blackListBusiness;
             _typeVehicleBusiness = typeVehicleBusiness;
             _taskQueue = taskQueue;
+            _camaraBusiness = camaraBusiness;
         }
 
         public async Task ProcessDetectionAsync(PlateDetectedEventRecord evt, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Procesando detección de placa {Plate}", evt.Plate);
 
+            // Conversión segura de string → int
+            if (!int.TryParse(evt.CameraId, out int cameraId))
+            {
+                _logger.LogWarning("CameraId inválido o no numérico: {CameraId}", evt.CameraId);
+                return; // o lanzar excepción si lo prefieres
+            }
+            CameraDto camera = await _camaraBusiness.GetById(cameraId);
+            evt.ParkingId = camera.ParkingId;
             //  Notificación inicial
             await NotifyAsync(evt.ParkingId, "Detección iniciada", $"Se detectó la placa **{evt.Plate}**.", "Info");
 
