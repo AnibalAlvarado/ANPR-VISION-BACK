@@ -12,5 +12,6 @@ namespace Business.Interfaces.Parameter
     {
         Task<IEnumerable<SectorsDto>> GetAllJoinAsync();
         Task<IEnumerable<SectorsDto>> GetAllByZoneId(int zoneId);
+        Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId , int parkingId);
     }
 }

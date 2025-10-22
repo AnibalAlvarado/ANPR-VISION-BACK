@@ -18,5 +18,8 @@ namespace Entity.Dtos.Operational
         // Navegación 
         public string? Client { get; set; }
         public string? TypeVehicle { get; set; } 
+
+        //Extra
+        public int? ParkingId { get; set; }
     }
 }

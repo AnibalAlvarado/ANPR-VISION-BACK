@@ -14,8 +14,6 @@ namespace Data.Interfaces.Parameter
     {
        Task<IEnumerable<SlotsDto>> GetAllJoinAsync();
         Task<IEnumerable<Slots>> GetAllBySectorId(int sectorId);
-        Task<bool> ExistsAsync<T>(Func<object, bool> value);
-        Task GetByIdAsync<T>(int sectorsId);
 
         Task<bool> AnyAsync(Expression<Func<Slots, bool>> predicate); // 👈
         Task<int> CountExistingBySectorAsync(int sectorId);

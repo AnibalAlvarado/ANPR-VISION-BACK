@@ -96,7 +96,9 @@ namespace Entity.Contexts
             //    e.Property(x => x.CreatedAt)
             //     .HasDefaultValueSql("GETUTCDATE()"); // SQL Server (si usas PG sería now() at time zone 'utc')
             //});
-
+            modelBuilder.Entity<RegisteredVehicles>()
+            .Property(rv => rv.Status)
+            .HasConversion<string>();
 
             // Llamada al seeding de datos iniciales
             DataInitial.Data(modelBuilder);

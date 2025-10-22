@@ -13,13 +13,14 @@ namespace Business.Interfaces.Operational
     public interface IRegisteredVehicleBusiness : IRepositoryBusiness<RegisteredVehicles, RegisteredVehiclesDto>
     {
         Task<IEnumerable<RegisteredVehiclesDto>> GetAllJoinAsync();
-
         Task<int> GetTotalCurrentlyParkedByParkingAsync(int parkingId);
         Task<int> GetTotalCurrentlyParkedAsync();
         Task<VehicleTypeDistributionDto> GetVehicleTypeDistributionGlobalAsync(bool includeZeros = true);
 
         Task<List<OccupancyItemDto>> GetSectorOccupancyByZoneAsync(int zoneId);
         Task<IEnumerable<RegisteredVehiclesDto>> GetByParkingAsync(int parkingId);
+        Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId, int parkingId);
+        Task<RegisteredVehiclesDto> RegisterVehicleExitAsync(int vehicleId);
 
     }
 }

@@ -4,6 +4,7 @@ using Entity.Contexts;
 using Entity.Contexts.parking;
 using Entity.Dtos.Dashboard;
 using Entity.Dtos.Operational;
+using Entity.Enums;
 using Entity.Models.Operational;
 using Entity.Models.Parameter;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,6 @@ namespace Data.Implementations.Operational
             return await _context.RegisteredVehicles
                 .AnyAsync(rv => rv.SlotsId == slotId && rv.ExitDate == null);
         }
-
         public async Task<IEnumerable<RegisteredVehiclesDto>> GetAllJoinAsync()
         {
             return await _context.RegisteredVehicles
@@ -209,6 +209,17 @@ namespace Data.Implementations.Operational
                 .ToListAsync();
         }
 
+        public async Task<RegisteredVehicles?> GetActiveRegisterByVehicleIdAsync(int vehicleId)
+        {
+            return await _context.RegisteredVehicles
+                .Include(rv => rv.Slots)
+                .Include(rv => rv.Vehicle)
+                .Where(rv => rv.VehicleId == vehicleId &&
+                             rv.Status == ERegisterStatus.In &&
+                             rv.ExitDate == null &&
+                             rv.Asset == true)
+                .FirstOrDefaultAsync();
+        }
 
     }
 }

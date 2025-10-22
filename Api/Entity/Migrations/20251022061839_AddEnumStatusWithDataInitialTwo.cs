@@ -6,10 +6,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Entity.Migrations.pgAdmin
+namespace Entity.Migrations
 {
     /// <inheritdoc />
-    public partial class NewEntityRolParkingUser : Migration
+    public partial class AddEnumStatusWithDataInitialTwo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -614,6 +614,7 @@ namespace Entity.Migrations.pgAdmin
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EntryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExitDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     VehicleId = table.Column<int>(type: "integer", nullable: false),
                     SlotsId = table.Column<int>(type: "integer", nullable: true),
                     Asset = table.Column<bool>(type: "boolean", nullable: false),
@@ -678,8 +679,9 @@ namespace Entity.Migrations.pgAdmin
                 columns: new[] { "Id", "Age", "Asset", "Document", "Email", "FirstName", "IsDeleted", "LastName", "Phone" },
                 values: new object[,]
                 {
-                    { 1, 30, true, "0001", "admin@mail.com", "Admin", false, "Principal", "111111111" },
-                    { 2, 25, true, "0002", "usuario@mail.com", "Usuario", false, "Demo", "222222222" }
+                    { 1, 30, true, "0001", "admin@gmail.com", "Admin", false, "Principal", "111111111" },
+                    { 2, 25, true, "0002", "usuario@gmail.com", "Usuario", false, "Demo", "222222222" },
+                    { 3, 18, true, "222222222222", "consumidorFinal@gmail.com", "Consumidor", false, "Final", "222222222222" }
                 });
 
             migrationBuilder.InsertData(
@@ -712,7 +714,8 @@ namespace Entity.Migrations.pgAdmin
                 values: new object[,]
                 {
                     { 1, true, false, "Cliente Demo", 1 },
-                    { 2, true, false, "Cliente Premium", 2 }
+                    { 2, true, false, "Cliente Premium", 2 },
+                    { 3, true, false, "Consumidor Final", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -745,7 +748,8 @@ namespace Entity.Migrations.pgAdmin
                 values: new object[,]
                 {
                     { 1, true, "admin@mail.com", false, "$2a$12$C3DSGP6PRwi3a4hsLdnrs.kYnRkJ0PgR3ky/AbI5Dmem7U3e/lSpq", 1, "admin" },
-                    { 2, true, "usuario@mail.com", false, "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm", 2, "usuario" }
+                    { 2, true, "usuario@mail.com", false, "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm", 2, "usuario" },
+                    { 3, true, "usuario@mail.com", false, "$2a$12$bvkOemZZo7d029/kwq5Duudeamk/pxdPn464EZOT6Ndbg6z06h.Gm", 3, "Consumidor Final" }
                 });
 
             migrationBuilder.InsertData(
@@ -773,7 +777,8 @@ namespace Entity.Migrations.pgAdmin
                 values: new object[,]
                 {
                     { 1, true, false, 1, 1, 1 },
-                    { 2, true, false, 2, 2, 2 }
+                    { 2, true, false, 2, 2, 2 },
+                    { 3, true, false, 2, 2, 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -833,11 +838,11 @@ namespace Entity.Migrations.pgAdmin
 
             migrationBuilder.InsertData(
                 table: "RegisteredVehicles",
-                columns: new[] { "Id", "Asset", "EntryDate", "ExitDate", "IsDeleted", "SlotsId", "VehicleId" },
+                columns: new[] { "Id", "Asset", "EntryDate", "ExitDate", "IsDeleted", "SlotsId", "Status", "VehicleId" },
                 values: new object[,]
                 {
-                    { 1, true, new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), false, 1, 1 },
-                    { 2, true, new DateTime(2025, 1, 1, 9, 0, 0, 0, DateTimeKind.Utc), null, false, 3, 2 }
+                    { 1, true, new DateTime(2025, 1, 1, 8, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), false, 1, "Out", 1 },
+                    { 2, true, new DateTime(2025, 1, 1, 9, 0, 0, 0, DateTimeKind.Utc), null, false, 3, "In", 2 }
                 });
 
             migrationBuilder.CreateIndex(
