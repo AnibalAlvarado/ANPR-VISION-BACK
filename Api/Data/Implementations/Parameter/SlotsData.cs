@@ -94,16 +94,6 @@ namespace Data.Implementations.Parameter
                 .ToListAsync();
         }
 
-        public Task<bool> ExistsAsync<T>(Func<object, bool> value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetByIdAsync<T>(int sectorsId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<bool> AnyAsync(Expression<Func<Slots, bool>> predicate)
        => _context.Slots.AsNoTracking().AnyAsync(predicate);
 

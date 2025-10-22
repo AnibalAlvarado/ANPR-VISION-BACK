@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Entity.Enums;
 using Entity.Models.Operational;
 using Entity.Models.Parameter;
 using Entity.Models.Security;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Entity.Contexts
 {
@@ -146,10 +147,29 @@ namespace Entity.Contexts
                 new Camera { Id = 2, Name = "Cam VIP", Resolution = "4K", Url = "http://cam-vip", ParkingId = 2, Asset = true }
             );
             // RegisteredVehicles
+            // RegisteredVehicles
             modelBuilder.Entity<RegisteredVehicles>().HasData(
-                new RegisteredVehicles { Id = 1, EntryDate = new DateTime(2025, 1, 1, 8, 0, 0, DateTimeKind.Utc), ExitDate = new DateTime(2025, 1, 1, 10, 0, 0, DateTimeKind.Utc), VehicleId = 1, SlotsId = 1, Asset = true },
-                new RegisteredVehicles { Id = 2, EntryDate = new DateTime(2025, 1, 1, 9, 0, 0, DateTimeKind.Utc), VehicleId = 2, SlotsId = 3, Asset = true }
+                new RegisteredVehicles
+                {
+                    Id = 1,
+                    EntryDate = new DateTime(2025, 1, 1, 8, 0, 0, DateTimeKind.Utc),
+                    ExitDate = new DateTime(2025, 1, 1, 10, 0, 0, DateTimeKind.Utc),
+                    VehicleId = 1,
+                    SlotsId = 1,
+                    Asset = true,
+                    Status = ERegisterStatus.Out   // 🔹 Se fue (tiene ExitDate)
+                },
+                new RegisteredVehicles
+                {
+                    Id = 2,
+                    EntryDate = new DateTime(2025, 1, 1, 9, 0, 0, DateTimeKind.Utc),
+                    VehicleId = 2,
+                    SlotsId = 3,
+                    Asset = true,
+                    Status = ERegisterStatus.In    // 🔹 Sigue dentro (sin ExitDate)
+                }
             );
+
 
             // MemberShipType
             modelBuilder.Entity<MemberShipType>().HasData(

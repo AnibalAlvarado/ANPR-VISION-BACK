@@ -15,7 +15,7 @@ namespace Business.Interfaces.Parameter
         Task<IEnumerable<SlotsDto>> GetAllBySectorId(int sectorId);
         Task<OccupancyDto> GetOccupancyGlobalAsync();
         Task<IEnumerable<SlotsDto>> GetAllByParkingIdAsync(int parkingId);
-
+        Task<Slots> AssignAvailableSlotAsync(int typeVehicleId, int parkingId);
 
 
     }

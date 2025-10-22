@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Implementations.Parameter;
 using Business.Interfaces;
 using Business.Interfaces.Operational;
 using Business.Interfaces.Parameter;
@@ -7,6 +8,7 @@ using Data.Implementations.Operational;
 using Data.Interfaces.Operational;
 using Entity.Dtos.Dashboard;
 using Entity.Dtos.Operational;
+using Entity.Dtos.Parameter;
 using Entity.Enums;
 using Entity.Models.Operational;
 using Entity.Models.Parameter;
@@ -26,14 +28,16 @@ namespace Business.Implementations.Operational
         private readonly IRegisteredVehiclesData _data;
         private readonly IVehicleBusiness _vehicleBusiness;
         private readonly ISectorsBusiness _sectorsBusiness;
+        private readonly ISlotsBusiness _slotsBusiness;
         private readonly IMapper _mapper;
-        public RegisteredVehicleBusiness(IRegisteredVehiclesData data, IMapper mapper, IVehicleBusiness vehicleBusiness, ISectorsBusiness sectorsBusiness)
+        public RegisteredVehicleBusiness(IRegisteredVehiclesData data, IMapper mapper, IVehicleBusiness vehicleBusiness, ISectorsBusiness sectorsBusiness, ISlotsBusiness slotsBusiness)
             : base(data, mapper)
         {
             _data = data;
             _vehicleBusiness = vehicleBusiness;
             _sectorsBusiness = sectorsBusiness;
             _mapper = mapper;
+            _slotsBusiness = slotsBusiness;
         }
 
 
@@ -126,36 +130,12 @@ namespace Business.Implementations.Operational
             VehicleDto vehicle = await _vehicleBusiness.GetById(vehicleId) ?? throw new Exception("Vehículo no encontrado.");
 
             //  Obtener sectores compatibles con el tipo de vehículo
-            List<Sectors> validSectors = await _sectorsBusiness.GetSectorsByVehicleTypeAsync(vehicle.TypeVehicleId, parkingId);
-
-            //  Filtrar slots disponibles
-            List<Slots> availableSlots = new List<Slots>();
-
-            foreach (Sectors sector in validSectors)
-            {
-                foreach (Slots slot in sector.Slots)
-                {
-                    bool isOccupied = await _data.AnyActiveRegisteredVehicleInSlotAsync(slot.Id);
-                    if (!isOccupied && slot.IsAvailable) // Validamos IsAvailable
-                    {
-                        availableSlots.Add(slot);
-                    }
-                }
-            }
-
-            //  Validar que haya slots libres
-            if (!availableSlots.Any())
-            {
-                throw new Exception("No hay slots disponibles para este tipo de vehículo.");
-            }
-
-            //  Seleccionar un slot aleatorio
-            Random random = new();
-            Slots assignedSlot = availableSlots[random.Next(availableSlots.Count)];
+            Slots assignedSlot = await _slotsBusiness.AssignAvailableSlotAsync(vehicle.TypeVehicleId, parkingId);
 
             // 6. Marcar el slot como ocupado
             assignedSlot.IsAvailable = false;
-            await _slotsData.Update(assignedSlot);
+            SlotsDto assignedSlotDto = _mapper.Map<SlotsDto>(assignedSlot);
+            await _slotsBusiness.Update(assignedSlotDto);
 
 
             //  Crear RegisteredVehicle
@@ -168,7 +148,7 @@ namespace Business.Implementations.Operational
                 Asset = true
             };
 
-            await _registeredVehicleData.Save(registeredVehicle);
+            await _data.Save(registeredVehicle);
 
             RegisteredVehiclesDto returnRegisteredVehicle = _mapper.Map<RegisteredVehiclesDto>(registeredVehicle);
 
@@ -176,6 +156,35 @@ namespace Business.Implementations.Operational
 
             return returnRegisteredVehicle;
         }
+        public async Task<RegisteredVehiclesDto> RegisterVehicleExitAsync(int vehicleId)
+        {
+            //  Buscar un registro activo del vehículo
+            RegisteredVehicles? activeRegister = await _data.GetActiveRegisterByVehicleIdAsync(vehicleId) ?? throw new BusinessException("No se encontró una entrada activa para este vehículo.");
+
+            //  Marcar salida
+            activeRegister.ExitDate = DateTime.UtcNow;
+            activeRegister.Status = ERegisterStatus.Out;
+
+            //  Liberar el slot
+            if (activeRegister.SlotsId.HasValue)
+            {
+                SlotsDto slot = await _slotsBusiness.GetById(activeRegister.SlotsId.Value);
+                if (slot != null)
+                {
+                    slot.IsAvailable = true;
+                    await _slotsBusiness.Update(slot);
+                }
+            }
+
+            //  Guardar cambios
+            await _data.Update(activeRegister);
+
+            //  Mapear y devolver DTO
+            RegisteredVehiclesDto dto = _mapper.Map<RegisteredVehiclesDto>(activeRegister);
+            dto.Slots = (await _slotsBusiness.GetById(activeRegister.SlotsId ?? 0))?.Name ?? "N/A";
+            return dto;
+        }
+
 
     }
 }
