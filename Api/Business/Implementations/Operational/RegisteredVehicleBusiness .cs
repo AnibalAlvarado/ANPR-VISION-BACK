@@ -26,12 +26,14 @@ namespace Business.Implementations.Operational
         private readonly IRegisteredVehiclesData _data;
         private readonly IVehicleBusiness _vehicleBusiness;
         private readonly ISectorsBusiness _sectorsBusiness;
+        private readonly IMapper _mapper;
         public RegisteredVehicleBusiness(IRegisteredVehiclesData data, IMapper mapper, IVehicleBusiness vehicleBusiness, ISectorsBusiness sectorsBusiness)
             : base(data, mapper)
         {
             _data = data;
             _vehicleBusiness = vehicleBusiness;
             _sectorsBusiness = sectorsBusiness;
+            _mapper = mapper;
         }
 
 
