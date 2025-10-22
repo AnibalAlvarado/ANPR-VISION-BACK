@@ -10,7 +10,9 @@ namespace Business.Interfaces.Parameter
 {
     public interface IClientBusiness : IRepositoryBusiness<Client, ClientDto>
     {
-        Task<IEnumerable<ClientDto>> GetAllJoinAsync();
+        //Task<IEnumerable<ClientDto>> GetAllJoinAsync();
+        Task<IEnumerable<ClientDto>> GetAllByParkingAsync();
+
 
     }
 }
