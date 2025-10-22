@@ -60,13 +60,14 @@ namespace Data.Implementations.Parameter
                 .ToListAsync();
         }
 
-        public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId)
+        public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId, int parkingId)
         {
-            // Traer sectores que tengan el mismo tipo de vehículo
-            // e incluir los slots relacionados
             var sectors = await _context.Sectors
-                .Where(s => s.TypeVehicleId == vehicleTypeId)
                 .Include(s => s.Slots)
+                .Include(s => s.Zones) // importante para poder filtrar por ParkingId
+                .Where(s =>
+                    s.TypeVehicleId == vehicleTypeId &&
+                    s.Zones.ParkingId == parkingId)
                 .ToListAsync();
 
             return sectors;

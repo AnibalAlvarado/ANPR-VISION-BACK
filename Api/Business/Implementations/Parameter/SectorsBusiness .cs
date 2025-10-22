@@ -235,8 +235,10 @@ namespace Business.Implementations.Parameter
                 throw new BusinessException("Error al actualizar el registro del sector.", ex);
             }
         }
-
-
-
+        public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId , int parkingId)
+        {
+            List<Sectors> sectors = await _data.GetSectorsByVehicleTypeAsync(vehicleTypeId , parkingId);
+            return sectors;
+        }
     }
 }

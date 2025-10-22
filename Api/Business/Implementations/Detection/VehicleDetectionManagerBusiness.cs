@@ -95,7 +95,7 @@ public class VehicleDetectionManagerBusiness : IVehicleDetectionManagerBusiness
         VehicleDto existedVehicle = await _vehicleBusiness.GetVehicleByPlate(evt.Plate);
         bool existInBlacklist = await _blackListBusiness.ExistsAsync(b => b.VehicleId == existedVehicle.Id);
         if (existInBlacklist)
-        {
+        {   
             //_taskQueue.Enqueue(async token =>
             //{
             //    await _notificationBusiness.CreateAndNotifyAsync(new NotificationDto

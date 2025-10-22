@@ -20,6 +20,7 @@ namespace Business.Interfaces.Operational
 
         Task<List<OccupancyItemDto>> GetSectorOccupancyByZoneAsync(int zoneId);
         Task<IEnumerable<RegisteredVehiclesDto>> GetByParkingAsync(int parkingId);
+        Task<RegisteredVehiclesDto> RegisterVehicleWithSlotAsync(int vehicleId, int parkingId);
 
     }
 }
