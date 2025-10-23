@@ -85,7 +85,7 @@ namespace Data.Implementations.Menu
                                 .Distinct()
                                 .ToList()
                         };
-
+                        
                         moduleDto.Forms.Add(formDto);
                     }
 

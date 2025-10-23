@@ -18,26 +18,7 @@ namespace Web.Controllers.Implementations.Parameter
             _logger = logger;
         }
 
-        //[HttpGet("join")]
-        //public async Task<ActionResult<IEnumerable<ClientDto>>> GetAllJoin()
-        //{
-        //    try
-        //    {
-        //        var data = await _business.GetAllJoinAsync();
-        //        if (data == null || !data.Any())
-        //        {
-        //            var responseNull = new ApiResponse<IEnumerable<ClientDto>>(null, false, "Registro no encontrado", null);
-        //            return NotFound(responseNull);
-        //        }
-        //        var response = new ApiResponse<IEnumerable<ClientDto>>(data, true, "Ok", null);
-        //        return Ok(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var response = new ApiResponse<IEnumerable<ClientDto>>(null, false, ex.Message.ToString(), null);
-        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
-        //    }
-        //}
+        
 
         [HttpGet("join")]
         public async Task<ActionResult<IEnumerable<ClientDto>>> GetAllJoin()
