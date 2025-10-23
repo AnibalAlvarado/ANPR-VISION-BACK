@@ -26,32 +26,32 @@ namespace Web.Controllers.Implementations.Operational
             _registeredVehicleBusiness = registeredVehicleBusiness;
         }
 
-        [HttpPost]
-        public override async Task<ActionResult<VehicleDto>> Save(VehicleDto dto)
-        {
-            try
-            {
-                // 1️⃣ Guardar el vehículo normalmente usando la lógica genérica
-                VehicleDto dtoSaved = await _business.Save(dto);
+        //[HttpPost]
+        //public override async Task<ActionResult<VehicleDto>> Save(VehicleDto dto)
+        //{
+        //    try
+        //    {
+        //        // 1️⃣ Guardar el vehículo normalmente usando la lógica genérica
+        //        VehicleDto dtoSaved = await _business.Save(dto);
 
-                // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
-                RegisteredVehiclesDto registeredVehicle = await _registeredVehicleBusiness.RegisterVehicleWithSlotAsync(dtoSaved.Id, dto.ParkingId ?? 0);
+        //        // 2️⃣ Asignar automáticamente un slot al vehículo recién creado
+        //        RegisteredVehiclesDto registeredVehicle = await _registeredVehicleBusiness.RegisterVehicleWithSlotAsync(dtoSaved.Id, dto.ParkingId ?? 0);
 
-                var response = new
-                {
-                    Vehicle = dtoSaved,
-                    RegisteredVehicle = registeredVehicle
-                };
+        //        var response = new
+        //        {
+        //            Vehicle = dtoSaved,
+        //            RegisteredVehicle = registeredVehicle
+        //        };
 
-                return CreatedAtRoute(new { id = dtoSaved.Id }, response);
+        //        return CreatedAtRoute(new { id = dtoSaved.Id }, response);
 
-            }
-            catch (Exception ex)
-            {
-                var response = new ApiResponse<object>(null, false, ex.Message, null);
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var response = new ApiResponse<object>(null, false, ex.Message, null);
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
 
 
         [HttpGet("join")]

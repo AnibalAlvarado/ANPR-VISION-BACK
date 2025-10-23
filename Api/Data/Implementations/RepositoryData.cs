@@ -57,7 +57,7 @@ namespace Data.Implementations
         private static bool HasParkingIdProperty() =>
             typeof(T).GetProperty("ParkingId") != null;
 
-        private IQueryable<T> ApplyParkingFilter(IQueryable<T> query)
+        public IQueryable<T> ApplyParkingFilter(IQueryable<T> query)
         {
             if (HasParkingIdProperty() && _parkingContext.ParkingId.HasValue)
             {
@@ -86,7 +86,7 @@ namespace Data.Implementations
         {
             try
             {
-                var query = _context.Set<T>().AsQueryable();
+                var query = _context.Set<T>().AsQueryable().Where(e => e.IsDeleted == false); 
                 query = ApplyParkingFilter(query);
 
                 if (filters != null && filters.Any())
@@ -105,7 +105,7 @@ namespace Data.Implementations
         // ============================================================
         public override async Task<T> GetById(int id)
         {
-            var query = _context.Set<T>().AsNoTracking();
+            var query = _context.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false);
             query = ApplyParkingFilter(query);
             return await query.FirstOrDefaultAsync(i => i.Id == id);
         }
@@ -322,6 +322,9 @@ namespace Data.Implementations
             var lambda = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
             return await query.AnyAsync(lambda);
         }
+
+      
+
     }
 
 }

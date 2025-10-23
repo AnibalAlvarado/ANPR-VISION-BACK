@@ -71,7 +71,7 @@ namespace Data.Implementations.Operational
                 join p in _context.Persons on c.PersonId equals p.Id
                 join u in _context.Users on p.Id equals u.PersonId
                 join rpu in _context.RolParkingUsers on u.Id equals rpu.UserId
-                where rpu.ParkingId == parkingId // 👈 filtro clave
+                where rpu.ParkingId == parkingId && v.IsDeleted == false  // 👈 filtro clave
                 select new VehicleDto
                 {
                     Id = v.Id,
