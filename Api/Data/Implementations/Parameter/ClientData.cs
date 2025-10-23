@@ -31,61 +31,6 @@ namespace Data.Implementations.Parameter
 
         }
 
-        //public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
-        //{
-        //    return await _context.Clients
-        //        .AsNoTracking()
-        //        .Select(p => new ClientDto
-        //        {
-        //            // --- BaseDto ---
-        //            Id = p.Id,                      // int? en BaseDto
-        //            Asset = p.Asset,                 // bool? en BaseDto
-        //            IsDeleted = p.IsDeleted,         // bool en BaseDto
-
-        //            // --- GenericDto ---
-        //            Name = p.Name,                   // string en GenericDto
-
-        //            // --- ZonesDto ---
-        //            PersonId = p.PersonId,
-        //            Person = p.Person != null
-        //                ? p.Person.FirstName
-        //                : null
-        //        })
-        //        .ToListAsync();
-        //}
-
-
-        //public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
-        //{
-        //    try
-        //    {
-        //        var parkingId = _parkingContext.ParkingId; // 👈 Contexto actual del parking
-
-        //        var clients = await (
-        //            from c in _context.Clients.AsNoTracking()
-        //            join p in _context.Persons on c.PersonId equals p.Id
-        //            join u in _context.Users on p.Id equals u.PersonId
-        //            join rpu in _context.RolParkingUsers on u.Id equals rpu.UserId
-        //            where rpu.ParkingId == parkingId && (c.IsDeleted == false || c.IsDeleted == null)
-        //            select new ClientDto
-        //            {
-        //                Id = c.Id,
-        //                Name = c.Name,
-        //                PersonId = c.PersonId,
-        //                Person = p.FirstName + " " + p.LastName,
-        //                Asset = c.Asset,
-        //                IsDeleted = c.IsDeleted
-        //            }
-        //        ).Distinct().ToListAsync();
-
-        //        return clients;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error al obtener clientes por parking");
-        //        throw;
-        //    }
-        //}
 
         public async Task<IEnumerable<ClientDto>> GetAllJoinAsync()
         {

@@ -306,6 +306,12 @@ namespace Data.Implementations
             }
         }
 
+        public async Task<User?> GetByPersonIdAsync(int personId)
+        {
+            var query = _context.Users.AsNoTracking();
+            query = ApplyParkingFilter(query);
+            return await query.FirstOrDefaultAsync(u => u.PersonId == personId);
+        }
 
 
 
