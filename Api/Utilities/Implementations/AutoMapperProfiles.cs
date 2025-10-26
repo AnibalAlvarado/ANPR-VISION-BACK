@@ -135,6 +135,7 @@ namespace Utilities.Implementations
 
             CreateMap<UserDto, User>();
             CreateMap<User, UserResponseDto>().ReverseMap();
+
             //CreateMap<BlackList, BlackListDto>().ReverseMap();
             //CreateMap<Client, ClientDto>().ReverseMap();
             CreateMap<Memberships, MembershipsDto>().ReverseMap();
@@ -152,6 +153,10 @@ namespace Utilities.Implementations
             //CreateMap<PersonParking, PersonParkingDto>();
             //CreateMap<PersonParkingDto, PersonParking>();
             //CreateMap<ClientDto, Client>().ReverseMap();
+
+            CreateMap<Notification, NotificationDto>().ReverseMap();
+            CreateMap<NotificationDto, Notification>().ReverseMap();
+
 
         }
     }

@@ -90,6 +90,18 @@ namespace Data.Implementations.Parameter
                 .ToListAsync();
         }
 
+        //public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId, int parkingId)
+        //{
+        //    var sectors = await _context.Sectors
+        //        .Include(s => s.Slots)
+        //        .Include(s => s.Zones) // importante para poder filtrar por ParkingId
+        //        .Where(s =>
+        //            s.TypeVehicleId == vehicleTypeId &&
+        //            s.Zones.ParkingId == parkingId)
+        //        .ToListAsync();
+
+        //    return sectors;
+        //}
         public async Task<List<Sectors>> GetSectorsByVehicleTypeAsync(int vehicleTypeId, int parkingId)
         {
             var sectors = await _context.Sectors
@@ -98,10 +110,10 @@ namespace Data.Implementations.Parameter
                 .Where(s =>
                     s.TypeVehicleId == vehicleTypeId &&
                     s.Zones.ParkingId == parkingId)
+                .AsNoTracking() // 👈 evita el seguimiento de EF
                 .ToListAsync();
 
             return sectors;
         }
-
     }
 }

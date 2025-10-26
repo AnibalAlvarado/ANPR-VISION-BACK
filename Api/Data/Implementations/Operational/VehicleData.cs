@@ -97,11 +97,19 @@ namespace Data.Implementations.Operational
                 .Include(rv => rv.Vehicle) // Para traer también la info del vehículo
                 .FirstOrDefaultAsync(rv => rv.SlotsId == slotId && rv.ExitDate == null);
         }
+        //public async Task<Vehicle?> GetVehicleByPlate(string plate)
+        //{
+        //    return await _context.Vehicles
+        //        .AsNoTracking()
+        //        .FirstOrDefaultAsync(v => v.Plate.Equals(plate, StringComparison.CurrentCultureIgnoreCase));
+        //}
+
         public async Task<Vehicle?> GetVehicleByPlate(string plate)
         {
             return await _context.Vehicles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(v => v.Plate.Equals(plate, StringComparison.CurrentCultureIgnoreCase));
+                .FirstOrDefaultAsync(v => v.Plate.ToLower() == plate.ToLower());
         }
+
     }
 }
